@@ -76,9 +76,5 @@ public abstract class BaseFragment extends Fragment {
         recyclerView.setAdapter(new SimpleHeaderRecyclerAdapter(getActivity(), getDummyData(), headerView));
     }
 
-    protected void setGridViewData(GridView gridView) {
-        gridView.setAdapter(new GridViewAdapter(getActivity()));
-    }
-
     abstract void updateAdapter();
 }

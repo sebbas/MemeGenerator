@@ -2,6 +2,7 @@ package org.sebbas.android.memegenerator;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,9 +21,11 @@ public class GoogleCardsAdapter extends BaseAdapter {
     private String mUrl;
     private List<String> mImageUrls = new ArrayList<String>();
     private List<String> mDisplayNames = new ArrayList<String>();
+    private AdapterCallback mAdapterCallback;
 
-    GoogleCardsAdapter(final Context context, String url) {
+    GoogleCardsAdapter(final Context context, Fragment fragment, String url) {
         mContext = context;
+        mAdapterCallback = (AdapterCallback) fragment;
         mUrl = url;
 
         // Trigger async data loading
@@ -70,8 +73,8 @@ public class GoogleCardsAdapter extends BaseAdapter {
         // Trigger the download of the URL asynchronously into the image view.
         Picasso.with(mContext) //
                 .load(url) //
-                .placeholder(R.drawable.ic_launcher) //
-                .error(R.drawable.ic_launcher) //
+                .placeholder(android.R.color.white) //
+                .error(android.R.color.white) //
                 .fit() //
                 .centerCrop() //
                 .tag(mContext) //
@@ -87,6 +90,13 @@ public class GoogleCardsAdapter extends BaseAdapter {
     }
 
     private class DataLoader extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            mAdapterCallback.onDataLoadStarted();
+        }
+
         @Override
         protected Void doInBackground(String... params) {
             String url = params[0];
@@ -107,11 +117,18 @@ public class GoogleCardsAdapter extends BaseAdapter {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             notifyDataSetChanged();
+            mAdapterCallback.onDataLoadFinished();
         }
+
     }
 
     public void triggerAsyncLoad() {
         DataLoader dataLoader = new DataLoader();
         dataLoader.execute(mUrl);
+    }
+
+    public static interface AdapterCallback {
+        void onDataLoadStarted();
+        void onDataLoadFinished();
     }
 }

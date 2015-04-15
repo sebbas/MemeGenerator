@@ -17,7 +17,6 @@
 package org.sebbas.android.memegenerator;
 
 import android.app.Activity;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -27,18 +26,17 @@ import android.view.ViewGroup;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableGridView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
-import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.SwipeDismissAdapter;
 
-import java.util.ArrayList;
-
-public class ViewPagerTab2GridViewFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener{
+public class ViewPagerTab2GridViewFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, GoogleCardsAdapter.AdapterCallback {
 
     private static final int INITIAL_DELAY_MILLIS = 300;
 
     private String mUrl;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private GoogleCardsAdapter mGoogleCardsAdapter;
+    private CircularProgressView mCircularProgressView;
 
     public static ViewPagerTab2GridViewFragment newInstance(String url) {
         ViewPagerTab2GridViewFragment fragment = new ViewPagerTab2GridViewFragment();
@@ -49,7 +47,7 @@ public class ViewPagerTab2GridViewFragment extends BaseFragment implements Swipe
     }
 
     public void updateAdapter() {
-        mGoogleCardsAdapter.triggerAsyncLoad();
+        //mGoogleCardsAdapter.triggerAsyncLoad();
         mGoogleCardsAdapter.notifyDataSetChanged();
     }
 
@@ -57,7 +55,7 @@ public class ViewPagerTab2GridViewFragment extends BaseFragment implements Swipe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mUrl = getArguments().getString("url");
-        mGoogleCardsAdapter = new GoogleCardsAdapter(this.getActivity(), mUrl);
+        mGoogleCardsAdapter = new GoogleCardsAdapter(this.getActivity(), this,  mUrl);
     }
 
     @Override
@@ -84,6 +82,9 @@ public class ViewPagerTab2GridViewFragment extends BaseFragment implements Swipe
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.accent);
+
+        //mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
+
         return view;
     }
 
@@ -96,5 +97,15 @@ public class ViewPagerTab2GridViewFragment extends BaseFragment implements Swipe
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         }, 5000);
+    }
+
+    @Override
+    public void onDataLoadStarted() {
+        //mCircularProgressView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onDataLoadFinished() {
+        //mCircularProgressView.setVisibility(View.GONE);
     }
 }

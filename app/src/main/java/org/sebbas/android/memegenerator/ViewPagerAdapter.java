@@ -50,16 +50,6 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
                 return mPreferencesFragment;
             default:
                 return EditorFragment.newInstance();
-            /*case 0:
-                return ViewPagerTab2Fragment.newInstance();
-            case 1:
-                return EditorFragment.newInstance();
-            case 2:
-                return EditorFragment.newInstance();
-            case 3:
-                return EditorFragment.newInstance();
-            default:
-                return EditorFragment.newInstance();*/
         }
     }
 

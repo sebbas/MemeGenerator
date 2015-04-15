@@ -18,10 +18,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <com.github.ksoichiro.android.observablescrollview.ObservableGridView
         android:id="@+id/scroll"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:numColumns="3"
         android:layout_marginBottom="200dp"/>
+
 </android.support.v4.widget.SwipeRefreshLayout>

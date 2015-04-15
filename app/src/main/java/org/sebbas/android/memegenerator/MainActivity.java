@@ -1,5 +1,7 @@
 package org.sebbas.android.memegenerator;
 
+import android.app.ActivityManager;
+import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -24,6 +26,11 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Customize task bar which is visible in multitask mode in Android Lollipop
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            this.setTaskDescription(new ActivityManager.TaskDescription(null, null, getResources().getColor(R.color.primaryDark)));
+        }
 
         mAdapter =  new ViewPagerAdapter(getSupportFragmentManager(), mTitles, mIcons, mNumbOfTabs);
 
