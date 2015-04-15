@@ -29,7 +29,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.github.ksoichiro:android-observablescrollview:1.5.0'
     compile 'com.nineoldandroids:library:2.4.0'
-    compile 'com.melnykov:floatingactionbutton:1.0.7'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.rahatarmanahmed:circularprogressview:2.0.1'
     compile 'com.nhaarman.listviewanimations:lib-core:3.1.0@aar'
@@ -37,5 +36,5 @@ dependencies {
     compile 'com.nhaarman.listviewanimations:lib-core-slh:3.1.0@aar'
     compile 'com.android.support:cardview-v7:21.0.+'
     compile 'com.android.support:support-v4-preferencefragment:1.0.0'
-    compile 'com.getbase:floatingactionbutton:1.9.0'
+    compile 'net.i2p.android.ext:floatingactionbutton:1.9.0'
 }

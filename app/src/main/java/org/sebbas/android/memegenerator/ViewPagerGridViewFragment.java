@@ -23,23 +23,26 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
+import com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout;
 import com.github.ksoichiro.android.observablescrollview.ObservableGridView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
-public class ViewPagerTab2GridViewFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, GoogleCardsAdapter.AdapterCallback {
+public class ViewPagerGridViewFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, GoogleCardsAdapter.AdapterCallback {
 
     private static final int INITIAL_DELAY_MILLIS = 300;
 
     private String mUrl;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private MultiSwipeRefreshLayout mSwipeRefreshLayout;
     private GoogleCardsAdapter mGoogleCardsAdapter;
     private CircularProgressView mCircularProgressView;
+    private ObservableGridView mGridView;
 
-    public static ViewPagerTab2GridViewFragment newInstance(String url) {
-        ViewPagerTab2GridViewFragment fragment = new ViewPagerTab2GridViewFragment();
+    public static ViewPagerGridViewFragment newInstance(String url) {
+        ViewPagerGridViewFragment fragment = new ViewPagerGridViewFragment();
         Bundle args = new Bundle();
         args.putString("url", url);
         fragment.setArguments(args);
@@ -62,30 +65,39 @@ public class ViewPagerTab2GridViewFragment extends BaseFragment implements Swipe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_gridview, container, false);
 
+        mGridView = (ObservableGridView) view.findViewById(R.id.scroll);
+        mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
         Activity parentActivity = getActivity();
-        final ObservableGridView gridView = (ObservableGridView) view.findViewById(R.id.scroll);
 
         SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(mGoogleCardsAdapter);
-        swingBottomInAnimationAdapter.setAbsListView(gridView);
+        swingBottomInAnimationAdapter.setAbsListView(mGridView);
 
         assert swingBottomInAnimationAdapter.getViewAnimator() != null;
         swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(INITIAL_DELAY_MILLIS);
 
-        gridView.setAdapter(swingBottomInAnimationAdapter);
-        gridView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
-
+        mGridView.setAdapter(swingBottomInAnimationAdapter);
+        mGridView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            }
+        });
         if (parentActivity instanceof ObservableScrollViewCallbacks) {
-            gridView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
+            mGridView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
         }
 
-        // Setup pull to refresh listener
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_container);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.accent);
-
-        //mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
-
-        return view;
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setSwipeableChildren(R.id.scroll);
     }
 
     @Override
@@ -100,12 +112,11 @@ public class ViewPagerTab2GridViewFragment extends BaseFragment implements Swipe
     }
 
     @Override
-    public void onDataLoadStarted() {
-        //mCircularProgressView.setVisibility(View.VISIBLE);
+    public void onDataLoadFinished() {
+        mCircularProgressView.setVisibility(View.GONE);
     }
 
-    @Override
-    public void onDataLoadFinished() {
-        //mCircularProgressView.setVisibility(View.GONE);
+    public interface ViewPagerGridViewFragmentCallback {
+        void onGridItemClicked();
     }
 }

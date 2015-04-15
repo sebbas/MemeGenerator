@@ -1,6 +1,7 @@
 package org.sebbas.android.memegenerator;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewCompat;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.github.ksoichiro.android.observablescrollview.CacheFragmentStatePagerAdapter;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
@@ -20,10 +22,11 @@ import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.github.ksoichiro.android.observablescrollview.Scrollable;
 import com.github.ksoichiro.android.observablescrollview.TouchInterceptionFrameLayout;
-import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.ViewHelper;
+
+import java.io.Serializable;
 
 /**
  * Another implementation of ViewPagerTabActivity.
@@ -32,7 +35,7 @@ import com.nineoldandroids.view.ViewHelper;
  * SlidingTabLayout and SlidingTabStrip are from google/iosched:
  * https://github.com/google/iosched
  */
-public class ViewPagerTab2Fragment extends BaseFragment implements ObservableScrollViewCallbacks {
+public class MemeFragment extends BaseFragment implements ObservableScrollViewCallbacks, ViewPagerGridViewFragment.ViewPagerGridViewFragmentCallback {
 
     private View mToolbarView;
     private TouchInterceptionFrameLayout mInterceptionLayout;
@@ -43,13 +46,13 @@ public class ViewPagerTab2Fragment extends BaseFragment implements ObservableScr
     private ScrollState mLastScrollState;
     private ActionBarActivity mParentActivity;
 
-    public static ViewPagerTab2Fragment newInstance() {
-        return new ViewPagerTab2Fragment();
+    public static MemeFragment newInstance() {
+        return new MemeFragment();
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
         mParentActivity = (ActionBarActivity) getActivity();
     }
 
@@ -246,9 +249,14 @@ public class ViewPagerTab2Fragment extends BaseFragment implements ObservableScr
         }
     }
 
-    public static class NavigationAdapter extends CacheFragmentStatePagerAdapter {
+    @Override
+    public void onGridItemClicked() {
+        Toast.makeText(mParentActivity, "Grid item clicked", Toast.LENGTH_SHORT).show();
+    }
 
-        private static final String[] TITLES = new String[] {"All", "Trending", "Popular", "New", "Favorites"};
+    public class NavigationAdapter extends CacheFragmentStatePagerAdapter {
+
+        private final String[] TITLES = new String[] {"All", "Trending", "Popular", "New", "Favorites"};
 
         public NavigationAdapter(FragmentManager fm) {
             super(fm);
@@ -259,22 +267,22 @@ public class ViewPagerTab2Fragment extends BaseFragment implements ObservableScr
             BaseFragment f;
             switch (position) {
                 case 0:
-                    f = ViewPagerTab2GridViewFragment.newInstance(Data.URL_TRENDING);
+                    f = ViewPagerGridViewFragment.newInstance(Data.URL_TRENDING);
                     break;
                 case 1:
-                    f = ViewPagerTab2GridViewFragment.newInstance(Data.URL_TRENDING);
+                    f = ViewPagerGridViewFragment.newInstance(Data.URL_TRENDING);
                     break;
                 case 2:
-                    f = ViewPagerTab2GridViewFragment.newInstance(Data.URL_POPULAR);
+                    f = ViewPagerGridViewFragment.newInstance(Data.URL_POPULAR);
                     break;
                 case 3:
-                    f = ViewPagerTab2GridViewFragment.newInstance(Data.URL_NEW);
+                    f = ViewPagerGridViewFragment.newInstance(Data.URL_NEW);
                     break;
                 case 4:
-                    f = ViewPagerTab2GridViewFragment.newInstance(Data.URL_NEW);
+                    f = ViewPagerGridViewFragment.newInstance(Data.URL_NEW);
                     break;
                 default:
-                    f = ViewPagerTab2GridViewFragment.newInstance(Data.URL_TRENDING);
+                    f = ViewPagerGridViewFragment.newInstance(Data.URL_TRENDING);
                     break;
             }
             return f;

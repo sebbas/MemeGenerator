@@ -11,10 +11,12 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     private int[] mIcons;
     private int mNumbOfTabs;
 
-    private ViewPagerTab2Fragment mMemeFragment;
+    private Fragment mMemeFragment;
     private EditorFragment mEditorFragment;
     private EditorFragment mGalleryFragment;
     private PreferencesFragment mPreferencesFragment;
+
+    private FragmentManager mFragmentManager;
 
     public ViewPagerAdapter(FragmentManager fm, CharSequence titles[], int[] icons, int numbOfTabs) {
         super(fm);
@@ -22,6 +24,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         mTitles = titles;
         mIcons = icons;
         mNumbOfTabs = numbOfTabs;
+        mFragmentManager = fm;
     }
 
     @Override
@@ -30,7 +33,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case 0:
                 if (mMemeFragment == null) {
-                    mMemeFragment = ViewPagerTab2Fragment.newInstance();
+                    mMemeFragment = MemeFragment.newInstance();
                 }
                 return mMemeFragment;
             case 1:

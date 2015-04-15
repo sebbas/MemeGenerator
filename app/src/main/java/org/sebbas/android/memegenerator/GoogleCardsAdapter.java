@@ -92,12 +92,6 @@ public class GoogleCardsAdapter extends BaseAdapter {
     private class DataLoader extends AsyncTask<String, Void, Void> {
 
         @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            mAdapterCallback.onDataLoadStarted();
-        }
-
-        @Override
         protected Void doInBackground(String... params) {
             String url = params[0];
 
@@ -119,7 +113,6 @@ public class GoogleCardsAdapter extends BaseAdapter {
             notifyDataSetChanged();
             mAdapterCallback.onDataLoadFinished();
         }
-
     }
 
     public void triggerAsyncLoad() {
@@ -128,7 +121,6 @@ public class GoogleCardsAdapter extends BaseAdapter {
     }
 
     public static interface AdapterCallback {
-        void onDataLoadStarted();
         void onDataLoadFinished();
     }
 }
