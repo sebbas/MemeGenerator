@@ -47,7 +47,7 @@ public class ViewPagerTab2GridViewFragment extends BaseFragment implements Swipe
     }
 
     public void updateAdapter() {
-        //mGoogleCardsAdapter.triggerAsyncLoad();
+        mGoogleCardsAdapter.triggerAsyncLoad();
         mGoogleCardsAdapter.notifyDataSetChanged();
     }
 
@@ -96,7 +96,7 @@ public class ViewPagerTab2GridViewFragment extends BaseFragment implements Swipe
                 mGoogleCardsAdapter.notifyDataSetChanged();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
-        }, 5000);
+        }, 4000);
     }
 
     @Override
