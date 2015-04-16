@@ -20,7 +20,7 @@
     android:layout_height="wrap_content"
     android:background="@drawable/card_background_white"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:padding="@dimen/google_cards_padding"
     tools:ignore="overdraw">
 
     <org.sebbas.android.memegenerator.SquaredImageView

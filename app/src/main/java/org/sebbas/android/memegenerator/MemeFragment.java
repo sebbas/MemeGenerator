@@ -1,7 +1,6 @@
 package org.sebbas.android.memegenerator;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewCompat;
@@ -25,8 +24,6 @@ import com.github.ksoichiro.android.observablescrollview.TouchInterceptionFrameL
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.ViewHelper;
-
-import java.io.Serializable;
 
 /**
  * Another implementation of ViewPagerTabActivity.
@@ -68,7 +65,7 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.activity_viewpagertab2, container, false);
+        View view = inflater.inflate(R.layout.fragment_meme, container, false);
 
         mParentActivity.setSupportActionBar((Toolbar) view.findViewById(R.id.toolbar));
 
