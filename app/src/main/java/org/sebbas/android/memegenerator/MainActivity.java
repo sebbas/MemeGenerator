@@ -1,6 +1,7 @@
 package org.sebbas.android.memegenerator;
 
 import android.app.ActivityManager;
+import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -9,13 +10,11 @@ import android.view.MenuItem;
 
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayoutForIcons;
 
-
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements ListCallback {
 
     private NonSwipeableViewPager mNonSwipeableViewPager;
-    private ViewPagerAdapter mAdapter;
+    private MainViewPagerAdapter mAdapter;
     private SlidingTabLayoutForIcons mSlidingTabs;
-    private CharSequence mTitles[] = {"Memes", "Editor", "Gallery", "Preferences"};
     private int mIcons[] = {R.drawable.selector_meme_icon,
                             R.drawable.selector_editor_icon,
                             R.drawable.selector_gallery_icon,
@@ -32,7 +31,7 @@ public class MainActivity extends ActionBarActivity {
             this.setTaskDescription(new ActivityManager.TaskDescription(null, null, getResources().getColor(R.color.primaryDark)));
         }
 
-        mAdapter =  new ViewPagerAdapter(getSupportFragmentManager(), mTitles, mIcons, mNumbOfTabs);
+        mAdapter =  new MainViewPagerAdapter(getSupportFragmentManager(), mIcons, mNumbOfTabs);
 
         mNonSwipeableViewPager = (NonSwipeableViewPager) findViewById(R.id.nonswipeable_viewpager);
         mNonSwipeableViewPager.setAdapter(mAdapter);
@@ -46,7 +45,6 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        mSlidingTabs.setOnPageChangeListener(new MyOnPageChangeListener(mAdapter));
         mSlidingTabs.setViewPager(mNonSwipeableViewPager);
     }
 
@@ -69,5 +67,11 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick() {
+        Intent editorIntent = new Intent(this, EditorActivity.class);
+        startActivityForResult(editorIntent, 1);
     }
 }

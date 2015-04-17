@@ -13,7 +13,30 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<com.github.ksoichiro.android.observablescrollview.ObservableListView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/scroll"
+<com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <com.github.ksoichiro.android.observablescrollview.ObservableListView
+            android:id="@+id/scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.github.rahatarmanahmed.cpv.CircularProgressView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/progress_view"
+            android:layout_centerInParent="true"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:cpv_indeterminate="true"
+            app:cpv_thickness="3dp"
+            app:cpv_color="@color/accent"/>
+    </RelativeLayout>
+</com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout>
+

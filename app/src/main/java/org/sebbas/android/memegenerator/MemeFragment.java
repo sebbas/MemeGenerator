@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
@@ -32,31 +31,36 @@ import com.nineoldandroids.view.ViewHelper;
  * SlidingTabLayout and SlidingTabStrip are from google/iosched:
  * https://github.com/google/iosched
  */
-public class TemplateFragment extends BaseFragment implements ObservableScrollViewCallbacks, ViewPagerGridViewFragment.ViewPagerGridViewFragmentCallback {
+public class MemeFragment extends BaseFragment implements ObservableScrollViewCallbacks {
 
     private View mToolbarView;
     private TouchInterceptionFrameLayout mInterceptionLayout;
     private ViewPager mViewPager;
-    private TemplateAdapter mPagerAdapter;
+    private CacheFragmentStatePagerAdapter mPagerAdapter;
     private int mSlop;
     private boolean mScrolled;
     private ScrollState mLastScrollState;
     private ActionBarActivity mParentActivity;
+    private String[] mTitles;
 
-    public static TemplateFragment newInstance() {
-        return new TemplateFragment();
+    public static MemeFragment newInstance(String[] titles) {
+        MemeFragment memeFragment = new MemeFragment();
+        Bundle args = new Bundle();
+        args.putStringArray("titles", titles);
+        memeFragment.setArguments(args);
+        return memeFragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mTitles = getArguments().getStringArray("titles");
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mParentActivity = (ActionBarActivity) activity;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //setRetainInstance(true);
     }
 
     @Override
@@ -68,7 +72,19 @@ public class TemplateFragment extends BaseFragment implements ObservableScrollVi
 
         ViewCompat.setElevation(view.findViewById(R.id.header), getResources().getDimension(R.dimen.toolbar_elevation));
         mToolbarView = view.findViewById(R.id.toolbar);
-        mPagerAdapter = new TemplateAdapter(getChildFragmentManager());
+
+        // Choose adapter type depending on settings
+        switch (getAdapterMode()) {
+            case 0:
+                mPagerAdapter = new GridAdapter(getChildFragmentManager());
+                break;
+            case 1:
+                mPagerAdapter = new ListAdapter(getChildFragmentManager());
+                break;
+            default:
+                mPagerAdapter = new GridAdapter(getChildFragmentManager());
+        }
+
         mViewPager = (ViewPager) view.findViewById(R.id.pager);
         mViewPager.setAdapter(mPagerAdapter);
 
@@ -243,16 +259,13 @@ public class TemplateFragment extends BaseFragment implements ObservableScrollVi
         }
     }
 
-    @Override
-    public void onGridItemClicked() {
-        Toast.makeText(mParentActivity, "Grid item clicked", Toast.LENGTH_SHORT).show();
+    private int getAdapterMode() {
+        return 0;
     }
 
-    public class TemplateAdapter extends CacheFragmentStatePagerAdapter {
+    public class GridAdapter extends CacheFragmentStatePagerAdapter {
 
-        private final String[] TITLES = new String[] {"Best", "Trending", "Popular", "New"};
-
-        public TemplateAdapter(FragmentManager fm) {
+        public GridAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -281,20 +294,18 @@ public class TemplateFragment extends BaseFragment implements ObservableScrollVi
 
         @Override
         public int getCount() {
-            return TITLES.length;
+            return mTitles.length;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return TITLES[position];
+            return mTitles[position];
         }
     }
 
-    public class InstanceAdapter extends CacheFragmentStatePagerAdapter {
+    public class ListAdapter extends CacheFragmentStatePagerAdapter {
 
-        private final String[] TITLES = new String[] {"Trending", "Popular", "New"};
-
-        public InstanceAdapter(FragmentManager fm) {
+        public ListAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -303,19 +314,16 @@ public class TemplateFragment extends BaseFragment implements ObservableScrollVi
             BaseFragment f;
             switch (position) {
                 case 0:
-                    f = ViewPagerGridViewFragment.newInstance(Data.URL_TRENDING);
+                    f = ViewPagerListViewFragment.newInstance(Data.URL_TRENDING);
                     break;
                 case 1:
-                    f = ViewPagerGridViewFragment.newInstance(Data.URL_TRENDING);
+                    f = ViewPagerListViewFragment.newInstance(Data.URL_POPULAR);
                     break;
                 case 2:
-                    f = ViewPagerGridViewFragment.newInstance(Data.URL_POPULAR);
-                    break;
-                case 3:
-                    f = ViewPagerGridViewFragment.newInstance(Data.URL_NEW);
+                    f = ViewPagerListViewFragment.newInstance(Data.URL_NEW);
                     break;
                 default:
-                    f = ViewPagerGridViewFragment.newInstance(Data.URL_TRENDING);
+                    f = ViewPagerListViewFragment.newInstance(Data.URL_TRENDING);
                     break;
             }
             return f;
@@ -323,12 +331,12 @@ public class TemplateFragment extends BaseFragment implements ObservableScrollVi
 
         @Override
         public int getCount() {
-            return TITLES.length;
+            return mTitles.length;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return TITLES[position];
+            return mTitles[position];
         }
     }
 }

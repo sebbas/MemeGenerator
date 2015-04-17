@@ -84,6 +84,7 @@ public class GoogleCardsAdapter extends BaseAdapter {
                 .tag(mContext) //
                 .into(viewHolder.imageView);
 
+        mAdapterCallback.onDataLoadFinished();
         return view;
     }
 

@@ -5,26 +5,24 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 
-public class ViewPagerAdapter extends FragmentStatePagerAdapter {
+public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    private CharSequence mTitles[];
+    private final String[] TITLES_TEMPLATE = new String[] {"Best", "Trending", "Popular", "New", "Random"};
+    private final String[] TITLES_INSTANCES = new String[] {"Trending", "Popular", "New", "Random"};
+
     private int[] mIcons;
     private int mNumbOfTabs;
 
-    private Fragment mMemeFragment;
-    private EditorFragment mEditorFragment;
+    private MemeFragment mTemplateFragment;
+    private MemeFragment mInstanceFragment;
     private EditorFragment mGalleryFragment;
     private PreferencesFragment mPreferencesFragment;
 
-    private FragmentManager mFragmentManager;
-
-    public ViewPagerAdapter(FragmentManager fm, CharSequence titles[], int[] icons, int numbOfTabs) {
+    public MainViewPagerAdapter(FragmentManager fm, int[] icons, int numbOfTabs) {
         super(fm);
 
-        mTitles = titles;
         mIcons = icons;
         mNumbOfTabs = numbOfTabs;
-        mFragmentManager = fm;
     }
 
     @Override
@@ -32,15 +30,15 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                if (mMemeFragment == null) {
-                    mMemeFragment = TemplateFragment.newInstance();
+                if (mTemplateFragment == null) {
+                    mTemplateFragment = MemeFragment.newInstance(TITLES_TEMPLATE);
                 }
-                return mMemeFragment;
+                return mTemplateFragment;
             case 1:
-                if (mEditorFragment == null) {
-                    mEditorFragment = EditorFragment.newInstance();
+                if (mInstanceFragment == null) {
+                    mInstanceFragment = MemeFragment.newInstance(TITLES_INSTANCES);
                 }
-                return mEditorFragment;
+                return mInstanceFragment;
             case 2:
                 if (mGalleryFragment == null) {
                     mGalleryFragment = EditorFragment.newInstance();
@@ -57,18 +55,8 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
     }
 
     @Override
-    public CharSequence getPageTitle(int position) {
-        return mTitles[position];
-    }
-
-    @Override
     public int getCount() {
         return mNumbOfTabs;
-    }
-
-    @Override
-    public int getItemPosition(Object object) {
-        return POSITION_NONE;
     }
 
     public int getDrawableId(int position) {

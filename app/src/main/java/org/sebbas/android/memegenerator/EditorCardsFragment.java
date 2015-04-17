@@ -15,9 +15,8 @@ public class EditorCardsFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_editor_cards, container, false);
 
-        // Set top and bottom padding dynamically (needed because of getActionBarSize())
-        final int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
-        view.findViewById(R.id.cards_scrollview).setPadding(0, getActionBarSize(), 0, tabHeight);
+        // Set top padding dynamically (because we get actionbar height dynamically)
+        view.findViewById(R.id.cards_scrollview).setPadding(0, getActionBarSize(), 0, 0);
         return view;
     }
 }

@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,17 +74,19 @@ public class ViewPagerGridViewFragment extends BaseFragment implements SwipeRefr
 
         Activity parentActivity = getActivity();
 
-        SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(mGoogleCardsAdapter);
-        swingBottomInAnimationAdapter.setAbsListView(mGridView);
+        // Animation for gridview
+        // SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(mGoogleCardsAdapter);
+        // swingBottomInAnimationAdapter.setAbsListView(mGridView);
+        // assert swingBottomInAnimationAdapter.getViewAnimator() != null;
+        // swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(INITIAL_DELAY_MILLIS);
+        // mGridView.setAdapter(swingBottomInAnimationAdapter);
 
-        assert swingBottomInAnimationAdapter.getViewAnimator() != null;
-        swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(INITIAL_DELAY_MILLIS);
-
-        mGridView.setAdapter(swingBottomInAnimationAdapter);
+        mGridView.setAdapter(mGoogleCardsAdapter);
         mGridView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ((ListCallback) getActivity()).onItemClick();
             }
         });
         if (parentActivity instanceof ObservableScrollViewCallbacks) {
@@ -109,9 +112,5 @@ public class ViewPagerGridViewFragment extends BaseFragment implements SwipeRefr
     @Override
     public void onDataLoadFinished() {
         mCircularProgressView.setVisibility(View.GONE);
-    }
-
-    public interface ViewPagerGridViewFragmentCallback {
-        void onGridItemClicked();
     }
 }

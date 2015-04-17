@@ -26,15 +26,9 @@ public class EditorFragment extends BaseFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_editor, container, false);
+        View view = inflater.inflate(R.layout.activity_editor, container, false);
 
         mParentActivity.setSupportActionBar((Toolbar) view.findViewById(R.id.toolbar));
 
@@ -45,26 +39,4 @@ public class EditorFragment extends BaseFragment {
 
         return view;
     }
-
-    /*@Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        final SoftKeyboardHandledLinearLayout main = (SoftKeyboardHandledLinearLayout) mParentActivity.findViewById(R.id.keyboard_listen_layout);
-        final LinearLayout footer = (LinearLayout) main.findViewById(R.id.footer);
-
-        main.setOnSoftKeyboardVisibilityChangeListener(new SoftKeyboardHandledLinearLayout.SoftKeyboardVisibilityChangeListener() {
-            @Override
-            public void onSoftKeyboardShow() {
-                Toast.makeText(mParentActivity, "Shown", Toast.LENGTH_SHORT).show();
-                //footer.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onSoftKeyboardHide() {
-                Toast.makeText(mParentActivity, "Hide", Toast.LENGTH_SHORT).show();
-                //footer.setVisibility(View.VISIBLE);
-            }
-        });
-    }*/
 }
