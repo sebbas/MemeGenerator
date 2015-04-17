@@ -58,9 +58,4 @@ public class ViewPagerTabRecyclerViewFragment extends BaseFragment {
         }
         return view;
     }
-
-    @Override
-    void updateAdapter() {
-
-    }
 }

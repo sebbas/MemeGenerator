@@ -1,5 +1,6 @@
 package org.sebbas.android.memegenerator;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.github.ksoichiro.android.observablescrollview.CacheFragmentStatePagerAdapter;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
@@ -32,34 +32,31 @@ import com.nineoldandroids.view.ViewHelper;
  * SlidingTabLayout and SlidingTabStrip are from google/iosched:
  * https://github.com/google/iosched
  */
-public class MemeFragment extends BaseFragment implements ObservableScrollViewCallbacks, ViewPagerGridViewFragment.ViewPagerGridViewFragmentCallback {
+public class TemplateFragment extends BaseFragment implements ObservableScrollViewCallbacks, ViewPagerGridViewFragment.ViewPagerGridViewFragmentCallback {
 
     private View mToolbarView;
     private TouchInterceptionFrameLayout mInterceptionLayout;
-    private ViewPager mPager;
-    private NavigationAdapter mPagerAdapter;
+    private ViewPager mViewPager;
+    private TemplateAdapter mPagerAdapter;
     private int mSlop;
     private boolean mScrolled;
     private ScrollState mLastScrollState;
     private ActionBarActivity mParentActivity;
 
-    public static MemeFragment newInstance() {
-        return new MemeFragment();
+    public static TemplateFragment newInstance() {
+        return new TemplateFragment();
     }
 
     @Override
-    public void onCreate(Bundle bundle) {
-        super.onCreate(bundle);
-        mParentActivity = (ActionBarActivity) getActivity();
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mParentActivity = (ActionBarActivity) activity;
     }
 
     @Override
-    public void updateAdapter() {
-        mPagerAdapter = new NavigationAdapter(mParentActivity.getSupportFragmentManager());
-        int previousPagerPosition = mPager.getCurrentItem();
-
-        mPager.setAdapter(mPagerAdapter);
-        mPager.setCurrentItem(previousPagerPosition);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //setRetainInstance(true);
     }
 
     @Override
@@ -71,9 +68,9 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
 
         ViewCompat.setElevation(view.findViewById(R.id.header), getResources().getDimension(R.dimen.toolbar_elevation));
         mToolbarView = view.findViewById(R.id.toolbar);
-        mPagerAdapter = new NavigationAdapter(mParentActivity.getSupportFragmentManager());
-        mPager = (ViewPager) view.findViewById(R.id.pager);
-        mPager.setAdapter(mPagerAdapter);
+        mPagerAdapter = new TemplateAdapter(getChildFragmentManager());
+        mViewPager = (ViewPager) view.findViewById(R.id.pager);
+        mViewPager.setAdapter(mPagerAdapter);
 
         // Padding for ViewPager must be set outside the ViewPager itself
         // because with padding, EdgeEffect of ViewPager become strange.
@@ -84,7 +81,7 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
         slidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
         slidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
         slidingTabLayout.setDistributeEvenly(true);
-        slidingTabLayout.setViewPager(mPager);
+        slidingTabLayout.setViewPager(mViewPager);
 
         ViewConfiguration vc = ViewConfiguration.get(mParentActivity);
         mSlop = vc.getScaledTouchSlop();
@@ -207,7 +204,7 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
     }
 
     private Fragment getCurrentFragment() {
-        return mPagerAdapter.getItemAt(mPager.getCurrentItem());
+        return mPagerAdapter.getItemAt(mViewPager.getCurrentItem());
     }
 
     private boolean toolbarIsShown() {
@@ -251,11 +248,11 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
         Toast.makeText(mParentActivity, "Grid item clicked", Toast.LENGTH_SHORT).show();
     }
 
-    public class NavigationAdapter extends CacheFragmentStatePagerAdapter {
+    public class TemplateAdapter extends CacheFragmentStatePagerAdapter {
 
-        private final String[] TITLES = new String[] {"All", "Trending", "Popular", "New", "Favorites"};
+        private final String[] TITLES = new String[] {"Best", "Trending", "Popular", "New"};
 
-        public NavigationAdapter(FragmentManager fm) {
+        public TemplateAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -275,7 +272,46 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
                 case 3:
                     f = ViewPagerGridViewFragment.newInstance(Data.URL_NEW);
                     break;
-                case 4:
+                default:
+                    f = ViewPagerGridViewFragment.newInstance(Data.URL_TRENDING);
+                    break;
+            }
+            return f;
+        }
+
+        @Override
+        public int getCount() {
+            return TITLES.length;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return TITLES[position];
+        }
+    }
+
+    public class InstanceAdapter extends CacheFragmentStatePagerAdapter {
+
+        private final String[] TITLES = new String[] {"Trending", "Popular", "New"};
+
+        public InstanceAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        protected Fragment createItem(int position) {
+            BaseFragment f;
+            switch (position) {
+                case 0:
+                    f = ViewPagerGridViewFragment.newInstance(Data.URL_TRENDING);
+                    break;
+                case 1:
+                    f = ViewPagerGridViewFragment.newInstance(Data.URL_TRENDING);
+                    break;
+                case 2:
+                    f = ViewPagerGridViewFragment.newInstance(Data.URL_POPULAR);
+                    break;
+                case 3:
                     f = ViewPagerGridViewFragment.newInstance(Data.URL_NEW);
                     break;
                 default:

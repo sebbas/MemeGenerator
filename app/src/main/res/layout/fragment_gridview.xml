@@ -39,5 +39,4 @@
             app:cpv_thickness="3dp"
             app:cpv_color="@color/accent"/>
     </RelativeLayout>
-
 </com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout>

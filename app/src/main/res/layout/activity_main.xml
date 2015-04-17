@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,13 +11,28 @@
         android:id="@+id/nonswipeable_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
 
-    <com.google.samples.apps.iosched.ui.widget.SlidingTabLayoutForIcons
-        android:id="@+id/sliding_tabs"
+    <LinearLayout
+        android:id="@+id/footer"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/tab_height"
-        android:background="@color/primary"
-        android:layout_alignParentBottom="true" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
 
+        <!-- This view is used to create the elevation effect at the
+        top of the bottom sliding tabs bar -->
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="4dp"
+            android:id="@+id/footer_shadow"
+            android:background="@drawable/footer_shadow"
+            android:layout_above="@+id/sliding_tabs"/>
+
+        <com.google.samples.apps.iosched.ui.widget.SlidingTabLayoutForIcons
+            android:id="@+id/sliding_tabs"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tab_height"
+            android:background="?attr/colorPrimary"/>
+    </LinearLayout>
 </RelativeLayout>

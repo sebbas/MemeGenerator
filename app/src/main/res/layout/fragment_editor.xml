@@ -13,78 +13,16 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<com.github.ksoichiro.android.observablescrollview.TouchInterceptionFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.github.ksoichiro.android.observablescrollview.TouchInterceptionFrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/card_wrapper"
+    <FrameLayout
+        android:id="@+id/scroll_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/card_view_text"
-        android:layout_gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_standard">
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/google_cards_padding">
-
-            <EditText
-                style="@android:style/TextAppearance.DeviceDefault.Small"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-light"
-                android:id="@+id/edit_top_text"
-                android:layout_gravity="center_horizontal"
-                android:hint="Top text" />
-
-            <EditText
-                style="@android:style/TextAppearance.DeviceDefault.Small"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-light"
-                android:id="@+id/edit_bottom_text"
-                android:layout_gravity="center_horizontal"
-                android:hint="Bottom text" />
-
-        </LinearLayout>
-
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/card_view_image"
-        android:layout_gravity="center"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_standard">
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/google_cards_padding">
-
-            <org.sebbas.android.memegenerator.SquaredImageView
-                android:id="@+id/activity_googlecards_card_imageview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_launcher"
-                tools:ignore="ContentDescription" />
-
-        </LinearLayout>
-
-    </android.support.v7.widget.CardView>
-    </LinearLayout>
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:id="@+id/header"
@@ -102,7 +40,4 @@
             app:popupTheme="@style/Theme.AppCompat.Light.DarkActionBar"
             app:theme="@style/Toolbar" />
     </LinearLayout>
-
 </com.github.ksoichiro.android.observablescrollview.TouchInterceptionFrameLayout>
-
-

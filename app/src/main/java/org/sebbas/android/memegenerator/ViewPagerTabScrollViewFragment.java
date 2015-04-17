@@ -52,9 +52,4 @@ public class ViewPagerTabScrollViewFragment extends BaseFragment {
         }
         return view;
     }
-
-    @Override
-    void updateAdapter() {
-
-    }
 }

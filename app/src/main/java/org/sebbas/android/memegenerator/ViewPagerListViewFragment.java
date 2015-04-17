@@ -25,7 +25,7 @@ import android.view.ViewGroup;
 import com.github.ksoichiro.android.observablescrollview.ObservableListView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 
-public class ViewPagerTab2ListViewFragment extends BaseFragment {
+public class ViewPagerListViewFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_listview, container, false);
@@ -39,10 +39,5 @@ public class ViewPagerTab2ListViewFragment extends BaseFragment {
             listView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
         }
         return view;
-    }
-
-    @Override
-    void updateAdapter() {
-
     }
 }

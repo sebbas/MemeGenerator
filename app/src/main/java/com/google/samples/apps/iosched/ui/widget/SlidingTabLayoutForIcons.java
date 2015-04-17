@@ -334,8 +334,6 @@ public class SlidingTabLayoutForIcons extends HorizontalScrollView {
                 mViewPagerPageChangeListener.onPageSelected(position);
             }
         }
-
-
     }
 
     private class TabClickListener implements OnClickListener {
@@ -349,6 +347,4 @@ public class SlidingTabLayoutForIcons extends HorizontalScrollView {
             }
         }
     }
-
-
 }

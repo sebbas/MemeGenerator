@@ -46,7 +46,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        mSlidingTabs.setOnPageChangeListener(new MyOnPageChangeListener(mAdapter, this));
+        mSlidingTabs.setOnPageChangeListener(new MyOnPageChangeListener(mAdapter));
         mSlidingTabs.setViewPager(mNonSwipeableViewPager);
     }
 

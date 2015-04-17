@@ -33,7 +33,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case 0:
                 if (mMemeFragment == null) {
-                    mMemeFragment = MemeFragment.newInstance();
+                    mMemeFragment = TemplateFragment.newInstance();
                 }
                 return mMemeFragment;
             case 1:

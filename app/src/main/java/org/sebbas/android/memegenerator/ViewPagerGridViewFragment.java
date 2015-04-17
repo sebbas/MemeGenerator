@@ -49,11 +49,6 @@ public class ViewPagerGridViewFragment extends BaseFragment implements SwipeRefr
         return fragment;
     }
 
-    public void updateAdapter() {
-        mGoogleCardsAdapter.triggerAsyncLoad();
-        mGoogleCardsAdapter.notifyDataSetChanged();
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

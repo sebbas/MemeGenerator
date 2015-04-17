@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -70,9 +71,12 @@ public class GoogleCardsAdapter extends BaseAdapter {
         // Get the image URL for the current position.
         String url = getItem(position);
 
+        String sub = url.substring(31);
+        String result = "http://cdn.meme.am/images/150x/" + sub;
+
         // Trigger the download of the URL asynchronously into the image view.
         Picasso.with(mContext) //
-                .load(url) //
+                .load(result) //
                 .placeholder(android.R.color.white) //
                 .error(android.R.color.white) //
                 .fit() //
