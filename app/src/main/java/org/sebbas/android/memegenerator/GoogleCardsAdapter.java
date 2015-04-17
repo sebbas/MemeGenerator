@@ -1,15 +1,12 @@
 package org.sebbas.android.memegenerator;
 
 import android.content.Context;
-import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -19,28 +16,23 @@ import java.util.List;
 public class GoogleCardsAdapter extends BaseAdapter {
 
     private final Context mContext;
-    private String mUrl;
     private List<String> mImageUrls = new ArrayList<String>();
     private List<String> mDisplayNames = new ArrayList<String>();
-    private AdapterCallback mAdapterCallback;
+    private DataLoader mDataLoader;
 
-    GoogleCardsAdapter(final Context context, Fragment fragment, String url) {
+    GoogleCardsAdapter(final Context context, DataLoader dataLoader) {
         mContext = context;
-        mAdapterCallback = (AdapterCallback) fragment;
-        mUrl = url;
-
-        // Trigger async data loading
-        triggerAsyncLoad();
+        mDataLoader = dataLoader;
     }
 
     @Override
     public int getCount() {
-        return mImageUrls.size();
+        return mDataLoader.getItemCount();
     }
 
     @Override
     public String getItem(int position) {
-        return mImageUrls.get(position);
+        return mDataLoader.getImageUrlAt(position);
     }
 
     @Override
@@ -63,7 +55,7 @@ public class GoogleCardsAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
-
+/*
         // Set the text
         String displayName = mDisplayNames.get(position);
         viewHolder.textView.setText(displayName);
@@ -73,6 +65,14 @@ public class GoogleCardsAdapter extends BaseAdapter {
 
         String sub = url.substring(31);
         String result = "http://cdn.meme.am/images/200x/" + sub;
+*/
+        String imageUrl = mDataLoader.getImageUrlAt(position);
+        String displayName = mDataLoader.getDisplayNameAt(position);
+
+        String sub = imageUrl.substring(31);
+        String result = "http://cdn.meme.am/images/200x/" + sub;
+
+        viewHolder.textView.setText(displayName);
 
         // Trigger the download of the URL asynchronously into the image view.
         Picasso.with(mContext) //
@@ -84,7 +84,6 @@ public class GoogleCardsAdapter extends BaseAdapter {
                 .tag(mContext) //
                 .into(viewHolder.imageView);
 
-        mAdapterCallback.onDataLoadFinished();
         return view;
     }
 
@@ -92,48 +91,5 @@ public class GoogleCardsAdapter extends BaseAdapter {
     private static class ViewHolder {
         TextView textView;
         ImageView imageView;
-    }
-
-    private class DataLoader extends AsyncTask<String, Void, Void> {
-
-        @Override
-        protected Void doInBackground(String... params) {
-            String url = params[0];
-
-            // Fetch the image data
-            JSONHandler jsonHandler = new JSONHandler(url);
-            jsonHandler.fetchJSON();
-
-            while (jsonHandler.parsingComplete) ;
-
-            mImageUrls = jsonHandler.getImageUrls();
-            mDisplayNames = jsonHandler.getDisplayNames();
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            notifyDataSetChanged();
-            mAdapterCallback.onDataLoadFinished();
-        }
-    }
-
-    public void triggerAsyncLoad() {
-        DataLoader dataLoader = new DataLoader();
-        dataLoader.execute(mUrl);
-    }
-
-    public static interface AdapterCallback {
-        void onDataLoadFinished();
-    }
-
-    public String getImageUrlAt(int position) {
-        return mImageUrls.get(position);
-    }
-
-    public String getDisplayNameAt(int position) {
-        return mDisplayNames.get(position);
     }
 }

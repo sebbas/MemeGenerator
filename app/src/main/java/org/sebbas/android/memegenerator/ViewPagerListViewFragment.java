@@ -32,7 +32,7 @@ import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCal
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
-public class ViewPagerListViewFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, GoogleCardsAdapter.AdapterCallback {
+public class ViewPagerListViewFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final int INITIAL_DELAY_MILLIS = 300;
 
@@ -41,6 +41,7 @@ public class ViewPagerListViewFragment extends BaseFragment implements SwipeRefr
     private ObservableListView mListView;
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
     private CircularProgressView mCircularProgressView;
+    private DataLoader mDataLoader;
 
     public static ViewPagerListViewFragment newInstance(String url) {
         ViewPagerListViewFragment fragment = new ViewPagerListViewFragment();
@@ -54,7 +55,10 @@ public class ViewPagerListViewFragment extends BaseFragment implements SwipeRefr
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mUrl = getArguments().getString("url");
-        mGoogleCardsAdapter = new GoogleCardsAdapter(this.getActivity(), this,  mUrl);
+        mDataLoader = new DataLoader(this, mUrl);
+        mGoogleCardsAdapter = new GoogleCardsAdapter(this.getActivity(), mDataLoader);
+
+        mDataLoader.loadData();
     }
 
     @Override
@@ -85,6 +89,7 @@ public class ViewPagerListViewFragment extends BaseFragment implements SwipeRefr
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ((ListCallback) getActivity()).onItemClick(position, mDataLoader);
             }
         });
         if (parentActivity instanceof ObservableScrollViewCallbacks) {
@@ -100,15 +105,9 @@ public class ViewPagerListViewFragment extends BaseFragment implements SwipeRefr
     public void onRefresh() {
         new Handler().postDelayed(new Runnable() {
             @Override public void run() {
-                mGoogleCardsAdapter.triggerAsyncLoad();
-                mGoogleCardsAdapter.notifyDataSetChanged();
+                mDataLoader.loadData();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         }, 4000);
-    }
-
-    @Override
-    public void onDataLoadFinished() {
-        mCircularProgressView.setVisibility(View.GONE);
     }
 }
