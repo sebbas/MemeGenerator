@@ -1,24 +1,35 @@
 package org.sebbas.android.memegenerator;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.ImageView;
+
+import com.squareup.picasso.Picasso;
 
 public class EditorActivity extends ActionBarActivity {
+
+    private ImageView mMemeImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
-        // Add editor content cards
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.scroll_container, EditorCardsFragment.newInstance());
-        fragmentTransaction.commit();
+        String imageUrl = getIntent().getStringExtra("imageUrl");
+
+        mMemeImage = (ImageView) findViewById(R.id.activity_googlecards_card_imageview);
+        Picasso.with(this) //
+                .load(imageUrl) //
+                .placeholder(android.R.color.white) //
+                .error(android.R.color.white) //
+                .tag(this) //
+                .fit()
+                .centerInside()
+                .into(mMemeImage);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

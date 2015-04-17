@@ -72,7 +72,7 @@ public class GoogleCardsAdapter extends BaseAdapter {
         String url = getItem(position);
 
         String sub = url.substring(31);
-        String result = "http://cdn.meme.am/images/150x/" + sub;
+        String result = "http://cdn.meme.am/images/200x/" + sub;
 
         // Trigger the download of the URL asynchronously into the image view.
         Picasso.with(mContext) //
@@ -127,5 +127,13 @@ public class GoogleCardsAdapter extends BaseAdapter {
 
     public static interface AdapterCallback {
         void onDataLoadFinished();
+    }
+
+    public String getImageUrlAt(int position) {
+        return mImageUrls.get(position);
+    }
+
+    public String getDisplayNameAt(int position) {
+        return mDisplayNames.get(position);
     }
 }

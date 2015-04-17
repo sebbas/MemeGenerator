@@ -1,9 +1,8 @@
 package org.sebbas.android.memegenerator;
 
-/**
- * Created by sbarschkis on 4/17/15.
- */
+import android.widget.BaseAdapter;
+
 public interface ListCallback {
-    public void onItemClick();
+    public void onItemClick(int itemPosition, BaseAdapter baseAdapter);
 
 }

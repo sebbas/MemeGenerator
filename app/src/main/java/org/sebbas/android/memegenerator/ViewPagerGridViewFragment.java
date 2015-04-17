@@ -86,7 +86,7 @@ public class ViewPagerGridViewFragment extends BaseFragment implements SwipeRefr
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ((ListCallback) getActivity()).onItemClick();
+                ((ListCallback) getActivity()).onItemClick(position, mGoogleCardsAdapter);
             }
         });
         if (parentActivity instanceof ObservableScrollViewCallbacks) {

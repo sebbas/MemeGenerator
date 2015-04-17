@@ -7,6 +7,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.BaseAdapter;
 
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayoutForIcons;
 
@@ -70,8 +72,13 @@ public class MainActivity extends ActionBarActivity implements ListCallback {
     }
 
     @Override
-    public void onItemClick() {
+    public void onItemClick(int position, BaseAdapter baseAdapter) {
         Intent editorIntent = new Intent(this, EditorActivity.class);
+
+        GoogleCardsAdapter googleCardsAdapter = (GoogleCardsAdapter) baseAdapter;
+        String imageUrl = googleCardsAdapter.getImageUrlAt(position);
+
+        editorIntent.putExtra("imageUrl", imageUrl);
         startActivityForResult(editorIntent, 1);
     }
 }

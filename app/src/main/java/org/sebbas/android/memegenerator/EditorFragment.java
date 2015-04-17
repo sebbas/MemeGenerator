@@ -33,9 +33,9 @@ public class EditorFragment extends BaseFragment {
         mParentActivity.setSupportActionBar((Toolbar) view.findViewById(R.id.toolbar));
 
         ViewCompat.setElevation(view.findViewById(R.id.header), getResources().getDimension(R.dimen.toolbar_elevation));
-        mScrollContainer = (FrameLayout) view.findViewById(R.id.scroll_container);
+        //mScrollContainer = (FrameLayout) view.findViewById(R.id.scroll_container);
 
-        getChildFragmentManager().beginTransaction().replace(R.id.scroll_container, EditorCardsFragment.newInstance()).commit();
+        //getChildFragmentManager().beginTransaction().replace(R.id.scroll_container, EditorCardsFragment.newInstance()).commit();
 
         return view;
     }
