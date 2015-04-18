@@ -36,7 +36,7 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
     private View mToolbarView;
     private TouchInterceptionFrameLayout mInterceptionLayout;
     private ViewPager mViewPager;
-    private CacheFragmentStatePagerAdapter mPagerAdapter;
+    private FragmentStatePagerAdapter mPagerAdapter;
     private int mSlop;
     private boolean mScrolled;
     private ScrollState mLastScrollState;
@@ -87,6 +87,7 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
 
         mViewPager = (ViewPager) view.findViewById(R.id.pager);
         mViewPager.setAdapter(mPagerAdapter);
+        mViewPager.setOffscreenPageLimit(mPagerAdapter.getCount());
 
         // Padding for ViewPager must be set outside the ViewPager itself
         // because with padding, EdgeEffect of ViewPager become strange.
@@ -205,12 +206,12 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
         if (scrollState == ScrollState.DOWN) {
             showToolbar();
         } else if (scrollState == ScrollState.UP) {
-            /*if (toolbarHeight <= scrollY) {
+            if (toolbarHeight <= scrollY) {
                 hideToolbar();
             } else {
                 showToolbar();
-            }*/
-            hideToolbar();
+            }
+            //hideToolbar();
         } else if (!toolbarIsShown() && !toolbarIsHidden()) {
             // Toolbar is moving but doesn't know which to move:
             // you can change this to hideToolbar()
@@ -220,7 +221,8 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
     }
 
     private Fragment getCurrentFragment() {
-        return mPagerAdapter.getItemAt(mViewPager.getCurrentItem());
+        //return mPagerAdapter.getItemAt(mViewPager.getCurrentItem());
+        return mPagerAdapter.getItem(mViewPager.getCurrentItem());
     }
 
     private boolean toolbarIsShown() {
@@ -263,13 +265,37 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
         return 0;
     }
 
-    public class GridAdapter extends CacheFragmentStatePagerAdapter {
+    public class GridAdapter extends FragmentStatePagerAdapter {
 
         public GridAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
+        public Fragment getItem(int position) {
+            BaseFragment f;
+            switch (position) {
+                case 0:
+                    f = ViewPagerRecyclerViewFragment.newInstance(Data.URL_TRENDING);
+                    break;
+                case 1:
+                    f = ViewPagerRecyclerViewFragment.newInstance(Data.URL_TRENDING);
+                    break;
+                case 2:
+                    f = ViewPagerRecyclerViewFragment.newInstance(Data.URL_POPULAR);
+                    break;
+                case 3:
+                    f = ViewPagerRecyclerViewFragment.newInstance(Data.URL_NEW);
+                    break;
+                default:
+                    f = ViewPagerRecyclerViewFragment.newInstance(Data.URL_TRENDING);
+                    break;
+            }
+            return f;
+        }
+
+
+        //@Override
         protected Fragment createItem(int position) {
             BaseFragment f;
             switch (position) {
@@ -303,13 +329,36 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
         }
     }
 
-    public class ListAdapter extends CacheFragmentStatePagerAdapter {
+    public class ListAdapter extends FragmentStatePagerAdapter {
 
         public ListAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
+        public Fragment getItem(int position) {
+            BaseFragment f;
+            switch (position) {
+                case 0:
+                    f = ViewPagerGridViewFragment.newInstance(Data.URL_TRENDING);
+                    break;
+                case 1:
+                    f = ViewPagerGridViewFragment.newInstance(Data.URL_TRENDING);
+                    break;
+                case 2:
+                    f = ViewPagerGridViewFragment.newInstance(Data.URL_POPULAR);
+                    break;
+                case 3:
+                    f = ViewPagerGridViewFragment.newInstance(Data.URL_NEW);
+                    break;
+                default:
+                    f = ViewPagerGridViewFragment.newInstance(Data.URL_TRENDING);
+                    break;
+            }
+            return f;
+        }
+
+        //@Override
         protected Fragment createItem(int position) {
             BaseFragment f;
             switch (position) {

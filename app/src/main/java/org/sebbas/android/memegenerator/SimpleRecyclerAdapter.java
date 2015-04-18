@@ -21,40 +21,79 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAdapter.ViewHolder> {
+    private Context mContext;
     private LayoutInflater mInflater;
-    private ArrayList<String> mItems;
+    private DataLoader mDataLoader;
 
-    public SimpleRecyclerAdapter(Context context, ArrayList<String> items) {
+    public SimpleRecyclerAdapter(Context context, DataLoader dataLoader) {
+        mContext = context;
         mInflater = LayoutInflater.from(context);
-        mItems = items;
+        mDataLoader = dataLoader;
     }
 
     @Override
     public int getItemCount() {
-        return mItems.size();
+        return mDataLoader.getItemCount();
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(mInflater.inflate(android.R.layout.simple_list_item_1, parent, false));
+        View view = mInflater.inflate(R.layout.activity_googlecards_card, parent, false);
+        SimpleRecyclerAdapter.ViewHolder viewHolder = new ViewHolder(view, new ViewHolder.ViewHolderCalback() {
+            @Override
+            public void onItemClick(int position) {
+                ((ListCallback) mContext).onItemClick(position, mDataLoader);
+            }
+        });
+        return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        viewHolder.textView.setText(mItems.get(position));
+        String displayName = mDataLoader.getDisplayNameAt(position);
+        String imageUrl = mDataLoader.getImageUrlAt(position);
+
+        viewHolder.textView.setText(displayName);
+
+        // Trigger the download of the URL asynchronously into the image view.
+        Picasso.with(mContext) //
+                .load(imageUrl) //
+                .placeholder(android.R.color.white) //
+                .error(android.R.color.white) //
+                .fit() //
+                .centerCrop() //
+                .tag(mContext) //
+                .into(viewHolder.imageView);
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         TextView textView;
+        ImageView imageView;
+        ViewHolderCalback mViewHolderCallback;
 
-        public ViewHolder(View view) {
+        public ViewHolder(View view, ViewHolderCalback viewHolderCalback) {
             super(view);
-            textView = (TextView) view.findViewById(android.R.id.text1);
+            view.setOnClickListener(this);
+            textView = (TextView) view.findViewById(R.id.activity_googlecards_card_textview);
+            imageView = (ImageView) view.findViewById(R.id.activity_googlecards_card_imageview);
+            mViewHolderCallback = viewHolderCalback;
+        }
+
+        @Override
+        public void onClick(View v) {
+            mViewHolderCallback.onItemClick(getPosition());
+        }
+
+        public static interface ViewHolderCalback {
+            public void onItemClick(int position);
         }
     }
 }

@@ -20,32 +20,29 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout;
-import com.github.ksoichiro.android.observablescrollview.ObservableGridView;
+import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
-import com.nhaarman.listviewanimations.appearance.simple.SwingBottomInAnimationAdapter;
 
-public class ViewPagerGridViewFragment extends BaseFragment implements
+public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener, DataLoader.DataLoaderCallback {
-
-    private static final int INITIAL_DELAY_MILLIS = 300;
 
     private String mUrl;
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
-    private GoogleCardsAdapter mGoogleCardsAdapter;
+    private SimpleRecyclerAdapter mSimpleRecyclerAdapter;
     private CircularProgressView mCircularProgressView;
-    private ObservableGridView mGridView;
+    private ObservableRecyclerView mRecyclerView;
     private DataLoader mDataLoader;
 
-    public static ViewPagerGridViewFragment newInstance(String url) {
-        ViewPagerGridViewFragment fragment = new ViewPagerGridViewFragment();
+    public static ViewPagerRecyclerViewFragment newInstance(String url) {
+        ViewPagerRecyclerViewFragment fragment = new ViewPagerRecyclerViewFragment();
         Bundle args = new Bundle();
         args.putString("url", url);
         fragment.setArguments(args);
@@ -57,18 +54,18 @@ public class ViewPagerGridViewFragment extends BaseFragment implements
         super.onCreate(savedInstanceState);
         mUrl = getArguments().getString("url");
         mDataLoader = new DataLoader(this, mUrl);
-        mGoogleCardsAdapter = new GoogleCardsAdapter(this.getActivity(), mDataLoader);
+        mSimpleRecyclerAdapter = new SimpleRecyclerAdapter(getActivity(), mDataLoader);
 
         mDataLoader.loadData();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_gridview, container, false);
+        View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
 
-        mGridView = (ObservableGridView) view.findViewById(R.id.scroll);
         mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
+        mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
 
         return view;
     }
@@ -77,25 +74,15 @@ public class ViewPagerGridViewFragment extends BaseFragment implements
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ActionBarActivity parentActivity = (ActionBarActivity) getActivity();
+        Activity parentActivity = getActivity();
 
-        // Animation for gridview
-        // SwingBottomInAnimationAdapter swingBottomInAnimationAdapter = new SwingBottomInAnimationAdapter(mGoogleCardsAdapter);
-        // swingBottomInAnimationAdapter.setAbsListView(mGridView);
-        // assert swingBottomInAnimationAdapter.getViewAnimator() != null;
-        // swingBottomInAnimationAdapter.getViewAnimator().setInitialDelayMillis(INITIAL_DELAY_MILLIS);
-        // mGridView.setAdapter(swingBottomInAnimationAdapter);
+        mRecyclerView.setAdapter(mSimpleRecyclerAdapter);
+        mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, 3));
+        mRecyclerView.setHasFixedSize(false);
+        mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
 
-        mGridView.setAdapter(mGoogleCardsAdapter);
-        mGridView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ((ListCallback) getActivity()).onItemClick(position, mDataLoader);
-            }
-        });
         if (parentActivity instanceof ObservableScrollViewCallbacks) {
-            mGridView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
+            mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
         }
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.accent);
@@ -116,6 +103,7 @@ public class ViewPagerGridViewFragment extends BaseFragment implements
     @Override
     public void onDataLoadComplete() {
         mCircularProgressView.setVisibility(View.GONE);
-        mGoogleCardsAdapter.notifyDataSetChanged();
+        mSimpleRecyclerAdapter.notifyDataSetChanged();
     }
+
 }

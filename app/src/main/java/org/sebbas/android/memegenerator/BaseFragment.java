@@ -68,9 +68,9 @@ public abstract class BaseFragment extends Fragment {
         gridView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, getDummyData()));
     }
 
-    protected void setDummyData(RecyclerView recyclerView) {
+    /*protected void setDummyData(RecyclerView recyclerView) {
         recyclerView.setAdapter(new SimpleRecyclerAdapter(getActivity(), getDummyData()));
-    }
+    }*/
 
     protected void setDummyDataWithHeader(RecyclerView recyclerView, View headerView) {
         recyclerView.setAdapter(new SimpleHeaderRecyclerAdapter(getActivity(), getDummyData(), headerView));

@@ -16,8 +16,6 @@ import java.util.List;
 public class GoogleCardsAdapter extends BaseAdapter {
 
     private final Context mContext;
-    private List<String> mImageUrls = new ArrayList<String>();
-    private List<String> mDisplayNames = new ArrayList<String>();
     private DataLoader mDataLoader;
 
     GoogleCardsAdapter(final Context context, DataLoader dataLoader) {
@@ -55,22 +53,12 @@ public class GoogleCardsAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
-/*
-        // Set the text
-        String displayName = mDisplayNames.get(position);
-        viewHolder.textView.setText(displayName);
 
-        // Get the image URL for the current position.
-        String url = getItem(position);
-
-        String sub = url.substring(31);
-        String result = "http://cdn.meme.am/images/200x/" + sub;
-*/
         String imageUrl = mDataLoader.getImageUrlAt(position);
         String displayName = mDataLoader.getDisplayNameAt(position);
 
         String sub = imageUrl.substring(31);
-        String result = "http://cdn.meme.am/images/200x/" + sub;
+        String result = "http://cdn.meme.am/images/150x/" + sub;
 
         viewHolder.textView.setText(displayName);
 
