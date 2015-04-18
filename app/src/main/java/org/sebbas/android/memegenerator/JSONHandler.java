@@ -1,5 +1,6 @@
 package org.sebbas.android.memegenerator;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -9,6 +10,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 public class JSONHandler {
 
@@ -31,7 +36,7 @@ public class JSONHandler {
     }
 
     @SuppressLint("NewApi")
-    public void readAndParseJSON(String in) {
+    private void readAndParseJSON(String in) {
         try {
             JSONObject reader = new JSONObject(in);
 
@@ -60,20 +65,17 @@ public class JSONHandler {
             @Override
             public void run() {
                 try {
-                    URL url = new URL(urlString);
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setReadTimeout(10000 /* milliseconds */);
-                    conn.setConnectTimeout(15000 /* milliseconds */);
-                    conn.setRequestMethod("GET");
-                    conn.setDoInput(true);
-                    // Starts the query
-                    conn.connect();
-                    InputStream stream = conn.getInputStream();
+                    OkHttpClient okHttpClient = new OkHttpClient();
+                    Request request = new Request.Builder()
+                            .url(urlString)
+                            .build();
 
+                    Response response = okHttpClient.newCall(request).execute();
+                    if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+                    InputStream stream = response.body().byteStream();
                     String data = convertStreamToString(stream);
 
                     readAndParseJSON(data);
-                    stream.close();
 
                 } catch (Exception e) {
                     e.printStackTrace();

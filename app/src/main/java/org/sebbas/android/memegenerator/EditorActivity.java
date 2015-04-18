@@ -8,29 +8,31 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
 public class EditorActivity extends ActionBarActivity {
 
+    private String mImageUrl;
     private ImageView mMemeImage;
+    private Picasso mPicasso;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
 
-        String imageUrl = getIntent().getStringExtra("imageUrl");
-
+        mImageUrl = getIntent().getStringExtra("imageUrl");
         mMemeImage = (ImageView) findViewById(R.id.activity_googlecards_card_imageview);
-        Picasso.with(this) //
-                .load(imageUrl) //
-                .placeholder(android.R.color.white) //
-                .error(android.R.color.white) //
-                .tag(this) //
-                .fit()
-                .centerInside()
-                .into(mMemeImage);
 
+        // Initialize Picasso object with okhttp
+        OkHttpClient okHttpClient = new OkHttpClient();
+        mPicasso = new Picasso.Builder(this)
+                .downloader(new OkHttpDownloader(okHttpClient))
+                .build();
+
+        // Set support toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -43,6 +45,19 @@ public class EditorActivity extends ActionBarActivity {
 
         // Hide keyboard when activity starts
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mPicasso.with(this) //
+                .load(mImageUrl) //
+                .placeholder(R.drawable.grumpy) //
+                .error(android.R.color.white) //
+                .tag(this) //
+                .fit()
+                .centerInside()
+                .into(mMemeImage);
     }
 
     @Override

@@ -24,6 +24,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -32,11 +34,16 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     private Context mContext;
     private LayoutInflater mInflater;
     private DataLoader mDataLoader;
+    private Picasso mPicasso;
 
     public SimpleRecyclerAdapter(Context context, DataLoader dataLoader) {
         mContext = context;
-        mInflater = LayoutInflater.from(context);
         mDataLoader = dataLoader;
+        mInflater = LayoutInflater.from(context);
+        OkHttpClient okHttpClient = new OkHttpClient();
+        mPicasso = new Picasso.Builder(mContext)
+                .downloader(new OkHttpDownloader(okHttpClient))
+                .build();
     }
 
     @Override
@@ -63,10 +70,13 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
         viewHolder.textView.setText(displayName);
 
+        String sub = imageUrl.substring(31);
+        String result = "http://cdn.meme.am/images/150x/" + sub;
+
         // Trigger the download of the URL asynchronously into the image view.
-        Picasso.with(mContext) //
+        mPicasso.with(mContext) //
                 .load(imageUrl) //
-                .placeholder(android.R.color.white) //
+                .placeholder(R.drawable.grumpy) //
                 .error(android.R.color.white) //
                 .fit() //
                 .centerCrop() //

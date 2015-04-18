@@ -15,7 +15,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private MemeFragment mTemplateFragment;
     private MemeFragment mInstanceFragment;
-    private EditorFragment mGalleryFragment;
+    private PreferencesFragment mGalleryFragment;
     private PreferencesFragment mPreferencesFragment;
 
     public MainViewPagerAdapter(FragmentManager fm, int[] icons, int numbOfTabs) {
@@ -41,7 +41,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
                 return mInstanceFragment;
             case 2:
                 if (mGalleryFragment == null) {
-                    mGalleryFragment = EditorFragment.newInstance();
+                    mGalleryFragment = PreferencesFragment.newInstance();
                 }
                 return mGalleryFragment;
             case 3:
@@ -50,7 +50,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
                 }
                 return mPreferencesFragment;
             default:
-                return EditorFragment.newInstance();
+                return PreferencesFragment.newInstance();
         }
     }
 

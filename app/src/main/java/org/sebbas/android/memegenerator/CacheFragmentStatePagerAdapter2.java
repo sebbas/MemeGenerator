@@ -31,7 +31,7 @@ import android.view.ViewGroup;
  * on how it create cache key is dangerous.
  * This adapter caches pages by itself and provide getter method to the cache.
  */
-public abstract class CacheFragmentStatePagerAdapter extends FragmentStatePagerAdapter {
+public abstract class CacheFragmentStatePagerAdapter2 extends FragmentStatePagerAdapter {
 
     private static final String STATE_SUPER_STATE = "superState";
     private static final String STATE_PAGES = "pages";
@@ -41,7 +41,7 @@ public abstract class CacheFragmentStatePagerAdapter extends FragmentStatePagerA
     private FragmentManager mFm;
     private SparseArray<Fragment> mPages;
 
-    public CacheFragmentStatePagerAdapter(FragmentManager fm) {
+    public CacheFragmentStatePagerAdapter2(FragmentManager fm) {
         super(fm);
         mPages = new SparseArray<Fragment>();
         mFm = fm;

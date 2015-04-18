@@ -40,11 +40,13 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
     private CircularProgressView mCircularProgressView;
     private ObservableRecyclerView mRecyclerView;
     private DataLoader mDataLoader;
+    private int mLayoutMode;
 
-    public static ViewPagerRecyclerViewFragment newInstance(String url) {
+    public static ViewPagerRecyclerViewFragment newInstance(String url, int layoutType) {
         ViewPagerRecyclerViewFragment fragment = new ViewPagerRecyclerViewFragment();
         Bundle args = new Bundle();
         args.putString("url", url);
+        args.putInt("layout_mode", layoutType);
         fragment.setArguments(args);
         return fragment;
     }
@@ -53,6 +55,7 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mUrl = getArguments().getString("url");
+        mLayoutMode = getArguments().getInt("layout_mode");
         mDataLoader = new DataLoader(this, mUrl);
         mSimpleRecyclerAdapter = new SimpleRecyclerAdapter(getActivity(), mDataLoader);
 
@@ -77,9 +80,21 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         Activity parentActivity = getActivity();
 
         mRecyclerView.setAdapter(mSimpleRecyclerAdapter);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, 3));
         mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
+        switch (mLayoutMode) {
+            case MemeFragment.GRID_LAYOUT:
+                mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, 3));
+                break;
+            case MemeFragment.LIST_LAYOUT:
+                mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, 3));
+                break;
+            case MemeFragment.CARD_LAYOUT:
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
+                break;
+            default:
+                mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, 3));
+        }
 
         if (parentActivity instanceof ObservableScrollViewCallbacks) {
             mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
