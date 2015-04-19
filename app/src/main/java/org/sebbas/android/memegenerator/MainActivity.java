@@ -1,22 +1,31 @@
 package org.sebbas.android.memegenerator;
 
 import android.app.ActivityManager;
+import android.app.SearchManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayoutForIcons;
 
-public class MainActivity extends ActionBarActivity implements ListCallback {
+public class MainActivity extends ActionBarActivity implements ItemClickCallback {
 
-    private NonSwipeableViewPager mNonSwipeableViewPager;
-    private MainViewPagerAdapter mAdapter;
+    private static final int DISK_CACHE_SIZE = 1024 * 1024 * 10; // 10MB
+    private static final String DISK_CACHE_SUBDIR = "thumbnails";
+    private DiskLruImageCache mDiskLruImageCache;
+
+    private NonSwipeableViewPager mMainViewPager;
+    private MainViewPagerAdapter mMainViewPagerAdapter;
     private SlidingTabLayoutForIcons mSlidingTabs;
-    private int mIcons[] = {R.drawable.selector_meme_icon,
-                            R.drawable.selector_editor_icon,
+    private int mIcons[] = {R.drawable.selector_template_icon,
+                            R.drawable.selector_instances_icon,
                             R.drawable.selector_gallery_icon,
                             R.drawable.selector_preferences_icon};
     private int mNumbOfTabs = 4;
@@ -31,10 +40,10 @@ public class MainActivity extends ActionBarActivity implements ListCallback {
             this.setTaskDescription(new ActivityManager.TaskDescription(null, null, getResources().getColor(R.color.primaryDark)));
         }
 
-        mAdapter =  new MainViewPagerAdapter(getSupportFragmentManager(), mIcons, mNumbOfTabs);
+        mMainViewPagerAdapter =  new MainViewPagerAdapter(getSupportFragmentManager(), mIcons, mNumbOfTabs);
 
-        mNonSwipeableViewPager = (NonSwipeableViewPager) findViewById(R.id.nonswipeable_viewpager);
-        mNonSwipeableViewPager.setAdapter(mAdapter);
+        mMainViewPager = (NonSwipeableViewPager) findViewById(R.id.nonswipeable_viewpager);
+        mMainViewPager.setAdapter(mMainViewPagerAdapter);
 
         mSlidingTabs = (SlidingTabLayoutForIcons) findViewById(R.id.sliding_tabs);
         mSlidingTabs.setDistributeEvenly(true);
@@ -45,24 +54,30 @@ public class MainActivity extends ActionBarActivity implements ListCallback {
             }
         });
 
-        mSlidingTabs.setViewPager(mNonSwipeableViewPager);
+        mSlidingTabs.setViewPager(mMainViewPager);
+
+        // Instantiate image cache
+        mDiskLruImageCache = new DiskLruImageCache(this, DISK_CACHE_SUBDIR, DISK_CACHE_SIZE, Bitmap.CompressFormat.JPEG, 0);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        ComponentName cn = new ComponentName(this, SearchActivity.class);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(cn));
+
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.menu_search) {
             return true;
         }
 
@@ -77,5 +92,9 @@ public class MainActivity extends ActionBarActivity implements ListCallback {
 
         editorIntent.putExtra("imageUrl", imageUrl);
         startActivityForResult(editorIntent, 1);
+    }
+
+    public DiskLruImageCache getDiskLruImageCache() {
+        return mDiskLruImageCache;
     }
 }

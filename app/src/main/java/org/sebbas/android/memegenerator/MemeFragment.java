@@ -83,7 +83,9 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
 
         mViewPager = (ViewPager) view.findViewById(R.id.pager);
         mViewPager.setAdapter(mPagerAdapter);
-        mViewPager.setOffscreenPageLimit(mPagerAdapter.getCount());
+
+        // Always preload all pages in viewpager
+        //mViewPager.setOffscreenPageLimit(mPagerAdapter.getCount());
 
         // Padding for ViewPager must be set outside the ViewPager itself
         // because with padding, EdgeEffect of ViewPager become strange.
@@ -207,18 +209,16 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
             } else {
                 showToolbar();
             }
-            //hideToolbar();
         } else if (!toolbarIsShown() && !toolbarIsHidden()) {
             // Toolbar is moving but doesn't know which to move:
             // you can change this to hideToolbar()
-            //showToolbar();
-            hideToolbar();
+            showToolbar();
+            //hideToolbar();
         }
     }
 
     private Fragment getCurrentFragment() {
         return mPagerAdapter.getItemAt(mViewPager.getCurrentItem());
-        //return mPagerAdapter.getItem(mViewPager.getCurrentItem());
     }
 
     private boolean toolbarIsShown() {
@@ -274,19 +274,24 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
             BaseFragment f;
             switch (position) {
                 case 0:
-                    f = ViewPagerRecyclerViewFragment.newInstance(Data.URL_TRENDING, mLayoutMode);
+                    f = ViewPagerRecyclerViewFragment.newInstance(
+                            ViewPagerRecyclerViewFragment.TEMPLATE_TRENDING_TYPE, mLayoutMode);
                     break;
                 case 1:
-                    f = ViewPagerRecyclerViewFragment.newInstance(Data.URL_TRENDING, mLayoutMode);
+                    f = ViewPagerRecyclerViewFragment.newInstance(
+                            ViewPagerRecyclerViewFragment.TEMPLATE_TRENDING_TYPE, mLayoutMode);
                     break;
                 case 2:
-                    f = ViewPagerRecyclerViewFragment.newInstance(Data.URL_POPULAR, mLayoutMode);
+                    f = ViewPagerRecyclerViewFragment.newInstance(
+                            ViewPagerRecyclerViewFragment.TEMPLATE_POPULAR_TYPE, mLayoutMode);
                     break;
                 case 3:
-                    f = ViewPagerRecyclerViewFragment.newInstance(Data.URL_NEW, mLayoutMode);
+                    f = ViewPagerRecyclerViewFragment.newInstance(
+                            ViewPagerRecyclerViewFragment.TEMPLATE_NEW_TYPE, mLayoutMode);
                     break;
                 default:
-                    f = ViewPagerRecyclerViewFragment.newInstance(Data.URL_TRENDING, mLayoutMode);
+                    f = ViewPagerRecyclerViewFragment.newInstance(
+                            ViewPagerRecyclerViewFragment.TEMPLATE_TRENDING_TYPE, mLayoutMode);
                     break;
             }
             return f;

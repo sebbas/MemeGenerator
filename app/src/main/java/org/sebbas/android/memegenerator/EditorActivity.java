@@ -52,7 +52,7 @@ public class EditorActivity extends ActionBarActivity {
         super.onResume();
         mPicasso.with(this) //
                 .load(mImageUrl) //
-                .placeholder(R.drawable.grumpy) //
+                .placeholder(android.R.color.white) //
                 .error(android.R.color.white) //
                 .tag(this) //
                 .fit()

@@ -11,17 +11,15 @@ public class DataLoader {
     private List<String> mImageUrls = new ArrayList<String>();
     private List<String> mDisplayNames = new ArrayList<String>();
     private DataLoaderCallback mDataLoaderCallback;
-    private String mUrl;
 
-    public DataLoader(Fragment fragment, String url) {
+    public DataLoader(Fragment fragment) {
         mDataLoaderCallback = (DataLoaderCallback) fragment;
-        mUrl = url;
-        loadData();
     }
 
-    public void loadData() {
+    public void loadData(String url) {
         AsyncLoader asyncLoader = new AsyncLoader();
-        asyncLoader.execute(mUrl);
+        asyncLoader.execute(url);
+        System.out.println("Started async loading with url: " + url);
     }
 
     public String getImageUrlAt(int position) {
@@ -62,10 +60,17 @@ public class DataLoader {
             JSONHandler jsonHandler = new JSONHandler(url);
             jsonHandler.fetchJSON();
 
+            System.out.println("Fetched JSON");
             while (jsonHandler.parsingComplete) ;
 
-            mImageUrls = jsonHandler.getImageUrls();
-            mDisplayNames = jsonHandler.getDisplayNames();
+
+            mImageUrls = (jsonHandler.getImageUrls());
+            mDisplayNames = (jsonHandler.getDisplayNames());
+
+            //System.out.println("imageUrl are: ");
+            for (String theurl : mImageUrls) {
+                //System.out.println(theurl);
+            }
 
             return null;
         }
