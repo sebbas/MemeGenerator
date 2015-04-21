@@ -1,6 +1,8 @@
 package org.sebbas.android.memegenerator;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
 
@@ -32,4 +34,11 @@ public class Utils {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO;
     }
 
+    public static boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) MemeGeneratorApplication.getAppContext()
+                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 }

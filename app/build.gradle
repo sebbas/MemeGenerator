@@ -39,5 +39,4 @@ dependencies {
     compile 'net.i2p.android.ext:floatingactionbutton:1.9.0'
     compile 'com.squareup.okhttp:okhttp:2.3.0'
     compile 'com.squareup.okhttp:okhttp-urlconnection:2.+'
-    compile 'com.jakewharton:disklrucache:2.0.2'
 }

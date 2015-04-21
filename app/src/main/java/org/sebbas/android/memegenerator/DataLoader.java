@@ -11,15 +11,17 @@ public class DataLoader {
     private List<String> mImageUrls = new ArrayList<String>();
     private List<String> mDisplayNames = new ArrayList<String>();
     private DataLoaderCallback mDataLoaderCallback;
+    private int mFragmentType;
 
-    public DataLoader(Fragment fragment) {
+    public DataLoader(Fragment fragment, int fragmentType) {
+        mFragmentType = fragmentType;
         mDataLoaderCallback = (DataLoaderCallback) fragment;
+        mImageUrls = Data.loadSettings(fragmentType);
     }
 
     public void loadData(String url) {
         AsyncLoader asyncLoader = new AsyncLoader();
         asyncLoader.execute(url);
-        System.out.println("Started async loading with url: " + url);
     }
 
     public String getImageUrlAt(int position) {
@@ -32,16 +34,16 @@ public class DataLoader {
 
     public String getDisplayNameAt(int position) {
         String name = "";
-        if (mDisplayNames != null) {
+        /*if (mDisplayNames != null) {
             name = mDisplayNames.get(position);
-        }
+        }*/
         return name;
     }
 
     public int getItemCount() {
         int count = 0;
         if (mImageUrls != null) {
-            count = mDisplayNames.size();
+            count = mImageUrls.size();
         }
         return count;
     }
@@ -54,22 +56,20 @@ public class DataLoader {
 
         @Override
         protected Void doInBackground(String... params) {
-            String url = params[0];
 
-            // Fetch the image data
-            JSONHandler jsonHandler = new JSONHandler(url);
-            jsonHandler.fetchJSON();
+            if (Utils.isNetworkAvailable()) {
+                String url = params[0];
 
-            System.out.println("Fetched JSON");
-            while (jsonHandler.parsingComplete) ;
+                // Fetch the image data
+                JSONHandler jsonHandler = new JSONHandler(url);
+                jsonHandler.fetchJSON();
 
+                while (jsonHandler.parsingComplete) ;
 
-            mImageUrls = (jsonHandler.getImageUrls());
-            mDisplayNames = (jsonHandler.getDisplayNames());
+                mImageUrls = (jsonHandler.getImageUrls());
+                mDisplayNames = (jsonHandler.getDisplayNames());
 
-            //System.out.println("imageUrl are: ");
-            for (String theurl : mImageUrls) {
-                //System.out.println(theurl);
+                Data.saveSettings(mFragmentType, mImageUrls);
             }
 
             return null;

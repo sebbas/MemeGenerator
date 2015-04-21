@@ -19,7 +19,6 @@ public class MainActivity extends ActionBarActivity implements ItemClickCallback
 
     private static final int DISK_CACHE_SIZE = 1024 * 1024 * 10; // 10MB
     private static final String DISK_CACHE_SUBDIR = "thumbnails";
-    private DiskLruImageCache mDiskLruImageCache;
 
     private NonSwipeableViewPager mMainViewPager;
     private MainViewPagerAdapter mMainViewPagerAdapter;
@@ -55,9 +54,6 @@ public class MainActivity extends ActionBarActivity implements ItemClickCallback
         });
 
         mSlidingTabs.setViewPager(mMainViewPager);
-
-        // Instantiate image cache
-        mDiskLruImageCache = new DiskLruImageCache(this, DISK_CACHE_SUBDIR, DISK_CACHE_SIZE, Bitmap.CompressFormat.JPEG, 0);
     }
 
     @Override
@@ -92,9 +88,5 @@ public class MainActivity extends ActionBarActivity implements ItemClickCallback
 
         editorIntent.putExtra("imageUrl", imageUrl);
         startActivityForResult(editorIntent, 1);
-    }
-
-    public DiskLruImageCache getDiskLruImageCache() {
-        return mDiskLruImageCache;
     }
 }

@@ -82,7 +82,7 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
             mFragmentType = getArguments().getInt("fragment_type");
             mLayoutMode = getArguments().getInt("layout_mode");
             mPageIndex = 0;
-            mDataLoader = new DataLoader(this);
+            mDataLoader = new DataLoader(this, mFragmentType);
             mDataLoader.loadData(getCurrentPageDataUrl());
             mSimpleRecyclerAdapter = new SimpleRecyclerAdapter(this, mDataLoader);
         }

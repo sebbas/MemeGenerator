@@ -2,8 +2,6 @@ package org.sebbas.android.memegenerator;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -17,7 +15,7 @@ import com.squareup.okhttp.Response;
 
 public class JSONHandler {
 
-    private String urlString = null;
+    private String mUrlString = null;
 
     private ArrayList<String> mImageUrls = new ArrayList<String>();
     private ArrayList<String> mDisplayNames = new ArrayList<String>();
@@ -25,7 +23,7 @@ public class JSONHandler {
     public volatile boolean parsingComplete = true;
 
     public JSONHandler(String url) {
-        this.urlString = url;
+        mUrlString = url;
     }
 
     public ArrayList<String> getImageUrls() {
@@ -55,7 +53,6 @@ public class JSONHandler {
             parsingComplete = false;
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -67,7 +64,7 @@ public class JSONHandler {
                 try {
                     OkHttpClient okHttpClient = new OkHttpClient();
                     Request request = new Request.Builder()
-                            .url(urlString)
+                            .url(mUrlString)
                             .build();
 
                     Response response = okHttpClient.newCall(request).execute();
