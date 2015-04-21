@@ -7,18 +7,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayoutForIcons;
 
 public class MainActivity extends ActionBarActivity implements ItemClickCallback {
-
-    private static final int DISK_CACHE_SIZE = 1024 * 1024 * 10; // 10MB
-    private static final String DISK_CACHE_SUBDIR = "thumbnails";
 
     private NonSwipeableViewPager mMainViewPager;
     private MainViewPagerAdapter mMainViewPagerAdapter;
@@ -36,10 +35,12 @@ public class MainActivity extends ActionBarActivity implements ItemClickCallback
 
         // Customize task bar which is visible in multitask mode in Android Lollipop
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            this.setTaskDescription(new ActivityManager.TaskDescription(null, null, getResources().getColor(R.color.primaryDark)));
+            this.setTaskDescription(new ActivityManager.TaskDescription(
+                    null, null, getResources().getColor(R.color.primaryDark)));
         }
 
-        mMainViewPagerAdapter =  new MainViewPagerAdapter(getSupportFragmentManager(), mIcons, mNumbOfTabs);
+        mMainViewPagerAdapter =  new MainViewPagerAdapter(
+                getSupportFragmentManager(), mIcons, mNumbOfTabs);
 
         mMainViewPager = (NonSwipeableViewPager) findViewById(R.id.nonswipeable_viewpager);
         mMainViewPager.setAdapter(mMainViewPagerAdapter);
@@ -89,4 +90,5 @@ public class MainActivity extends ActionBarActivity implements ItemClickCallback
         editorIntent.putExtra("imageUrl", imageUrl);
         startActivityForResult(editorIntent, 1);
     }
+
 }

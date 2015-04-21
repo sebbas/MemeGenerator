@@ -19,6 +19,9 @@ package org.sebbas.android.memegenerator;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,12 +31,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout;
+import com.github.ksoichiro.android.observablescrollview.CacheFragmentStatePagerAdapter;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.mrengineer13.snackbar.SnackBar;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 
 public class ViewPagerRecyclerViewFragment extends BaseFragment implements
-        SwipeRefreshLayout.OnRefreshListener, DataLoader.DataLoaderCallback {
+        SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener {
 
     static final int TEMPLATE_TRENDING_TYPE = 0;
     static final int TEMPLATE_POPULAR_TYPE = 1;
@@ -96,6 +101,7 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
         mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
 
+        mRecyclerView.setAdapter(mSimpleRecyclerAdapter);
         return view;
     }
 
@@ -105,7 +111,6 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
 
         Activity parentActivity = getActivity();
 
-        mRecyclerView.setAdapter(mSimpleRecyclerAdapter);
         mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
         switch (mLayoutMode) {
@@ -142,7 +147,8 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
     @Override
     public void onRefresh() {
         new Handler().postDelayed(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 mDataLoader.loadData(getCurrentPageDataUrl());
                 mSwipeRefreshLayout.setRefreshing(false);
             }
@@ -150,9 +156,72 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
     }
 
     @Override
-    public void onDataLoadComplete() {
-        mCircularProgressView.setVisibility(View.GONE);
+    public void onDataLoadSuccessful() {
+        //mCircularProgressView.setVisibility(View.GONE);
         mSimpleRecyclerAdapter.notifyDataSetChanged();
+    }
+
+    private Fragment getCurrentFragmentFromViewPager() {
+        ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.meme_pager);
+        int index = viewPager.getCurrentItem();
+        MemeFragment.FragmentAdapter adapter = ((MemeFragment.FragmentAdapter)
+                viewPager.getAdapter());
+        ViewPagerRecyclerViewFragment fragment = (ViewPagerRecyclerViewFragment)
+                adapter.getFragment(index);
+        return fragment;
+    }
+
+    @Override
+    public void onConnectionUnavailable() {
+        if (getParentFragment() == null) {
+            if (isVisible()) {
+                showConnectionUnavailableNotification();
+            }
+        } else {
+            if (isVisible() && getCurrentFragmentFromViewPager() == this) {
+                showConnectionUnavailableNotification();
+            }
+        }
+    }
+
+    @Override
+    public void onConnectionTimeout() {
+        // Checks when no nested fragments are present
+        if (getParentFragment() == null) {
+            if (isVisible()) {
+                showConnectionTimeoutNotification();
+            }
+        // Checks when nested fragments are present
+        } else {
+            if (isVisible() && getCurrentFragmentFromViewPager() == this) {
+                showConnectionTimeoutNotification();
+            }
+        }
+    }
+
+    private void showConnectionUnavailableNotification() {
+        new SnackBar.Builder(this.getActivity())
+                .withOnClickListener(this)
+                .withMessageId(R.string.connection_unavailable)
+                .withActionMessageId(R.string.retry)
+                .withDuration((short) 5000)
+                .withBackgroundColorId(R.color.accent)
+                .show();
+    }
+
+    private void showConnectionTimeoutNotification() {
+        new SnackBar.Builder(this.getActivity())
+                .withOnClickListener(this)
+                .withMessageId(R.string.connection_timeout)
+                .withActionMessageId(R.string.retry)
+                .withDuration((short) 5000)
+                .withBackgroundColorId(R.color.accent)
+                .show();
+    }
+
+    @Override
+    public void onMessageClick(Parcelable parcelable) {
+        mDataLoader.loadData(getCurrentPageDataUrl());
     }
 
     private String getCurrentPageDataUrl() {
@@ -170,7 +239,4 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         return Data.getUrlForData(mPageIndex, mFragmentType);
     }
 
-    public int getFragmentType() {
-        return mFragmentType;
-    }
 }

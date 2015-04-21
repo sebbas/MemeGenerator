@@ -1,20 +1,25 @@
 package org.sebbas.android.memegenerator;
 
 import android.os.AsyncTask;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+
+import com.github.mrengineer13.snackbar.SnackBar;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DataLoader {
 
-    private List<String> mImageUrls = new ArrayList<String>();
-    private List<String> mDisplayNames = new ArrayList<String>();
+    private List<String> mImageUrls = new ArrayList<>();
+    private List<String> mDisplayNames = new ArrayList<>();
     private DataLoaderCallback mDataLoaderCallback;
     private int mFragmentType;
+    private Fragment mFragment;
 
     public DataLoader(Fragment fragment, int fragmentType) {
         mFragmentType = fragmentType;
+        mFragment = fragment;
         mDataLoaderCallback = (DataLoaderCallback) fragment;
         mImageUrls = Data.loadSettings(fragmentType);
     }
@@ -48,11 +53,10 @@ public class DataLoader {
         return count;
     }
 
-    public interface DataLoaderCallback {
-        void onDataLoadComplete();
-    }
-
     private class AsyncLoader extends AsyncTask<String, Void, Void> {
+
+        private boolean mParsingSuccessful = false;
+        private boolean mConnectionUnavailable = false;
 
         @Override
         protected Void doInBackground(String... params) {
@@ -64,12 +68,20 @@ public class DataLoader {
                 JSONHandler jsonHandler = new JSONHandler(url);
                 jsonHandler.fetchJSON();
 
-                while (jsonHandler.parsingComplete) ;
+                while (!jsonHandler.mParsingComplete) ;
 
-                mImageUrls = (jsonHandler.getImageUrls());
-                mDisplayNames = (jsonHandler.getDisplayNames());
+                // If parsing was successful, update array lists
+                if (jsonHandler.mParsingSuccessful) {
 
-                Data.saveSettings(mFragmentType, mImageUrls);
+                    mParsingSuccessful = jsonHandler.mParsingSuccessful;
+
+                    mImageUrls = (jsonHandler.getImageUrls());
+                    mDisplayNames = (jsonHandler.getDisplayNames());
+
+                    Data.saveSettings(mFragmentType, mImageUrls);
+                }
+            } else {
+                mConnectionUnavailable = true;
             }
 
             return null;
@@ -78,7 +90,15 @@ public class DataLoader {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            mDataLoaderCallback.onDataLoadComplete();
+
+            if (mConnectionUnavailable) {
+                mDataLoaderCallback.onConnectionUnavailable();
+            } else if (!mParsingSuccessful) {
+                mDataLoaderCallback.onConnectionTimeout();
+            } else {
+                mDataLoaderCallback.onDataLoadSuccessful();
+            }
         }
     }
+
 }

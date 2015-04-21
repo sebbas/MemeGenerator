@@ -25,6 +25,9 @@ import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.ViewHelper;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Another implementation of ViewPagerTabActivity.
  * This uses TouchInterceptionFrameLayout to move Fragments.
@@ -81,7 +84,7 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
         // Choose adapter type depending on settings
         mPagerAdapter = new FragmentAdapter(getChildFragmentManager(), getLayoutMode());
 
-        mViewPager = (ViewPager) view.findViewById(R.id.pager);
+        mViewPager = (ViewPager) view.findViewById(R.id.meme_pager);
         mViewPager.setAdapter(mPagerAdapter);
 
         // Always preload all pages in viewpager
@@ -264,9 +267,12 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
     public class FragmentAdapter extends CacheFragmentStatePagerAdapter {
 
         private int mLayoutMode;
+        private Map<Integer, Fragment> mPageReferenceMap;
+
         public FragmentAdapter(FragmentManager fm, int layoutMode) {
             super(fm);
             mLayoutMode = layoutMode;
+            mPageReferenceMap = new HashMap<>();
         }
 
         @Override
@@ -276,25 +282,40 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
                 case 0:
                     f = ViewPagerRecyclerViewFragment.newInstance(
                             ViewPagerRecyclerViewFragment.TEMPLATE_TRENDING_TYPE, mLayoutMode);
+                    mPageReferenceMap.put(0, f);
                     break;
                 case 1:
                     f = ViewPagerRecyclerViewFragment.newInstance(
                             ViewPagerRecyclerViewFragment.TEMPLATE_TRENDING_TYPE, mLayoutMode);
+                    mPageReferenceMap.put(1, f);
                     break;
                 case 2:
                     f = ViewPagerRecyclerViewFragment.newInstance(
                             ViewPagerRecyclerViewFragment.TEMPLATE_POPULAR_TYPE, mLayoutMode);
+                    mPageReferenceMap.put(2, f);
                     break;
                 case 3:
                     f = ViewPagerRecyclerViewFragment.newInstance(
                             ViewPagerRecyclerViewFragment.TEMPLATE_NEW_TYPE, mLayoutMode);
+                    mPageReferenceMap.put(3, f);
                     break;
                 default:
                     f = ViewPagerRecyclerViewFragment.newInstance(
                             ViewPagerRecyclerViewFragment.TEMPLATE_TRENDING_TYPE, mLayoutMode);
+                    mPageReferenceMap.put(0, f);
                     break;
             }
             return f;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            super.destroyItem(container, position, object);
+            mPageReferenceMap.remove(position);
+        }
+
+        public Fragment getFragment(int key) {
+            return mPageReferenceMap.get(key);
         }
 
         @Override

@@ -3,6 +3,7 @@ package org.sebbas.android.memegenerator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,7 +21,8 @@ public class JSONHandler {
     private ArrayList<String> mImageUrls = new ArrayList<String>();
     private ArrayList<String> mDisplayNames = new ArrayList<String>();
 
-    public volatile boolean parsingComplete = true;
+    public volatile boolean mParsingComplete = false;
+    public volatile boolean mParsingSuccessful = false;
 
     public JSONHandler(String url) {
         mUrlString = url;
@@ -50,7 +52,8 @@ public class JSONHandler {
                 mImageUrls.add(imageUrl);
             }
 
-            parsingComplete = false;
+            mParsingComplete = true;
+            mParsingSuccessful = true;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,6 +66,9 @@ public class JSONHandler {
             public void run() {
                 try {
                     OkHttpClient okHttpClient = new OkHttpClient();
+                    okHttpClient.setConnectTimeout(15, TimeUnit.SECONDS); // connect timeout
+                    okHttpClient.setReadTimeout(15, TimeUnit.SECONDS);    // socket timeout
+
                     Request request = new Request.Builder()
                             .url(mUrlString)
                             .build();
@@ -76,6 +82,8 @@ public class JSONHandler {
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                    mParsingComplete = true;
+                    mParsingSuccessful = false;
                 }
             }
         });
