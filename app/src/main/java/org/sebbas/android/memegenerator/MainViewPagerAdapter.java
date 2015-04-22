@@ -12,8 +12,8 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     private SimpleFragment mTemplateFragment;
     private SlidingTabsFragment mInstanceFragment;
-    private PreferencesFragment mGalleryFragment;
-    private PreferencesFragment mPreferencesFragment;
+    private SlidingTabsFragment mGalleryFragment;
+    private SimplePreferenceFragment mPreferencesFragment;
 
     public MainViewPagerAdapter(FragmentManager fm, int[] icons, int numbOfTabs) {
         super(fm);
@@ -24,28 +24,35 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        String[] tabTitles = MemeGeneratorApplication.getAppContext()
-                .getResources().getStringArray(R.array.tab_titles);
+        String[] tabTitlesInstances = MemeGeneratorApplication.getAppContext()
+                .getResources().getStringArray(R.array.tab_titles_instances);
+
+        String[] tabTitlesGallery = MemeGeneratorApplication.getAppContext()
+                .getResources().getStringArray(R.array.tab_titles_gallery);
 
         switch (position) {
             case 0:
                 if (mTemplateFragment == null) {
-                    mTemplateFragment = SimpleFragment.newInstance();
+                    mTemplateFragment = SimpleFragment.newInstance(
+                            R.string.templates);
                 }
                 return mTemplateFragment;
             case 1:
                 if (mInstanceFragment == null) {
-                    mInstanceFragment = SlidingTabsFragment.newInstance(tabTitles);
+                    mInstanceFragment = SlidingTabsFragment.newInstance(
+                            R.string.instances, tabTitlesInstances);
                 }
                 return mInstanceFragment;
             case 2:
                 if (mGalleryFragment == null) {
-                    mGalleryFragment = PreferencesFragment.newInstance();
+                    mGalleryFragment = SlidingTabsFragment.newInstance(
+                            R.string.gallery, tabTitlesGallery);
                 }
                 return mGalleryFragment;
             case 3:
                 if (mPreferencesFragment == null) {
-                    mPreferencesFragment = PreferencesFragment.newInstance();
+                    mPreferencesFragment = SimplePreferenceFragment.newInstance(
+                            R.string.preferences);
                 }
                 return mPreferencesFragment;
             default:

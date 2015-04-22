@@ -44,12 +44,12 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
     private int mSlop;
     private boolean mScrolled;
     private ScrollState mLastScrollState;
-    private ActionBarActivity mParentActivity;
     private String[] mTitles;
 
-    public static SlidingTabsFragment newInstance(String[] titles) {
+    public static SlidingTabsFragment newInstance(int titleResource, String[] titles) {
         SlidingTabsFragment slidingTabsFragment = new SlidingTabsFragment();
         Bundle args = new Bundle();
+        args.putInt("fragment_title", titleResource);
         args.putStringArray("titles", titles);
         slidingTabsFragment.setArguments(args);
         return slidingTabsFragment;
@@ -62,20 +62,20 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mParentActivity = (ActionBarActivity) activity;
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_slidingtabs, container, false);
 
-        mParentActivity.setSupportActionBar((Toolbar) view.findViewById(R.id.toolbar));
-
+        // Setup the toolbar
+        ActionBarActivity parentActivity = (ActionBarActivity) getActivity();
         ViewCompat.setElevation(view.findViewById(R.id.header), getResources().getDimension(R.dimen.toolbar_elevation));
+        parentActivity.setSupportActionBar((Toolbar) view.findViewById(R.id.toolbar));
+
         mToolbarView = view.findViewById(R.id.toolbar);
+
+        // Set custom fragment title
+        int titleResource = getArguments().getInt("fragment_title");
+        setActionBarTitle(titleResource);
 
         // Choose adapter type depending on settings
         mPagerAdapter = new FragmentAdapter(getChildFragmentManager(), UIOptions.getLayoutMode());
@@ -97,7 +97,7 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
         slidingTabLayout.setDistributeEvenly(true);
         slidingTabLayout.setViewPager(mViewPager);
 
-        ViewConfiguration vc = ViewConfiguration.get(mParentActivity);
+        ViewConfiguration vc = ViewConfiguration.get(parentActivity);
         mSlop = vc.getScaledTouchSlop();
         mInterceptionLayout = (TouchInterceptionFrameLayout) view.findViewById(R.id.container);
         mInterceptionLayout.setScrollInterceptionListener(mInterceptionListener);

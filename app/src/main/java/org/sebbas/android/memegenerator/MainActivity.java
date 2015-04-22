@@ -45,6 +45,9 @@ public class MainActivity extends ActionBarActivity implements ItemClickCallback
         mMainViewPager = (NonSwipeableViewPager) findViewById(R.id.nonswipeable_viewpager);
         mMainViewPager.setAdapter(mMainViewPagerAdapter);
 
+        // Always preload all pages in viewpager
+        mMainViewPager.setOffscreenPageLimit(mMainViewPagerAdapter.getCount());
+
         mSlidingTabs = (SlidingTabLayoutForIcons) findViewById(R.id.sliding_tabs);
         mSlidingTabs.setDistributeEvenly(true);
         mSlidingTabs.setCustomTabColorizer(new SlidingTabLayoutForIcons.TabColorizer() {

@@ -9,21 +9,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class SimpleFragment extends BaseFragment {
+public class SimplePreferenceFragment extends BaseFragment {
 
-    public static SimpleFragment newInstance(int titleResource) {
-        SimpleFragment simpleFragment = new SimpleFragment();
+    public static SimplePreferenceFragment newInstance(int titleResource) {
+        SimplePreferenceFragment simplePreferenceFragment = new SimplePreferenceFragment();
         Bundle args = new Bundle();
         args.putInt("fragment_title", titleResource);
-        simpleFragment.setArguments(args);
-        return simpleFragment;
+        simplePreferenceFragment.setArguments(args);
+        return simplePreferenceFragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View view = inflater.inflate(R.layout.fragment_simple, container, false);
+        View view = inflater.inflate(R.layout.fragment_preferences, container, false);
 
         // Setup the toolbar
         ActionBarActivity parentActivity = (ActionBarActivity) getActivity();
@@ -34,24 +34,19 @@ public class SimpleFragment extends BaseFragment {
         int titleResource = getArguments().getInt("fragment_title");
         setActionBarTitle(titleResource);
 
-        // Get a recycler fragment
-        ViewPagerRecyclerViewFragment fragment =
-                ViewPagerRecyclerViewFragment.newInstance(
-                        ViewPagerRecyclerViewFragment.DEFAULTS, UIOptions.CARD_LAYOUT);
+        // Get a preferences fragment
+        PreferencesFragment fragment = PreferencesFragment.newInstance();
 
         // Attach the just obtained fragment to frame layout
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.recycler_container, fragment);
+        fragmentTransaction.replace(R.id.preferences_container, fragment);
         fragmentTransaction.commit();
 
         // Set padding for view so that top and bottom bars don't interfere
         final int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
-        view.findViewById(R.id.recycler_container).setPadding(0, getActionBarSize(), 0, tabHeight);
-
-        // Set custom title
-        String toolbarTitle = getResources().getString(R.string.templates);
-        setActionBarTitle(toolbarTitle);
+        view.findViewById(R.id.preferences_container).setPadding(0, getActionBarSize(), 0, tabHeight);
 
         return view;
     }
+
 }

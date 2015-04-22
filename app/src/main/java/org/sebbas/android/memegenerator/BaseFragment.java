@@ -19,6 +19,7 @@ package org.sebbas.android.memegenerator;
 import android.app.Activity;
 import android.content.res.TypedArray;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
@@ -55,24 +56,16 @@ public abstract class BaseFragment extends Fragment {
         return activity.findViewById(android.R.id.content).getHeight();
     }
 
-    protected void setDummyData(ListView listView) {
-        listView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, getDummyData()));
+    protected void setActionBarTitle(String title) {
+        ActionBarActivity actionBarActivity = (ActionBarActivity) getActivity();
+        actionBarActivity.getSupportActionBar().setTitle(title);
     }
 
-    protected void setDummyDataWithHeader(ListView listView, View headerView) {
-        listView.addHeaderView(headerView);
-        setDummyData(listView);
+    protected void setActionBarTitle(int titleResource) {
+        ActionBarActivity actionBarActivity = (ActionBarActivity) getActivity();
+
+        String title = actionBarActivity.getResources().getString(titleResource);
+        actionBarActivity.getSupportActionBar().setTitle(title);
     }
 
-    protected void setDummyData(GridView gridView) {
-        gridView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, getDummyData()));
-    }
-
-    /*protected void setDummyData(RecyclerView recyclerView) {
-        recyclerView.setAdapter(new SimpleRecyclerAdapter(getActivity(), getDummyData()));
-    }*/
-
-    protected void setDummyDataWithHeader(RecyclerView recyclerView, View headerView) {
-        recyclerView.setAdapter(new SimpleHeaderRecyclerAdapter(getActivity(), getDummyData(), headerView));
-    }
 }
