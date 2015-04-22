@@ -4,4 +4,4 @@
 /.idea/libraries
 .DS_Store
 /build
-/~/AndroidStudioProjects/MemeGenerator/app/src/main/res/values/imgur.xml
+~/AndroidStudioProjects/MemeGenerator/app/src/main/res/values/imgur.xml
