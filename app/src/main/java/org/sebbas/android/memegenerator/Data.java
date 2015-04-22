@@ -10,7 +10,6 @@ import java.util.Set;
 
 final class Data {
 
-    static final String CLIENT_ID = "";
     static final String THUMBNAIL_SIZE = "b";
 
     // Base url

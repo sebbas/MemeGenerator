@@ -6,32 +6,16 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Environment;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class Utils {
-    public static final int IO_BUFFER_SIZE = 8 * 1024;
 
-    private Utils() {};
-
-    public static boolean isExternalStorageRemovable() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            return Environment.isExternalStorageRemovable();
-        }
-        return true;
-    }
-
-    public static File getExternalCacheDir(Context context) {
-        if (hasExternalCacheDir()) {
-            return context.getExternalCacheDir();
-        }
-
-        // Before Froyo we need to construct the external cache dir ourselves
-        final String cacheDir = "/Android/data/" + context.getPackageName() + "/cache/";
-        return new File(Environment.getExternalStorageDirectory().getPath() + cacheDir);
-    }
-
-    public static boolean hasExternalCacheDir() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO;
+    private Utils() {
+        // No instances
     }
 
     public static boolean isNetworkAvailable() {
@@ -44,5 +28,25 @@ public class Utils {
 
     public static String getThumbnailUrl(String imageUrl, String id, String size) {
         return imageUrl.replaceAll(id, id + size);
+    }
+
+    /*
+     * Returns your personal client id for imgur. The file with my client id was
+     * omitted on purpose for security reasons.
+     *
+     * For this to work for you, you have to add your personal imgur client id to the
+     * string resources in this project.
+     *
+     * You can do so by creating a new file "imgur.xml" under /res/values containing the following:
+     *
+     * <?xml version="1.0" encoding="utf-8"?><resources><item name="client_id" type="string">your_client_id</item></resources>
+     *
+     * If you plan to share (e.g on Github) your fork of this project, you should consider
+     * placing the file "imgur.xml" in your '.gitignore'. That way your client id will not
+     * be compromised.
+     */
+    public static String getImgurClientId() {
+        return MemeGeneratorApplication.
+                getAppContext().getResources().getString(R.string.client_id);
     }
 }

@@ -105,7 +105,7 @@ public class JSONHandler {
                     //conn.setReadTimeout(10000 /* milliseconds */);
                     //conn.setConnectTimeout(15000 /* milliseconds */);
                     conn.setRequestMethod("GET");
-                    conn.setRequestProperty("Authorization", "Client-ID " + Data.CLIENT_ID);
+                    conn.setRequestProperty("Authorization", "Client-ID " + Utils.getImgurClientId());
                     conn.setDoInput(true);
                     // Starts the query
                     conn.connect();
