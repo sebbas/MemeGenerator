@@ -28,8 +28,6 @@ import android.widget.TextView;
 
 public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAdapter.ViewHolder> {
 
-    private static final int DISK_CACHE_SIZE = 1024 * 1024 * 10; // 10MB
-
     private Context mContext;
     private LayoutInflater mInflater;
     private DataLoader mDataLoader;
@@ -47,7 +45,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.activity_googlecards_card, parent, false);
+        View view = mInflater.inflate(R.layout.google_card, parent, false);
         SimpleRecyclerAdapter.ViewHolder viewHolder = new ViewHolder(view, new ViewHolder.ViewHolderCalback() {
             @Override
             public void onItemClick(int position) {
@@ -61,13 +59,14 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     public void onBindViewHolder(final ViewHolder viewHolder, int position) {
 
         // Get an updated image over the network and replace the just set thumbnail with it
-        String displayName = mDataLoader.getDisplayNameAt(position);
+        int viewCount = mDataLoader.getViewCountAt(position);
         String imageUrl = mDataLoader.getImageUrlAt(position);
+        String imageId = mDataLoader.getImageId(position);
 
-        viewHolder.textView.setText(displayName);
+        viewHolder.textView.setText(imageId);
 
         PicassoCache.getPicassoInstance(mContext)
-                .load(imageUrl)
+                .load(Utils.getThumbnailUrl(imageUrl, imageId, Data.THUMBNAIL_SIZE))
                 .placeholder(android.R.color.holo_blue_bright)
                 .error(android.R.color.holo_red_dark)
                 .fit()
@@ -84,8 +83,8 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         public ViewHolder(View view, ViewHolderCalback viewHolderCalback) {
             super(view);
             view.setOnClickListener(this);
-            textView = (TextView) view.findViewById(R.id.activity_googlecards_card_textview);
-            imageView = (ImageView) view.findViewById(R.id.activity_googlecards_card_imageview);
+            textView = (TextView) view.findViewById(R.id.card_view_count);
+            imageView = (ImageView) view.findViewById(R.id.card_imageview);
             mViewHolderCallback = viewHolderCalback;
         }
 

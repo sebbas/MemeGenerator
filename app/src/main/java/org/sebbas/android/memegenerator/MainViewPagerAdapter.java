@@ -7,8 +7,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    private final String[] TITLES_TEMPLATE = new String[] {"Best", "Trending", "Popular", "New", "Random"};
-    private final String[] TITLES_INSTANCES = new String[] {"Trending", "Popular", "New", "Random"};
+    private final String[] TITLES_INSTANCES = new String[] {"Viral", "Time", "Top Today", "Top Week", "Top Month", "Top Year", "Top All"};
 
     private int[] mIcons;
     private int mNumbOfTabs;
@@ -31,7 +30,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case 0:
                 if (mTemplateFragment == null) {
-                    mTemplateFragment = MemeFragment.newInstance(TITLES_TEMPLATE);
+                    mTemplateFragment = MemeFragment.newInstance(TITLES_INSTANCES);
                 }
                 return mTemplateFragment;
             case 1:

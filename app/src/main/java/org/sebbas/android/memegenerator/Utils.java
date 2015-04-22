@@ -41,4 +41,8 @@ public class Utils {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+
+    public static String getThumbnailUrl(String imageUrl, String id, String size) {
+        return imageUrl.replaceAll(id, id + size);
+    }
 }

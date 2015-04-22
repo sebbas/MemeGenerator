@@ -24,13 +24,13 @@
     tools:ignore="overdraw">
 
     <org.sebbas.android.memegenerator.SquaredImageView
-        android:id="@+id/activity_googlecards_card_imageview"
+        android:id="@+id/card_imageview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:ignore="ContentDescription" />
 
     <TextView
-        android:id="@+id/activity_googlecards_card_textview"
+        android:id="@+id/card_view_count"
         style="@android:style/TextAppearance.DeviceDefault"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

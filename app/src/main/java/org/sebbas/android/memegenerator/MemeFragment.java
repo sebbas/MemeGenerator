@@ -126,7 +126,8 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
         }
     }
 
-    private TouchInterceptionFrameLayout.TouchInterceptionListener mInterceptionListener = new TouchInterceptionFrameLayout.TouchInterceptionListener() {
+    private TouchInterceptionFrameLayout.TouchInterceptionListener mInterceptionListener =
+            new TouchInterceptionFrameLayout.TouchInterceptionListener() {
         @Override
         public boolean shouldInterceptTouchEvent(MotionEvent ev, boolean moving, float diffX, float diffY) {
             if (!mScrolled && mSlop < Math.abs(diffX) && Math.abs(diffY) < Math.abs(diffX)) {
@@ -281,27 +282,37 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
             switch (position) {
                 case 0:
                     f = ViewPagerRecyclerViewFragment.newInstance(
-                            ViewPagerRecyclerViewFragment.TEMPLATE_TRENDING_TYPE, mLayoutMode);
+                            ViewPagerRecyclerViewFragment.VIRAL, mLayoutMode);
                     mPageReferenceMap.put(0, f);
                     break;
                 case 1:
                     f = ViewPagerRecyclerViewFragment.newInstance(
-                            ViewPagerRecyclerViewFragment.TEMPLATE_TRENDING_TYPE, mLayoutMode);
-                    mPageReferenceMap.put(1, f);
+                            ViewPagerRecyclerViewFragment.TIME, mLayoutMode);
+                    mPageReferenceMap.put(0, f);
                     break;
                 case 2:
                     f = ViewPagerRecyclerViewFragment.newInstance(
-                            ViewPagerRecyclerViewFragment.TEMPLATE_POPULAR_TYPE, mLayoutMode);
-                    mPageReferenceMap.put(2, f);
+                            ViewPagerRecyclerViewFragment.WINDOW_DAY, mLayoutMode);
+                    mPageReferenceMap.put(0, f);
                     break;
                 case 3:
                     f = ViewPagerRecyclerViewFragment.newInstance(
-                            ViewPagerRecyclerViewFragment.TEMPLATE_NEW_TYPE, mLayoutMode);
+                            ViewPagerRecyclerViewFragment.WINDOW_DAY, mLayoutMode);
+                    mPageReferenceMap.put(1, f);
+                    break;
+                case 4:
+                    f = ViewPagerRecyclerViewFragment.newInstance(
+                            ViewPagerRecyclerViewFragment.WINDOW_WEEK, mLayoutMode);
+                    mPageReferenceMap.put(2, f);
+                    break;
+                case 5:
+                    f = ViewPagerRecyclerViewFragment.newInstance(
+                            ViewPagerRecyclerViewFragment.WINDOW_MONTH, mLayoutMode);
                     mPageReferenceMap.put(3, f);
                     break;
                 default:
                     f = ViewPagerRecyclerViewFragment.newInstance(
-                            ViewPagerRecyclerViewFragment.TEMPLATE_TRENDING_TYPE, mLayoutMode);
+                            ViewPagerRecyclerViewFragment.WINDOW_DAY, mLayoutMode);
                     mPageReferenceMap.put(0, f);
                     break;
             }

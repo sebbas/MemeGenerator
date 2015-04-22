@@ -31,7 +31,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout;
-import com.github.ksoichiro.android.observablescrollview.CacheFragmentStatePagerAdapter;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.mrengineer13.snackbar.SnackBar;
@@ -40,13 +39,14 @@ import com.github.rahatarmanahmed.cpv.CircularProgressView;
 public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener {
 
-    static final int TEMPLATE_TRENDING_TYPE = 0;
-    static final int TEMPLATE_POPULAR_TYPE = 1;
-    static final int TEMPLATE_NEW_TYPE = 2;
-    static final int TEMPLATE_RANDOM_TYPE = 3;
-    static final int TEMPLATE_QUERY_TYPE = 4;
-    static final int INSTANCE_POPULAR_TYPE = 5;
-    static final int INSTANCE_NEW_TYPE = 6;
+    static final int VIRAL = 0;
+    static final int TIME = 1;
+    static final int WINDOW_DAY = 2;
+    static final int WINDOW_WEEK = 3;
+    static final int WINDOW_MONTH = 4;
+    static final int WINDOW_YEAR = 5;
+    static final int WINDOW_ALL = 6;
+    static final int QUERY = 7;
 
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
     private SimpleRecyclerAdapter mSimpleRecyclerAdapter;
@@ -225,7 +225,7 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
     }
 
     private String getCurrentPageDataUrl() {
-        if (mFragmentType == ViewPagerRecyclerViewFragment.TEMPLATE_QUERY_TYPE) {
+        if (mFragmentType == ViewPagerRecyclerViewFragment.QUERY) {
             return Data.getUrlForQuery(mPageIndex, mQuery);
         }
         return Data.getUrlForData(mPageIndex, mFragmentType);
@@ -233,7 +233,7 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
 
     private String getNextPageDataUrl() {
         mPageIndex = mPageIndex++;
-        if (mFragmentType == ViewPagerRecyclerViewFragment.TEMPLATE_QUERY_TYPE) {
+        if (mFragmentType == ViewPagerRecyclerViewFragment.QUERY) {
             return Data.getUrlForQuery(mPageIndex, mQuery);
         }
         return Data.getUrlForData(mPageIndex, mFragmentType);

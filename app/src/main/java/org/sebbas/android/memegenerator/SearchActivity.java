@@ -59,7 +59,7 @@ public class SearchActivity extends ActionBarActivity implements ItemClickCallba
             // Create a fragment that loads the query and data
             ViewPagerRecyclerViewFragment searchContainer =
                     ViewPagerRecyclerViewFragment.newInstance(
-                            ViewPagerRecyclerViewFragment.TEMPLATE_QUERY_TYPE,
+                            ViewPagerRecyclerViewFragment.QUERY,
                             MemeFragment.GRID_LAYOUT,
                             query);
 

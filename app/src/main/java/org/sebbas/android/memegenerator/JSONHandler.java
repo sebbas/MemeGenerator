@@ -1,25 +1,23 @@
 package org.sebbas.android.memegenerator;
 
-import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
-
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 public class JSONHandler {
 
     private String mUrlString = null;
 
-    private ArrayList<String> mImageUrls = new ArrayList<String>();
-    private ArrayList<String> mDisplayNames = new ArrayList<String>();
+    private ArrayList<Integer> mViewCounts = new ArrayList<>();
+    private ArrayList<String> mImageUrls = new ArrayList<>();
+    private ArrayList<String> mImageIds = new ArrayList<>();
 
     public volatile boolean mParsingComplete = false;
     public volatile boolean mParsingSuccessful = false;
@@ -28,11 +26,16 @@ public class JSONHandler {
         mUrlString = url;
     }
 
+    public ArrayList<Integer> getViewCounts() {
+        return mViewCounts;
+    }
+
     public ArrayList<String> getImageUrls() {
         return mImageUrls;
     }
-    public ArrayList<String> getDisplayNames() {
-        return mDisplayNames;
+
+    public ArrayList<String> getImageIds() {
+        return mImageIds;
     }
 
     @SuppressLint("NewApi")
@@ -40,24 +43,41 @@ public class JSONHandler {
         try {
             JSONObject reader = new JSONObject(in);
 
-            JSONArray data  = reader.getJSONArray("result");
+            // Only start loading json if success field is true
+            if (isValid(reader)) {
+                JSONArray data = reader.getJSONArray("data");
 
-            for (int i = 0; i < data.length(); i++) {
-                JSONObject jsonObject = data.getJSONObject(i);
+                for (int i = 0; i < data.length(); i++) {
+                    JSONObject image = data.getJSONObject(i);
 
-                String displayName = jsonObject.getString("displayName");
-                String imageUrl = jsonObject.getString("imageUrl");
+                    // Only look at json objects that represent images
+                    if (!isAlbum(image)) {
+                        int views = image.getInt("views");
+                        String imageUrl = image.getString("link");
+                        String imageId = image.getString("id");
 
-                mDisplayNames.add(displayName);
-                mImageUrls.add(imageUrl);
+                        mViewCounts.add(views);
+                        mImageUrls.add(imageUrl);
+                        mImageIds.add(imageId);
+                    }
+                }
+                mParsingSuccessful = true;
+            } else {
+                mParsingSuccessful = false;
             }
-
             mParsingComplete = true;
-            mParsingSuccessful = true;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private boolean isAlbum(JSONObject image) throws JSONException {
+        return image.getBoolean("is_album");
+    }
+
+    private boolean isValid(JSONObject reader) throws JSONException {
+        return reader.getBoolean("success");
     }
 
     public void fetchJSON() {
@@ -65,7 +85,7 @@ public class JSONHandler {
             @Override
             public void run() {
                 try {
-                    OkHttpClient okHttpClient = new OkHttpClient();
+                    /*OkHttpClient okHttpClient = new OkHttpClient();
                     okHttpClient.setConnectTimeout(15, TimeUnit.SECONDS); // connect timeout
                     okHttpClient.setReadTimeout(15, TimeUnit.SECONDS);    // socket timeout
 
@@ -78,7 +98,23 @@ public class JSONHandler {
                     InputStream stream = response.body().byteStream();
                     String data = convertStreamToString(stream);
 
+                    readAndParseJSON(data);*/
+
+                    URL url = new URL(mUrlString);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    //conn.setReadTimeout(10000 /* milliseconds */);
+                    //conn.setConnectTimeout(15000 /* milliseconds */);
+                    conn.setRequestMethod("GET");
+                    conn.setRequestProperty("Authorization", "Client-ID " + Data.CLIENT_ID);
+                    conn.setDoInput(true);
+                    // Starts the query
+                    conn.connect();
+                    InputStream stream = conn.getInputStream();
+
+                    String data = convertStreamToString(stream);
+
                     readAndParseJSON(data);
+                    stream.close();
 
                 } catch (Exception e) {
                     e.printStackTrace();

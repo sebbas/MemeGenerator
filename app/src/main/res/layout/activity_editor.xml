@@ -98,7 +98,7 @@
                     android:padding="@dimen/google_cards_padding">
 
                     <ImageView
-                        android:id="@+id/activity_googlecards_card_imageview"
+                        android:id="@+id/card_imageview"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"

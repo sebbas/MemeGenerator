@@ -24,7 +24,7 @@ public class EditorActivity extends ActionBarActivity {
         setContentView(R.layout.activity_editor);
 
         mImageUrl = getIntent().getStringExtra("imageUrl");
-        mMemeImage = (ImageView) findViewById(R.id.activity_googlecards_card_imageview);
+        mMemeImage = (ImageView) findViewById(R.id.card_imageview);
 
         // Initialize Picasso object with okhttp
         OkHttpClient okHttpClient = new OkHttpClient();

@@ -9,48 +9,49 @@ import java.util.List;
 import java.util.Set;
 
 final class Data {
-    private static final String BASE = "http://version1.api.memegenerator.net/";
 
-    // Generators
-    private static final String TEMPLATE_TRENDING = "Generators_Select_ByTrending?";
-    private static final String TEMPLATE_POPULAR = "Generators_Select_ByPopular?";
-    private static final String TEMPLATE_NEW = "Generators_Select_ByNew?";
-    private static final String TEMPLATE_SEARCH = "Generators_Search?q=";
+    static final String CLIENT_ID = "";
+    static final String THUMBNAIL_SIZE = "b";
 
-    // Instances
-    private static final String INSTANCE_POPULAR = "Instances_Select_ByPopular?";
-    private static final String INSTANCE_NEW = "Instances_Select_ByNew?pageIndex=0&pageSize=24";
+    // Base url
+    private static final String BASE = "https://api.imgur.com/3/g/memes/";
 
-    private static final String AMPERSAND = "&";
-    private static final String PAGE_INDEX = "pageIndex=";
-    private static final String PAGE_SIZE = "pageSize=";
+    // Sorting
+    private static final String SORT_VIRAL = "viral/";
+    private static final String SORT_TIME = "time/";
+    private static final String SORT_TOP = "top/";
 
-    private static final int PAGE_SIZE_DEFAULT = 24;
+    // Window
+    private static final String WINDOW_DAY = "day/";
+    private static final String WINDOW_WEEK = "week/";
+    private static final String WINDOW_MONTH = "month/";
+    private static final String WINDOW_YEAR = "year/";
+    private static final String WINDOW_ALL = "all/";
 
     private Data() {
         // No instances.
     }
 
     static final String getUrlForQuery(int pageIndex, String query) {
-        return BASE + TEMPLATE_SEARCH + query.replace(" ", "&") + AMPERSAND + PAGE_INDEX + pageIndex + AMPERSAND + PAGE_SIZE + PAGE_SIZE_DEFAULT;
+        return BASE + SORT_TOP + WINDOW_DAY + pageIndex + "/q=" + query.replace(" ", "&");
     }
 
     static final String getUrlForData(int pageIndex, int urlType) {
         switch (urlType) {
-            case ViewPagerRecyclerViewFragment.TEMPLATE_TRENDING_TYPE:
-                return BASE + TEMPLATE_TRENDING + PAGE_INDEX + pageIndex + AMPERSAND + PAGE_SIZE + PAGE_SIZE_DEFAULT;
-            case ViewPagerRecyclerViewFragment.TEMPLATE_POPULAR_TYPE:
-                return BASE + TEMPLATE_POPULAR + PAGE_INDEX + pageIndex + AMPERSAND + PAGE_SIZE + PAGE_SIZE_DEFAULT;
-            case ViewPagerRecyclerViewFragment.TEMPLATE_NEW_TYPE:
-                return BASE + TEMPLATE_NEW + PAGE_INDEX + pageIndex + AMPERSAND + PAGE_SIZE + PAGE_SIZE_DEFAULT;
-            case ViewPagerRecyclerViewFragment.TEMPLATE_RANDOM_TYPE:
-                return "";
-            case ViewPagerRecyclerViewFragment.INSTANCE_POPULAR_TYPE:
-                return BASE + INSTANCE_POPULAR + PAGE_INDEX + pageIndex + AMPERSAND + PAGE_SIZE + PAGE_SIZE_DEFAULT;
-            case ViewPagerRecyclerViewFragment.INSTANCE_NEW_TYPE:
-                return BASE + INSTANCE_NEW + PAGE_INDEX + pageIndex + AMPERSAND + PAGE_SIZE + PAGE_SIZE_DEFAULT;
+            case ViewPagerRecyclerViewFragment.VIRAL:
+                return BASE + SORT_VIRAL + pageIndex;
+            case ViewPagerRecyclerViewFragment.WINDOW_DAY:
+                return BASE + SORT_TIME + pageIndex;
+            case ViewPagerRecyclerViewFragment.WINDOW_WEEK:
+                return BASE + SORT_TOP + WINDOW_WEEK + pageIndex;
+            case ViewPagerRecyclerViewFragment.WINDOW_MONTH:
+                return BASE + SORT_TOP + WINDOW_MONTH + pageIndex;
+            case ViewPagerRecyclerViewFragment.WINDOW_YEAR:
+                return BASE + SORT_TOP + WINDOW_YEAR + pageIndex;
+            case ViewPagerRecyclerViewFragment.WINDOW_ALL:
+                return BASE + SORT_TOP + WINDOW_ALL + pageIndex;
             default:
-                return BASE + TEMPLATE_TRENDING + PAGE_INDEX + pageIndex + AMPERSAND + PAGE_SIZE + PAGE_SIZE_DEFAULT;
+                return BASE + SORT_TOP + WINDOW_DAY + pageIndex;
         }
     }
 

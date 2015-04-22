@@ -1,10 +1,7 @@
 package org.sebbas.android.memegenerator;
 
 import android.os.AsyncTask;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
-
-import com.github.mrengineer13.snackbar.SnackBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +9,8 @@ import java.util.List;
 public class DataLoader {
 
     private List<String> mImageUrls = new ArrayList<>();
-    private List<String> mDisplayNames = new ArrayList<>();
+    private List<Integer> mViewCounts = new ArrayList<>();
+    private List<String> mImageIds = new ArrayList<>();
     private DataLoaderCallback mDataLoaderCallback;
     private int mFragmentType;
     private Fragment mFragment;
@@ -29,6 +27,14 @@ public class DataLoader {
         asyncLoader.execute(url);
     }
 
+    public int getViewCountAt(int position) {
+        int count = 0;
+        if (mViewCounts != null && mViewCounts.size() > position) {
+            count = mViewCounts.get(position);
+        }
+        return count;
+    }
+
     public String getImageUrlAt(int position) {
         String url = "";
         if (mImageUrls != null && mImageUrls.size() > position) {
@@ -37,12 +43,12 @@ public class DataLoader {
         return url;
     }
 
-    public String getDisplayNameAt(int position) {
-        String name = "";
-        /*if (mDisplayNames != null) {
-            name = mDisplayNames.get(position);
-        }*/
-        return name;
+    public String getImageId(int position) {
+        String imageId = "";
+        if (mImageIds != null && mImageIds.size() > position) {
+            imageId = mImageIds.get(position);
+        }
+        return imageId;
     }
 
     public int getItemCount() {
@@ -75,8 +81,10 @@ public class DataLoader {
 
                     mParsingSuccessful = jsonHandler.mParsingSuccessful;
 
-                    mImageUrls = (jsonHandler.getImageUrls());
-                    mDisplayNames = (jsonHandler.getDisplayNames());
+                    // Fill up all the lists
+                    mViewCounts = jsonHandler.getViewCounts();
+                    mImageUrls = jsonHandler.getImageUrls();
+                    mImageIds = jsonHandler.getImageIds();
 
                     Data.saveSettings(mFragmentType, mImageUrls);
                 }
