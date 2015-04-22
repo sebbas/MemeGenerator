@@ -7,8 +7,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    private final String[] TITLES_INSTANCES = new String[] {"Viral", "Time", "Top Today", "Top Week", "Top Month", "Top Year", "Top All"};
-
     private int[] mIcons;
     private int mNumbOfTabs;
 
@@ -26,16 +24,18 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+        String[] tabTitles = MemeGeneratorApplication.getAppContext()
+                .getResources().getStringArray(R.array.tab_titles);
 
         switch (position) {
             case 0:
                 if (mTemplateFragment == null) {
-                    mTemplateFragment = MemeFragment.newInstance(TITLES_INSTANCES);
+                    mTemplateFragment = MemeFragment.newInstance(tabTitles);
                 }
                 return mTemplateFragment;
             case 1:
                 if (mInstanceFragment == null) {
-                    mInstanceFragment = MemeFragment.newInstance(TITLES_INSTANCES);
+                    mInstanceFragment = MemeFragment.newInstance(tabTitles);
                 }
                 return mInstanceFragment;
             case 2:
