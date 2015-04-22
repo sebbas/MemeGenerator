@@ -10,10 +10,12 @@ import java.util.Set;
 
 final class Data {
 
-    static final String THUMBNAIL_SIZE = "b";
+    static final String THUMBNAIL_SIZE = "m";
 
     // Base url
     private static final String BASE = "https://api.imgur.com/3/g/memes/";
+    private static final String BASE_SEARCH = "https://api.imgur.com/3/gallery/search/";
+    private static final String BASE_DEFAULTS = "https://api.imgur.com/3/memegen/defaults";
 
     // Sorting
     private static final String SORT_VIRAL = "viral/";
@@ -32,7 +34,7 @@ final class Data {
     }
 
     static final String getUrlForQuery(int pageIndex, String query) {
-        return BASE + SORT_TOP + WINDOW_DAY + pageIndex + "/q=" + query.replace(" ", "&");
+        return BASE_SEARCH + query.replace(" ", "&");
     }
 
     static final String getUrlForData(int pageIndex, int urlType) {
@@ -49,26 +51,28 @@ final class Data {
                 return BASE + SORT_TOP + WINDOW_YEAR + pageIndex;
             case ViewPagerRecyclerViewFragment.WINDOW_ALL:
                 return BASE + SORT_TOP + WINDOW_ALL + pageIndex;
+            case ViewPagerRecyclerViewFragment.DEFAULTS:
+                return BASE_DEFAULTS;
             default:
                 return BASE + SORT_TOP + WINDOW_DAY + pageIndex;
         }
     }
 
-    public static void saveSettings(int fragmentType, List<String> data) {
+    public static void saveSettings(int fragmentType, List<String> data, String key) {
         Context context = MemeGeneratorApplication.getAppContext();
         SharedPreferences preferences = context.getSharedPreferences(Integer.toString(fragmentType), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
 
-        Set<String> set = new HashSet<String>();
+        Set<String> set = new HashSet<>();
         set.addAll(data);
-        editor.putStringSet("imageUrls", set);
+        editor.putStringSet(key, set);
         editor.commit();
     }
 
-    public static ArrayList<String> loadSettings(int fragmentType) {
+    public static ArrayList<String> loadSettings(int fragmentType, String key) {
         Context context = MemeGeneratorApplication.getAppContext();
         SharedPreferences preferences = context.getSharedPreferences(Integer.toString(fragmentType), Context.MODE_PRIVATE);
-        Set<String> set = preferences.getStringSet("imageUrls", null);
+        Set<String> set = preferences.getStringSet(key, null);
 
         if (set == null) {
             return new ArrayList<>();

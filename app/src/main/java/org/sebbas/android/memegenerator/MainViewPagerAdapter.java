@@ -10,8 +10,8 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     private int[] mIcons;
     private int mNumbOfTabs;
 
-    private MemeFragment mTemplateFragment;
-    private MemeFragment mInstanceFragment;
+    private SimpleFragment mTemplateFragment;
+    private SlidingTabsFragment mInstanceFragment;
     private PreferencesFragment mGalleryFragment;
     private PreferencesFragment mPreferencesFragment;
 
@@ -30,12 +30,12 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
         switch (position) {
             case 0:
                 if (mTemplateFragment == null) {
-                    mTemplateFragment = MemeFragment.newInstance(tabTitles);
+                    mTemplateFragment = SimpleFragment.newInstance();
                 }
                 return mTemplateFragment;
             case 1:
                 if (mInstanceFragment == null) {
-                    mInstanceFragment = MemeFragment.newInstance(tabTitles);
+                    mInstanceFragment = SlidingTabsFragment.newInstance(tabTitles);
                 }
                 return mInstanceFragment;
             case 2:

@@ -46,7 +46,7 @@ public class JSONHandler {
             // Only start loading json if success field is true
             if (isValid(reader)) {
                 JSONArray data = reader.getJSONArray("data");
-
+                System.out.println(data);
                 for (int i = 0; i < data.length(); i++) {
                     JSONObject image = data.getJSONObject(i);
 
@@ -73,7 +73,12 @@ public class JSONHandler {
     }
 
     private boolean isAlbum(JSONObject image) throws JSONException {
-        return image.getBoolean("is_album");
+        boolean isAlbum = false;
+        try {
+            isAlbum = image.getBoolean("is_album");
+        } finally {
+            return isAlbum;
+        }
     }
 
     private boolean isValid(JSONObject reader) throws JSONException {

@@ -35,11 +35,7 @@ import java.util.Map;
  * SlidingTabLayout and SlidingTabStrip are from google/iosched:
  * https://github.com/google/iosched
  */
-public class MemeFragment extends BaseFragment implements ObservableScrollViewCallbacks {
-
-    public static final int GRID_LAYOUT = 0;
-    public static final int LIST_LAYOUT = 1;
-    public static final int CARD_LAYOUT = 2;
+public class SlidingTabsFragment extends BaseFragment implements ObservableScrollViewCallbacks {
 
     private View mToolbarView;
     private TouchInterceptionFrameLayout mInterceptionLayout;
@@ -51,12 +47,12 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
     private ActionBarActivity mParentActivity;
     private String[] mTitles;
 
-    public static MemeFragment newInstance(String[] titles) {
-        MemeFragment memeFragment = new MemeFragment();
+    public static SlidingTabsFragment newInstance(String[] titles) {
+        SlidingTabsFragment slidingTabsFragment = new SlidingTabsFragment();
         Bundle args = new Bundle();
         args.putStringArray("titles", titles);
-        memeFragment.setArguments(args);
-        return memeFragment;
+        slidingTabsFragment.setArguments(args);
+        return slidingTabsFragment;
     }
 
     @Override
@@ -74,7 +70,7 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_meme, container, false);
+        View view = inflater.inflate(R.layout.fragment_slidingtabs, container, false);
 
         mParentActivity.setSupportActionBar((Toolbar) view.findViewById(R.id.toolbar));
 
@@ -82,13 +78,13 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
         mToolbarView = view.findViewById(R.id.toolbar);
 
         // Choose adapter type depending on settings
-        mPagerAdapter = new FragmentAdapter(getChildFragmentManager(), getLayoutMode());
+        mPagerAdapter = new FragmentAdapter(getChildFragmentManager(), UIOptions.getLayoutMode());
 
         mViewPager = (ViewPager) view.findViewById(R.id.meme_pager);
         mViewPager.setAdapter(mPagerAdapter);
 
         // Always preload all pages in viewpager
-        //mViewPager.setOffscreenPageLimit(mPagerAdapter.getCount());
+        mViewPager.setOffscreenPageLimit(mPagerAdapter.getCount());
 
         // Padding for ViewPager must be set outside the ViewPager itself
         // because with padding, EdgeEffect of ViewPager become strange.
@@ -259,10 +255,6 @@ public class MemeFragment extends BaseFragment implements ObservableScrollViewCa
             });
             animator.start();
         }
-    }
-
-    private int getLayoutMode() {
-        return GRID_LAYOUT;
     }
 
     public class FragmentAdapter extends CacheFragmentStatePagerAdapter {

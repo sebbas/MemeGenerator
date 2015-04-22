@@ -19,7 +19,11 @@ public class DataLoader {
         mFragmentType = fragmentType;
         mFragment = fragment;
         mDataLoaderCallback = (DataLoaderCallback) fragment;
-        mImageUrls = Data.loadSettings(fragmentType);
+
+        // Restore array lists from previous session
+        mViewCounts = Utils.fromStringList(Data.loadSettings(fragmentType, "viewCounts"));
+        mImageUrls = Data.loadSettings(fragmentType, "imageUrls");
+        mImageIds = Data.loadSettings(fragmentType, "imageIds");
     }
 
     public void loadData(String url) {
@@ -86,7 +90,11 @@ public class DataLoader {
                     mImageUrls = jsonHandler.getImageUrls();
                     mImageIds = jsonHandler.getImageIds();
 
-                    Data.saveSettings(mFragmentType, mImageUrls);
+                    // Save array lists for next session
+                    Data.saveSettings(mFragmentType, Utils.toStringList(mViewCounts), "viewCounts");
+                    Data.saveSettings(mFragmentType, mImageUrls, "imageUrls");
+                    Data.saveSettings(mFragmentType, mImageIds, "imageIds");
+
                 }
             } else {
                 mConnectionUnavailable = true;

@@ -47,6 +47,7 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
     static final int WINDOW_YEAR = 5;
     static final int WINDOW_ALL = 6;
     static final int QUERY = 7;
+    static final int DEFAULTS = 8;
 
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
     private SimpleRecyclerAdapter mSimpleRecyclerAdapter;
@@ -114,13 +115,13 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
         switch (mLayoutMode) {
-            case MemeFragment.GRID_LAYOUT:
+            case UIOptions.GRID_LAYOUT:
                 mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, 3));
                 break;
-            case MemeFragment.LIST_LAYOUT:
+            case UIOptions.LIST_LAYOUT:
                 mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, 3));
                 break;
-            case MemeFragment.CARD_LAYOUT:
+            case UIOptions.CARD_LAYOUT:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
                 break;
             default:
@@ -164,7 +165,7 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
     private Fragment getCurrentFragmentFromViewPager() {
         ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.meme_pager);
         int index = viewPager.getCurrentItem();
-        MemeFragment.FragmentAdapter adapter = ((MemeFragment.FragmentAdapter)
+        SlidingTabsFragment.FragmentAdapter adapter = ((SlidingTabsFragment.FragmentAdapter)
                 viewPager.getAdapter());
         ViewPagerRecyclerViewFragment fragment = (ViewPagerRecyclerViewFragment)
                 adapter.getFragment(index);
@@ -226,6 +227,7 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
 
     private String getCurrentPageDataUrl() {
         if (mFragmentType == ViewPagerRecyclerViewFragment.QUERY) {
+            System.out.println(Data.getUrlForQuery(mPageIndex, mQuery));
             return Data.getUrlForQuery(mPageIndex, mQuery);
         }
         return Data.getUrlForData(mPageIndex, mFragmentType);
