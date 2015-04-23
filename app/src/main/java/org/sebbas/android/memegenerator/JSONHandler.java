@@ -51,7 +51,7 @@ public class JSONHandler {
                     JSONObject image = data.getJSONObject(i);
 
                     // Only look at json objects that represent images
-                    if (!isAlbum(image)) {
+                    if (!isAlbum(image) && !isAnimated(image)) {
                         int views = image.getInt("views");
                         String imageUrl = image.getString("link");
                         String imageId = image.getString("id");
@@ -81,6 +81,15 @@ public class JSONHandler {
         }
     }
 
+    private boolean isAnimated(JSONObject image) throws JSONException {
+        boolean isAnimated = false;
+        try {
+            isAnimated = image.getBoolean("animated");
+        } finally {
+            return isAnimated;
+        }
+    }
+
     private boolean isValid(JSONObject reader) throws JSONException {
         return reader.getBoolean("success");
     }
@@ -107,8 +116,8 @@ public class JSONHandler {
 
                     URL url = new URL(mUrlString);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    //conn.setReadTimeout(10000 /* milliseconds */);
-                    //conn.setConnectTimeout(15000 /* milliseconds */);
+                    conn.setReadTimeout(10000 /* milliseconds */);
+                    conn.setConnectTimeout(15000 /* milliseconds */);
                     conn.setRequestMethod("GET");
                     conn.setRequestProperty("Authorization", "Client-ID " + Utils.getImgurClientId());
                     conn.setDoInput(true);

@@ -32,4 +32,47 @@
         <item>Favorites</item>
     </string-array>
 
+    <string name="layout_grid">Grid</string>
+    <string name="layout_cards">Cards</string>
+    <string name="layout_list">List</string>
+
+    <!-- Google card strings -->
+    <string name="image_views">Views</string>
+    <string name="image_timestamp">ago</string>
+
+    <!-- Preferences strings -->
+    <string name="category_downloads">Downloads</string>
+    <string name="preference_download_favorites">Download favorite memes</string>
+
+
+
+    <string name="category_view">View</string>
+    <string name="preference_template_tab">Templates</string>
+    <string name="preference_template_tab_summary">Choose how meme templates are displayed</string>
+
+    <string name="preference_instances_tab">Instances</string>
+    <string name="preference_instances_tab_summary">Choose how meme instances are displayed</string>
+
+    <string name="preference_gallery_tab">Gallery</string>
+    <string name="preference_gallery_tab_summary">Choose how gallery memes are displayed</string>
+
+    <string name="dialog_layout_header">Show as</string>
+
+
+
+    <string name="category_contact">Contact</string>
+    <string name="preference_suggestions">Suggestions</string>
+    <string name="preference_suggestions_summary">Suggestions</string>
+    <string name="preference_problem">Problems</string>
+    <string name="preference_problem_summary">Report a problem or bug that you encountered</string>
+
+
+
+    <string name="category_about">About</string>
+    <string name="preference_developer">Developer</string>
+    <string name="preference_developer_summary">Visit developer website</string>
+    <string name="preference_version">Version</string>
+
+
+
 </resources>

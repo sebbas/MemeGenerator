@@ -31,11 +31,15 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     private Context mContext;
     private LayoutInflater mInflater;
     private DataLoader mDataLoader;
+    private String mViewsString;
 
     public SimpleRecyclerAdapter(Fragment fragment, DataLoader dataLoader) {
         mContext = fragment.getActivity();
         mDataLoader = dataLoader;
         mInflater = LayoutInflater.from(mContext);
+
+        // String resources for google cards
+        mViewsString = mContext.getResources().getString(R.string.image_views);
     }
 
     @Override
@@ -63,7 +67,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         String imageUrl = mDataLoader.getImageUrlAt(position);
         String imageId = mDataLoader.getImageId(position);
 
-        viewHolder.textView.setText(imageId);
+        viewHolder.textView.setText(Integer.toString(viewCount) + " " + mViewsString);
 
         PicassoCache.getPicassoInstance(mContext)
                 .load(Utils.getThumbnailUrl(imageUrl, imageId, Data.THUMBNAIL_SIZE))

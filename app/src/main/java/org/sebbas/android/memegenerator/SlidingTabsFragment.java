@@ -1,6 +1,5 @@
 package org.sebbas.android.memegenerator;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,13 +27,6 @@ import com.nineoldandroids.view.ViewHelper;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Another implementation of ViewPagerTabActivity.
- * This uses TouchInterceptionFrameLayout to move Fragments.
- * <p/>
- * SlidingTabLayout and SlidingTabStrip are from google/iosched:
- * https://github.com/google/iosched
- */
 public class SlidingTabsFragment extends BaseFragment implements ObservableScrollViewCallbacks {
 
     private View mToolbarView;
@@ -280,32 +272,32 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
                 case 1:
                     f = ViewPagerRecyclerViewFragment.newInstance(
                             ViewPagerRecyclerViewFragment.TIME, mLayoutMode);
-                    mPageReferenceMap.put(0, f);
+                    mPageReferenceMap.put(1, f);
                     break;
                 case 2:
                     f = ViewPagerRecyclerViewFragment.newInstance(
                             ViewPagerRecyclerViewFragment.WINDOW_DAY, mLayoutMode);
-                    mPageReferenceMap.put(0, f);
+                    mPageReferenceMap.put(2, f);
                     break;
                 case 3:
                     f = ViewPagerRecyclerViewFragment.newInstance(
-                            ViewPagerRecyclerViewFragment.WINDOW_DAY, mLayoutMode);
-                    mPageReferenceMap.put(1, f);
+                            ViewPagerRecyclerViewFragment.WINDOW_WEEK, mLayoutMode);
+                    mPageReferenceMap.put(3, f);
                     break;
                 case 4:
                     f = ViewPagerRecyclerViewFragment.newInstance(
-                            ViewPagerRecyclerViewFragment.WINDOW_WEEK, mLayoutMode);
-                    mPageReferenceMap.put(2, f);
+                            ViewPagerRecyclerViewFragment.WINDOW_MONTH, mLayoutMode);
+                    mPageReferenceMap.put(4, f);
                     break;
                 case 5:
                     f = ViewPagerRecyclerViewFragment.newInstance(
-                            ViewPagerRecyclerViewFragment.WINDOW_MONTH, mLayoutMode);
-                    mPageReferenceMap.put(3, f);
+                            ViewPagerRecyclerViewFragment.WINDOW_YEAR, mLayoutMode);
+                    mPageReferenceMap.put(5, f);
                     break;
                 default:
                     f = ViewPagerRecyclerViewFragment.newInstance(
-                            ViewPagerRecyclerViewFragment.WINDOW_DAY, mLayoutMode);
-                    mPageReferenceMap.put(0, f);
+                            ViewPagerRecyclerViewFragment.WINDOW_ALL, mLayoutMode);
+                    mPageReferenceMap.put(6, f);
                     break;
             }
             return f;
