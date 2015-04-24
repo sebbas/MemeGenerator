@@ -70,7 +70,7 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
         setActionBarTitle(titleResource);
 
         // Choose adapter type depending on settings
-        mPagerAdapter = new FragmentAdapter(getChildFragmentManager(), UIOptions.getLayoutMode());
+        mPagerAdapter = new FragmentAdapter(getChildFragmentManager(), UIOptions.getLayoutMode(this));
 
         mViewPager = (ViewPager) view.findViewById(R.id.meme_pager);
         mViewPager.setAdapter(mPagerAdapter);

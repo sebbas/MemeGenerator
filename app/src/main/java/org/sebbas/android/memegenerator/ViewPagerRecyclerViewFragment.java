@@ -29,6 +29,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
@@ -116,16 +117,16 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
         switch (mLayoutMode) {
             case UIOptions.GRID_LAYOUT:
-                mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, 3));
+                mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, UIOptions.getGridColumnCount()));
                 break;
             case UIOptions.LIST_LAYOUT:
-                mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, 3));
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
                 break;
             case UIOptions.CARD_LAYOUT:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
                 break;
             default:
-                mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, 3));
+                mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, UIOptions.getGridColumnCount()));
         }
 
         if (parentActivity instanceof ObservableScrollViewCallbacks) {
@@ -239,6 +240,10 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
             return Data.getUrlForQuery(mPageIndex, mQuery);
         }
         return Data.getUrlForData(mPageIndex, mFragmentType);
+    }
+
+    public int getLayoutMode() {
+        return mLayoutMode;
     }
 
 }

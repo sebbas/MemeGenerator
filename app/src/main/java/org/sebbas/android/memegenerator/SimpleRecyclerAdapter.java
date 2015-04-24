@@ -26,16 +26,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
-public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAdapter.ViewHolder> {
+public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAdapter.MainViewHolder> {
 
     private Context mContext;
     private LayoutInflater mInflater;
     private DataLoader mDataLoader;
+    private int mLayoutMode;
     private String mViewsString;
 
     public SimpleRecyclerAdapter(Fragment fragment, DataLoader dataLoader) {
         mContext = fragment.getActivity();
         mDataLoader = dataLoader;
+        mLayoutMode = ((ViewPagerRecyclerViewFragment) fragment).getLayoutMode();
         mInflater = LayoutInflater.from(mContext);
 
         // String resources for google cards
@@ -48,66 +50,118 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.google_card, parent, false);
-        SimpleRecyclerAdapter.ViewHolder viewHolder = new ViewHolder(view, new ViewHolder.ViewHolderCalback() {
+    public MainViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        MainViewHolder.ViewHolderCalback mainViewHolderCallback = new MainViewHolder.ViewHolderCalback() {
             @Override
             public void onItemClick(int position) {
                 ((ItemClickCallback) mContext).onItemClick(position, mDataLoader);
             }
-        });
-        return viewHolder;
+        };
+
+        View view;
+        switch (mLayoutMode) {
+            case UIOptions.LIST_LAYOUT:
+                view = mInflater.inflate(R.layout.list_item, parent, false);
+                return new ListViewHolder(view, mainViewHolderCallback);
+            case UIOptions.CARD_LAYOUT:
+                view = mInflater.inflate(R.layout.card_item, parent, false);
+                return new CardViewHolder(view, mainViewHolderCallback);
+            default:
+                view = mInflater.inflate(R.layout.list_item, parent, false);
+                return new ListViewHolder(view, mainViewHolderCallback);
+        }
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder viewHolder, int position) {
+    public void onBindViewHolder(MainViewHolder viewHolder, int position) {
 
         // Get an updated image over the network and replace the just set thumbnail with it
-        String viewCount = mDataLoader.getViewCountAt(position);
+        String imageTitle = mDataLoader.getImageTitleAt(position);
         String imageUrl = mDataLoader.getImageUrlAt(position);
         String imageId = mDataLoader.getImageIdAt(position);
-        String imageTitle = mDataLoader.getImageTitleAt(position);
-        String timeStamp = mDataLoader.getTimeStampAt(position);
 
-        viewHolder.textViewViewCount.setText(viewCount + " " + mViewsString);
-        viewHolder.textViewImageTitle.setText(imageTitle);
 
-        PicassoCache.getPicassoInstance(mContext)
-                .load(Utils.getThumbnailUrl(imageUrl, imageId, Data.THUMBNAIL_SIZE))
-                .placeholder(android.R.color.holo_blue_bright)
-                .error(android.R.color.holo_red_dark)
-                .fit()
-                .centerCrop()
-                .tag(mContext)
-                .into(viewHolder.imageView);
+        viewHolder.textViewTitle.setText(imageTitle);
+
+        if (mLayoutMode == UIOptions.LIST_LAYOUT) {
+            PicassoCache.getPicassoInstance(mContext)
+                    .load(Utils.getThumbnailUrl(imageUrl, imageId, Data.THUMBNAIL_SIZE_LIST))
+                    .placeholder(android.R.color.holo_blue_bright)
+                    .error(android.R.color.holo_red_dark)
+                    .fit()
+                    .centerCrop()
+                    .tag(mContext)
+                    .into(viewHolder.imageView);
+        }
+
+        if (mLayoutMode == UIOptions.CARD_LAYOUT) {
+            CardViewHolder cardViewHolder = (CardViewHolder) viewHolder;
+
+            String viewCount = mDataLoader.getViewCountAt(position);
+            String timeStamp = mDataLoader.getTimeStampAt(position);
+
+            PicassoCache.getPicassoInstance(mContext)
+                    .load(Utils.getThumbnailUrl(imageUrl, imageId, Data.THUMBNAIL_SIZE_CARD))
+                    .placeholder(android.R.color.holo_blue_bright)
+                    .error(android.R.color.holo_red_dark)
+                    .tag(mContext)
+                    .into(viewHolder.imageView);
+
+            cardViewHolder.textViewViewCount.setText(viewCount + " " + mViewsString);
+            cardViewHolder.textViewTimeStamp.setText(timeStamp);
+        }
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView textViewViewCount;
+    static class MainViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
-        TextView textViewImageTitle;
-        TextView textViewTimeStamp;
-
+        TextView textViewTitle;
         ViewHolderCalback mViewHolderCallback;
 
-        public ViewHolder(View view, ViewHolderCalback viewHolderCalback) {
+        public MainViewHolder(View view, ViewHolderCalback viewHolderCalback) {
             super(view);
-            view.setOnClickListener(this);
 
-            textViewViewCount = (TextView) view.findViewById(R.id.card_view_count);
-            imageView = (ImageView) view.findViewById(R.id.card_imageview);
-            textViewImageTitle = (TextView) view.findViewById(R.id.card_image_title);
+            imageView = (ImageView) view.findViewById(R.id.item_image);
+            textViewTitle = (TextView) view.findViewById(R.id.item_title);
 
             mViewHolderCallback = viewHolderCalback;
+        }
+
+        static interface ViewHolderCalback {
+            public void onItemClick(int position);
+        }
+    }
+
+    static class CardViewHolder extends MainViewHolder implements View.OnClickListener{
+        TextView textViewViewCount;
+        TextView textViewTimeStamp;
+
+
+        public CardViewHolder(View view, ViewHolderCalback viewHolderCalback) {
+            super(view, viewHolderCalback);
+            view.setOnClickListener(this);
+
+            textViewViewCount = (TextView) view.findViewById(R.id.item_viewcount);
+            textViewTimeStamp = (TextView) view.findViewById(R.id.item_datetime);
         }
 
         @Override
         public void onClick(View v) {
             mViewHolderCallback.onItemClick(getPosition());
         }
+    }
 
-        public static interface ViewHolderCalback {
-            public void onItemClick(int position);
+    static class ListViewHolder extends MainViewHolder implements View.OnClickListener {
+
+        public ListViewHolder(View view, ViewHolderCalback viewHolderCalback) {
+            super(view, viewHolderCalback);
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mViewHolderCallback.onItemClick(getPosition());
         }
     }
+
 }

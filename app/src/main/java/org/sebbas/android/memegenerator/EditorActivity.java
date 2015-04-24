@@ -2,7 +2,6 @@ package org.sebbas.android.memegenerator;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.WindowManager;
@@ -26,7 +25,7 @@ public class EditorActivity extends BaseActivity {
         setCustomLollipopActionBar();
 
         mImageUrl = getIntent().getStringExtra("imageUrl");
-        mMemeImage = (ImageView) findViewById(R.id.card_imageview);
+        mMemeImage = (ImageView) findViewById(R.id.item_image);
 
         // Initialize Picasso object with okhttp
         OkHttpClient okHttpClient = new OkHttpClient();

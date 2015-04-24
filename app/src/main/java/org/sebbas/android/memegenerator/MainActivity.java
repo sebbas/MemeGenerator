@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayoutForIcons;
@@ -82,6 +83,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
 
     @Override
     public void onItemClick(int position, DataLoader dataLoader) {
+        Toast.makeText(this, "Item clicked", Toast.LENGTH_SHORT).show();
         Intent editorIntent = new Intent(this, EditorActivity.class);
 
         String imageUrl = dataLoader.getImageUrlAt(position);

@@ -38,8 +38,6 @@
     </LinearLayout>
 
     <ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/cards_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -53,16 +51,18 @@
 
             <android.support.v7.widget.CardView
                 android:id="@+id/card_view_text"
-                android:layout_gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_short">
+                android:layout_gravity="center_horizontal"
+                app:cardElevation="@dimen/margin_extra_short"
+                app:cardUseCompatPadding="true"
+                app:cardCornerRadius="@dimen/google_cards_corner_radius">
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/google_cards_padding">
+                    android:padding="@dimen/margin_short">
 
                     <EditText
                         style="@android:style/TextAppearance.DeviceDefault.Small"
@@ -86,23 +86,24 @@
 
             <android.support.v7.widget.CardView
                 android:id="@+id/card_view_image"
-                android:layout_gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_short">
+                android:layout_gravity="center_horizontal"
+                app:cardElevation="@dimen/margin_extra_short"
+                app:cardUseCompatPadding="true"
+                app:cardCornerRadius="@dimen/google_cards_corner_radius">
 
                 <RelativeLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/google_cards_padding">
+                    android:padding="@dimen/margin_short">
 
                     <ImageView
-                        android:id="@+id/card_imageview"
+                        android:id="@+id/item_image"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        tools:ignore="ContentDescription" />
+                        android:adjustViewBounds="true" />
 
                     <TextView
                         android:id="@+id/text_top"

@@ -37,7 +37,7 @@ public class SimpleFragment extends BaseFragment {
         // Get a recycler fragment
         ViewPagerRecyclerViewFragment fragment =
                 ViewPagerRecyclerViewFragment.newInstance(
-                        ViewPagerRecyclerViewFragment.DEFAULTS, UIOptions.CARD_LAYOUT);
+                        ViewPagerRecyclerViewFragment.DEFAULTS, UIOptions.getLayoutMode(this));
 
         // Attach the just obtained fragment to frame layout
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();

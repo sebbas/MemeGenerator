@@ -62,7 +62,7 @@ public class SearchActivity extends BaseActivity implements ItemClickCallback {
             ViewPagerRecyclerViewFragment searchContainer =
                     ViewPagerRecyclerViewFragment.newInstance(
                             ViewPagerRecyclerViewFragment.QUERY,
-                            UIOptions.getLayoutMode(),
+                            UIOptions.getLayoutMode(this),
                             query);
 
             // Finally add the search container to the UI

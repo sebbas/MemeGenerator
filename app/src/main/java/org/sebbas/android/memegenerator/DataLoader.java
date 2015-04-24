@@ -105,6 +105,8 @@ public class DataLoader {
         protected Void doInBackground(String... params) {
 
             if (Utils.isNetworkAvailable()) {
+                mConnectionUnavailable = false;
+
                 String url = params[0];
 
                 fetchJSON(url);
@@ -172,7 +174,6 @@ public class DataLoader {
     private void readAndParseJSON(String in) {
         try {
             JSONObject reader = new JSONObject(in);
-            System.out.println(reader);
 
             // Only start loading json if success field is true
             if (isValid(reader)) {

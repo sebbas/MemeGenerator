@@ -40,5 +40,7 @@
 
     <dimen name="action_bar_height">56dp</dimen>
 
-    <dimen name="google_cards_padding">16dp</dimen>
+    <dimen name="google_cards_padding">6dp</dimen>
+    <dimen name="google_cards_padding_short">3dp</dimen>
+    <dimen name="google_cards_corner_radius">2dp</dimen>
 </resources>
