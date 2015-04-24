@@ -9,12 +9,14 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-public class SearchActivity extends ActionBarActivity implements ItemClickCallback {
+public class SearchActivity extends BaseActivity implements ItemClickCallback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
+
+        setCustomLollipopActionBar();
 
         // Set support toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);

@@ -18,6 +18,8 @@ public class JSONHandler {
     private ArrayList<Integer> mViewCounts = new ArrayList<>();
     private ArrayList<String> mImageUrls = new ArrayList<>();
     private ArrayList<String> mImageIds = new ArrayList<>();
+    private ArrayList<String> mImageTitles = new ArrayList<>();
+    private ArrayList<Integer> mTimeStamps = new ArrayList<>();
 
     public volatile boolean mParsingComplete = false;
     public volatile boolean mParsingSuccessful = false;
@@ -38,6 +40,14 @@ public class JSONHandler {
         return mImageIds;
     }
 
+    public ArrayList<String> getImageTitles() {
+        return mImageTitles;
+    }
+
+    public ArrayList<Integer> getTimeStamps() {
+        return mTimeStamps;
+    }
+
     @SuppressLint("NewApi")
     private void readAndParseJSON(String in) {
         try {
@@ -55,10 +65,14 @@ public class JSONHandler {
                         int views = image.getInt("views");
                         String imageUrl = image.getString("link");
                         String imageId = image.getString("id");
+                        String imageTitle = image.getString("title");
+                        int timeStamp = image.getInt("datetime");
 
                         mViewCounts.add(views);
                         mImageUrls.add(imageUrl);
                         mImageIds.add(imageId);
+                        mImageTitles.add(imageTitle);
+                        mTimeStamps.add(timeStamp);
                     }
                 }
                 mParsingSuccessful = true;

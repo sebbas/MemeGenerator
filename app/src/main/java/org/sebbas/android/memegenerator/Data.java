@@ -2,8 +2,10 @@ package org.sebbas.android.memegenerator;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -67,25 +69,16 @@ final class Data {
         }
     }
 
-    public static void saveSettings(int fragmentType, List<String> data, String key) {
+    public static ArrayList<String> getListString(int fragmentType, String key) {
         Context context = MemeGeneratorApplication.getAppContext();
         SharedPreferences preferences = context.getSharedPreferences(Integer.toString(fragmentType), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
-
-        Set<String> set = new HashSet<>();
-        set.addAll(data);
-        editor.putStringSet(key, set);
-        editor.commit();
+        return new ArrayList<>(Arrays.asList(TextUtils.split(preferences.getString(key, ""), "‚‗‚")));
     }
 
-    public static ArrayList<String> loadSettings(int fragmentType, String key) {
+    public static void putListString(int fragmentType, List<String> stringList, String key) {
         Context context = MemeGeneratorApplication.getAppContext();
         SharedPreferences preferences = context.getSharedPreferences(Integer.toString(fragmentType), Context.MODE_PRIVATE);
-        Set<String> set = preferences.getStringSet(key, null);
-
-        if (set == null) {
-            return new ArrayList<>();
-        }
-        return new ArrayList<>(set);
+        String[] myStringList = stringList.toArray(new String[stringList.size()]);
+        preferences.edit().putString(key, TextUtils.join("‚‗‚", myStringList)).apply();
     }
 }

@@ -3,16 +3,6 @@ package org.sebbas.android.memegenerator;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
-import android.os.Environment;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Utils {
 
@@ -50,21 +40,5 @@ public class Utils {
     public static String getImgurClientId() {
         return MemeGeneratorApplication.
                 getAppContext().getResources().getString(R.string.client_id);
-    }
-
-    public static List<String> toStringList(List<Integer> integerList) {
-        List<String> stringList = new ArrayList<String>(integerList.size());
-        for (Integer myInt : integerList) {
-            stringList.add(String.valueOf(myInt));
-        }
-        return stringList;
-    }
-
-    public static List<Integer> fromStringList(List<String> stringList) {
-        List<Integer> integerList = new ArrayList<Integer>(stringList.size());
-        for (String string : stringList) {
-            integerList.add(Integer.valueOf(string));
-        }
-        return integerList;
     }
 }

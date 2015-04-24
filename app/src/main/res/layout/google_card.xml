@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ Copyright 2014 Niek Haarman
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +24,20 @@
     android:padding="@dimen/google_cards_padding"
     tools:ignore="overdraw">
 
+    <TextView
+        android:id="@+id/card_image_title"
+        style="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fontFamily="sans-serif-light"
+        android:ellipsize="marquee"
+        android:singleLine="false"
+        android:maxLines="2"
+        android:minLines="2"
+        android:paddingBottom="@dimen/margin_extra_short"
+        android:textColor="?android:attr/textColorSecondary"
+        tools:ignore="UnusedAttribute" />
+
     <org.sebbas.android.memegenerator.SquaredImageView
         android:id="@+id/card_imageview"
         android:layout_width="match_parent"
@@ -39,6 +54,7 @@
         android:singleLine="false"
         android:maxLines="2"
         android:minLines="2"
+        android:paddingTop="@dimen/margin_extra_short"
         android:textColor="?android:attr/textColorSecondary"
         tools:ignore="UnusedAttribute" />
 

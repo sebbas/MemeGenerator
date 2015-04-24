@@ -17,7 +17,7 @@ import android.view.MenuItem;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayoutForIcons;
 
-public class MainActivity extends ActionBarActivity implements ItemClickCallback {
+public class MainActivity extends BaseActivity implements ItemClickCallback {
 
     private NonSwipeableViewPager mMainViewPager;
     private MainViewPagerAdapter mMainViewPagerAdapter;
@@ -33,11 +33,7 @@ public class MainActivity extends ActionBarActivity implements ItemClickCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Customize task bar which is visible in multitask mode in Android Lollipop
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            this.setTaskDescription(new ActivityManager.TaskDescription(
-                    null, null, getResources().getColor(R.color.primaryDark)));
-        }
+        setCustomLollipopActionBar();
 
         mMainViewPagerAdapter =  new MainViewPagerAdapter(
                 getSupportFragmentManager(), mIcons, mNumbOfTabs);

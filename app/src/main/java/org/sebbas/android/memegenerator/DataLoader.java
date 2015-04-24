@@ -1,29 +1,49 @@
 package org.sebbas.android.memegenerator;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class DataLoader {
 
-    private List<String> mImageUrls = new ArrayList<>();
-    private List<Integer> mViewCounts = new ArrayList<>();
-    private List<String> mImageIds = new ArrayList<>();
+    private List<String> mViewCounts;
+    private List<String> mImageUrls;
+    private List<String> mImageIds;
+    private List<String> mImageTitles;
+    private List<String> mTimeStamps;
+
+    private volatile boolean mParsingComplete = false;
+    private volatile boolean mParsingSuccessful = false;
+    private boolean mConnectionUnavailable = false;
+
+
     private DataLoaderCallback mDataLoaderCallback;
     private int mFragmentType;
-    private Fragment mFragment;
 
     public DataLoader(Fragment fragment, int fragmentType) {
         mFragmentType = fragmentType;
-        mFragment = fragment;
         mDataLoaderCallback = (DataLoaderCallback) fragment;
 
-        // Restore array lists from previous session
-        mViewCounts = Utils.fromStringList(Data.loadSettings(fragmentType, "viewCounts"));
-        mImageUrls = Data.loadSettings(fragmentType, "imageUrls");
-        mImageIds = Data.loadSettings(fragmentType, "imageIds");
+        // Restore array lists from previous session or if restore not possible (on startup) then get new lists
+        mViewCounts = Data.getListString(fragmentType, "viewCounts");
+        mImageUrls = Data.getListString(fragmentType, "imageUrls");
+        mImageIds = Data.getListString(fragmentType, "imageIds");
+        mImageTitles = Data.getListString(fragmentType, "imageTitles");
+        mTimeStamps = Data.getListString(fragmentType, "timeStamps");
     }
 
     public void loadData(String url) {
@@ -31,8 +51,8 @@ public class DataLoader {
         asyncLoader.execute(url);
     }
 
-    public int getViewCountAt(int position) {
-        int count = 0;
+    public String getViewCountAt(int position) {
+        String count = "";
         if (mViewCounts != null && mViewCounts.size() > position) {
             count = mViewCounts.get(position);
         }
@@ -47,12 +67,28 @@ public class DataLoader {
         return url;
     }
 
-    public String getImageId(int position) {
+    public String getImageIdAt(int position) {
         String imageId = "";
         if (mImageIds != null && mImageIds.size() > position) {
             imageId = mImageIds.get(position);
         }
         return imageId;
+    }
+
+    public String getImageTitleAt(int position) {
+        String imageTitle = "";
+        if (mImageTitles != null && mImageTitles.size() > position) {
+            imageTitle = mImageTitles.get(position);
+        }
+        return imageTitle;
+    }
+
+    public String getTimeStampAt(int position) {
+        String timeStamp = "";
+        if (mTimeStamps != null && mTimeStamps.size() > position) {
+            timeStamp = mTimeStamps.get(position);
+        }
+        return timeStamp;
     }
 
     public int getItemCount() {
@@ -65,41 +101,26 @@ public class DataLoader {
 
     private class AsyncLoader extends AsyncTask<String, Void, Void> {
 
-        private boolean mParsingSuccessful = false;
-        private boolean mConnectionUnavailable = false;
-
         @Override
         protected Void doInBackground(String... params) {
 
             if (Utils.isNetworkAvailable()) {
                 String url = params[0];
 
-                // Fetch the image data
-                JSONHandler jsonHandler = new JSONHandler(url);
-                jsonHandler.fetchJSON();
+                fetchJSON(url);
+                while (!mParsingComplete);
 
-                while (!jsonHandler.mParsingComplete) ;
-
-                // If parsing was successful, update array lists
-                if (jsonHandler.mParsingSuccessful) {
-
-                    mParsingSuccessful = jsonHandler.mParsingSuccessful;
-
-                    // Fill up all the lists
-                    mViewCounts = jsonHandler.getViewCounts();
-                    mImageUrls = jsonHandler.getImageUrls();
-                    mImageIds = jsonHandler.getImageIds();
-
+                if (mParsingSuccessful) {
                     // Save array lists for next session
-                    Data.saveSettings(mFragmentType, Utils.toStringList(mViewCounts), "viewCounts");
-                    Data.saveSettings(mFragmentType, mImageUrls, "imageUrls");
-                    Data.saveSettings(mFragmentType, mImageIds, "imageIds");
-
+                    Data.putListString(mFragmentType, mViewCounts, "viewCounts");
+                    Data.putListString(mFragmentType, mImageUrls, "imageUrls");
+                    Data.putListString(mFragmentType, mImageIds, "imageIds");
+                    Data.putListString(mFragmentType, mImageTitles, "imageTitles");
+                    Data.putListString(mFragmentType, mTimeStamps, "timeStamps");
                 }
             } else {
                 mConnectionUnavailable = true;
             }
-
             return null;
         }
 
@@ -115,6 +136,111 @@ public class DataLoader {
                 mDataLoaderCallback.onDataLoadSuccessful();
             }
         }
+    }
+
+    private void fetchJSON(String urlString) {
+        try {
+            OkHttpClient okHttpClient = new OkHttpClient();
+            okHttpClient.setConnectTimeout(15, TimeUnit.SECONDS); // connect timeout
+            okHttpClient.setReadTimeout(15, TimeUnit.SECONDS);    // socket timeout
+
+            Request request = new Request.Builder()
+                    .url(urlString)
+                    .addHeader("Authorization", "Client-ID " + Utils.getImgurClientId())
+                    .build();
+
+            Response response = okHttpClient.newCall(request).execute();
+            if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+            InputStream stream = response.body().byteStream();
+            String data = convertStreamToString(stream);
+
+            readAndParseJSON(data);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            mParsingComplete = true;
+            mParsingSuccessful = false;
+        }
+    }
+
+    private static String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
+    }
+
+    @SuppressLint("NewApi")
+    private void readAndParseJSON(String in) {
+        try {
+            JSONObject reader = new JSONObject(in);
+            System.out.println(reader);
+
+            // Only start loading json if success field is true
+            if (isValid(reader)) {
+                JSONArray data = reader.getJSONArray("data");
+                parseJsonArray(data);
+                mParsingSuccessful = true;
+            } else {
+                mParsingSuccessful = false;
+            }
+            mParsingComplete = true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void parseJsonArray(JSONArray data) throws JSONException {
+
+        mViewCounts = new ArrayList<>();
+        mImageUrls = new ArrayList<>();
+        mImageIds = new ArrayList<>();
+        mImageTitles = new ArrayList<>();
+        mTimeStamps = new ArrayList<>();
+
+        for (int i = 0; i < data.length(); i++) {
+            JSONObject image = data.getJSONObject(i);
+
+            // Only look at json objects that represent images
+            if (!isAlbum(image) && !isAnimated(image)) {
+                String views = Integer.toString(image.getInt("views"));
+                String imageUrl = image.getString("link");
+                String imageId = image.getString("id");
+                String imageTitle = image.getString("title");
+                String timeStamp = Integer.toString(image.getInt("datetime"));
+
+                mViewCounts.add(views);
+
+                mImageUrls.add(imageUrl);
+
+                mImageIds.add(imageId);
+
+                mImageTitles.add(imageTitle);
+
+                mTimeStamps.add(timeStamp);
+            }
+        }
+    }
+
+    private boolean isAlbum(JSONObject image) throws JSONException {
+        boolean isAlbum = false;
+        try {
+            isAlbum = image.getBoolean("is_album");
+        } finally {
+            return isAlbum;
+        }
+    }
+
+    private boolean isAnimated(JSONObject image) throws JSONException {
+        boolean isAnimated = false;
+        try {
+            isAnimated = image.getBoolean("animated");
+        } finally {
+            return isAnimated;
+        }
+    }
+
+    private boolean isValid(JSONObject reader) throws JSONException {
+        return reader.getBoolean("success");
     }
 
 }

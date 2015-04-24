@@ -63,11 +63,14 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     public void onBindViewHolder(final ViewHolder viewHolder, int position) {
 
         // Get an updated image over the network and replace the just set thumbnail with it
-        int viewCount = mDataLoader.getViewCountAt(position);
+        String viewCount = mDataLoader.getViewCountAt(position);
         String imageUrl = mDataLoader.getImageUrlAt(position);
-        String imageId = mDataLoader.getImageId(position);
+        String imageId = mDataLoader.getImageIdAt(position);
+        String imageTitle = mDataLoader.getImageTitleAt(position);
+        String timeStamp = mDataLoader.getTimeStampAt(position);
 
-        viewHolder.textView.setText(Integer.toString(viewCount) + " " + mViewsString);
+        viewHolder.textViewViewCount.setText(viewCount + " " + mViewsString);
+        viewHolder.textViewImageTitle.setText(imageTitle);
 
         PicassoCache.getPicassoInstance(mContext)
                 .load(Utils.getThumbnailUrl(imageUrl, imageId, Data.THUMBNAIL_SIZE))
@@ -80,15 +83,21 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView textView;
+        TextView textViewViewCount;
         ImageView imageView;
+        TextView textViewImageTitle;
+        TextView textViewTimeStamp;
+
         ViewHolderCalback mViewHolderCallback;
 
         public ViewHolder(View view, ViewHolderCalback viewHolderCalback) {
             super(view);
             view.setOnClickListener(this);
-            textView = (TextView) view.findViewById(R.id.card_view_count);
+
+            textViewViewCount = (TextView) view.findViewById(R.id.card_view_count);
             imageView = (ImageView) view.findViewById(R.id.card_imageview);
+            textViewImageTitle = (TextView) view.findViewById(R.id.card_image_title);
+
             mViewHolderCallback = viewHolderCalback;
         }
 

@@ -30,9 +30,6 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 public abstract class BaseFragment extends Fragment {
-    public static ArrayList<String> getDummyData() {
-        return BaseActivity.getDummyData();
-    }
 
     protected int getActionBarSize() {
         Activity activity = getActivity();

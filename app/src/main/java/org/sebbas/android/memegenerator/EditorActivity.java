@@ -12,7 +12,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
-public class EditorActivity extends ActionBarActivity {
+public class EditorActivity extends BaseActivity {
 
     private String mImageUrl;
     private ImageView mMemeImage;
@@ -22,6 +22,8 @@ public class EditorActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editor);
+
+        setCustomLollipopActionBar();
 
         mImageUrl = getIntent().getStringExtra("imageUrl");
         mMemeImage = (ImageView) findViewById(R.id.card_imageview);
