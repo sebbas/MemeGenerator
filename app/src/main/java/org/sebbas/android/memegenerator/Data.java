@@ -12,10 +12,6 @@ import java.util.Set;
 
 final class Data {
 
-    static final String THUMBNAIL_SIZE_LIST = "t";
-    static final String THUMBNAIL_SIZE_CARD = "l";
-
-
     // Base url
     private static final String BASE = "https://api.imgur.com/3/g/memes/";
     private static final String BASE_SEARCH = "https://api.imgur.com/3/gallery/search/";

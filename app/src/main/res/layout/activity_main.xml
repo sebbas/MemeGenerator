@@ -28,10 +28,10 @@
             android:layout_height="4dp"
             android:id="@+id/footer_shadow"
             android:background="@drawable/footer_shadow"
-            android:layout_above="@+id/sliding_tabs"/>
+            android:layout_above="@+id/main_tabs"/>
 
         <com.google.samples.apps.iosched.ui.widget.SlidingTabLayoutForIcons
-            android:id="@+id/sliding_tabs"
+            android:id="@+id/main_tabs"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tab_height"
             android:background="?attr/colorPrimary"/>

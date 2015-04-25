@@ -16,7 +16,6 @@
 
 package org.sebbas.android.memegenerator;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -26,16 +25,18 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
+import com.tonicartos.superslim.LayoutManager;
+
 
 public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener {
@@ -49,6 +50,11 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
     static final int WINDOW_ALL = 6;
     static final int QUERY = 7;
     static final int DEFAULTS = 8;
+    static final int MY_MEMES = 9;
+    static final int RECENT = 10;
+    static final int FAVORITE_TEMPLATES = 11;
+    static final int FAVORITE_INSTANCES = 12;
+    static final int SEARCH = 13;
 
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
     private SimpleRecyclerAdapter mSimpleRecyclerAdapter;
@@ -103,7 +109,6 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
         mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
 
-        mRecyclerView.setAdapter(mSimpleRecyclerAdapter);
         return view;
     }
 
@@ -111,16 +116,18 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Activity parentActivity = getActivity();
+        final MainActivity parentActivity = (MainActivity) getActivity();
+
+        mRecyclerView.setAdapter(mSimpleRecyclerAdapter);
 
         mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
         switch (mLayoutMode) {
             case UIOptions.GRID_LAYOUT:
-                mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, UIOptions.getGridColumnCount()));
+                mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(UIOptions.getGridColumnCount(), StaggeredGridLayoutManager.VERTICAL));
                 break;
             case UIOptions.LIST_LAYOUT:
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
+                mRecyclerView.setLayoutManager(new LayoutManager(parentActivity));
                 break;
             case UIOptions.CARD_LAYOUT:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
@@ -132,14 +139,6 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         if (parentActivity instanceof ObservableScrollViewCallbacks) {
             mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
         }
-
-        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                //mDataLoader.loadData(getNextPageDataUrl());
-            }
-        });
 
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.accent);
         mSwipeRefreshLayout.setOnRefreshListener(this);
@@ -166,7 +165,7 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
     private Fragment getCurrentFragmentFromViewPager() {
         ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.meme_pager);
         int index = viewPager.getCurrentItem();
-        SlidingTabsFragment.FragmentAdapter adapter = ((SlidingTabsFragment.FragmentAdapter)
+        SlidingTabsFragment.SlidingTabsFragmentAdapter adapter = ((SlidingTabsFragment.SlidingTabsFragmentAdapter)
                 viewPager.getAdapter());
         ViewPagerRecyclerViewFragment fragment = (ViewPagerRecyclerViewFragment)
                 adapter.getFragment(index);

@@ -59,11 +59,10 @@ public class SearchActivity extends BaseActivity implements ItemClickCallback {
             getSupportActionBar().setTitle(toolbarTitle);
 
             // Create a fragment that loads the query and data
+            int id = ViewPagerRecyclerViewFragment.SEARCH;
+            int layout = UIOptions.getLayoutMode(id);
             ViewPagerRecyclerViewFragment searchContainer =
-                    ViewPagerRecyclerViewFragment.newInstance(
-                            ViewPagerRecyclerViewFragment.QUERY,
-                            UIOptions.getLayoutMode(this),
-                            query);
+                    ViewPagerRecyclerViewFragment.newInstance(id, layout, query);
 
             // Finally add the search container to the UI
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

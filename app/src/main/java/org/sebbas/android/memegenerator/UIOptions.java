@@ -1,9 +1,9 @@
 package org.sebbas.android.memegenerator;
 
-import android.support.v4.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
-
 public class UIOptions {
+
+    static final String THUMBNAIL_SIZE_LIST = "m";
+    static final String THUMBNAIL_SIZE_CARD = "l";
 
     // Meme fragment recycler view layout
     static final int GRID_LAYOUT = 0;
@@ -12,21 +12,35 @@ public class UIOptions {
 
     private static final int GRID_COLUMN_COUNT = 2;
 
-    public static int getLayoutMode(ActionBarActivity activity) {
-        if (activity instanceof SearchActivity) {
-            return LIST_LAYOUT;
+    public static int getLayoutMode(int id) {
+        switch (id) {
+            case ViewPagerRecyclerViewFragment.VIRAL:
+                return CARD_LAYOUT;
+            case ViewPagerRecyclerViewFragment.TIME:
+                return CARD_LAYOUT;
+            case ViewPagerRecyclerViewFragment.WINDOW_DAY:
+                return CARD_LAYOUT;
+            case ViewPagerRecyclerViewFragment.WINDOW_WEEK:
+                return CARD_LAYOUT;
+            case ViewPagerRecyclerViewFragment.WINDOW_MONTH:
+                return CARD_LAYOUT;
+            case ViewPagerRecyclerViewFragment.WINDOW_YEAR:
+                return CARD_LAYOUT;
+            case ViewPagerRecyclerViewFragment.WINDOW_ALL:
+                return CARD_LAYOUT;
+            case ViewPagerRecyclerViewFragment.DEFAULTS:
+                return LIST_LAYOUT;
+            case ViewPagerRecyclerViewFragment.MY_MEMES:
+                return LIST_LAYOUT;
+            case ViewPagerRecyclerViewFragment.RECENT:
+                return LIST_LAYOUT;
+            case ViewPagerRecyclerViewFragment.FAVORITE_TEMPLATES:
+                return LIST_LAYOUT;
+            case ViewPagerRecyclerViewFragment.FAVORITE_INSTANCES:
+                return LIST_LAYOUT;
+            default:
+                return LIST_LAYOUT;
         }
-        return LIST_LAYOUT;
-    }
-
-    public static int getLayoutMode(Fragment fragment) {
-        if (fragment instanceof SimpleFragment) {
-            return LIST_LAYOUT;
-        }
-        if (fragment instanceof SlidingTabsFragment) {
-            return CARD_LAYOUT;
-        }
-        return LIST_LAYOUT;
     }
 
     public static int getGridColumnCount() {
