@@ -20,6 +20,7 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,6 @@ import android.widget.TextView;
 import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.squareup.picasso.Transformation;
 import com.tonicartos.superslim.GridSLM;
-import com.tonicartos.superslim.LayoutManager;
 import com.tonicartos.superslim.LinearSLM;
 
 import java.util.ArrayList;
@@ -37,6 +37,7 @@ import java.util.ArrayList;
 
 public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAdapter.MainViewHolder> {
 
+    private static final String TAG = "SimpleRecyclerAdapter";
     private static final int VIEW_TYPE_HEADER = 1;
     private static final int VIEW_TYPE_CONTENT = 0;
 
@@ -58,32 +59,8 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         // String resources for google cards
         mViewsString = mContext.getResources().getString(R.string.image_views);
 
-        // Insert headers into list of items.
-        String lastHeader = "";
-        int sectionManager = -1;
-        int headerCount = 0;
-        int sectionFirstPosition = 0;
-        for (int i = 0; i < dataLoader.getItemCount(); i++) {
-
-            // Get some information (used for regular and/or header items)
-            String title = dataLoader.getImageTitleAt(i);
-            String header = title.substring(0, 1);
-            String imageUrl = dataLoader.getImageUrlAt(i);
-            String imageId = dataLoader.getImageIdAt(i);
-            String viewCount = dataLoader.getViewCountAt(i);
-            String timeStamp = dataLoader.getTimeStampAt(i);
-
-            if (!TextUtils.equals(lastHeader, header) && mLayoutMode == UIOptions.LIST_LAYOUT) {
-                // Insert new header view and update section data.
-                sectionManager = (sectionManager + 1) % 2;
-                sectionFirstPosition = i + headerCount;
-                lastHeader = header;
-                headerCount += 1;
-                mLineItems.add(new LineItem(header, true, sectionManager, sectionFirstPosition));
-            }
-            mLineItems.add(new LineItem(title, imageUrl, imageId, viewCount, timeStamp, false,
-                    sectionManager, sectionFirstPosition));
-        }
+        // Fill up array list of line items with data from dataloader
+        getLineItems();
     }
 
     @Override
@@ -102,11 +79,15 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         MainViewHolder.ViewHolderCalback mainViewHolderCallback = new MainViewHolder.ViewHolderCalback() {
             @Override
             public void onItemClick(int position) {
-                ((ItemClickCallback) mContext).onItemClick(position, mDataLoader);
+                // Only trigger click event for content items
+                if (getItemViewType(position) == VIEW_TYPE_CONTENT) {
+                    ((ItemClickCallback) mContext).onItemClick(position, mLineItems);
+                }
             }
         };
 
         View view;
+
         switch (mLayoutMode) {
             case UIOptions.LIST_LAYOUT:
                 if (viewType == VIEW_TYPE_HEADER) {
@@ -133,39 +114,35 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         final LineItem item = mLineItems.get(position);
         final View itemView = viewHolder.itemView;
 
-        viewHolder.textViewTitle.setText(item.mTitle);
-
-
-        if (mLayoutMode == UIOptions.LIST_LAYOUT) {
-
-            if (getItemViewType(position) == VIEW_TYPE_CONTENT) {
-
-                Transformation transformation = new RoundedTransformationBuilder()
-                        .oval(true)
-                        .build();
-
-                PicassoCache.getPicassoInstance(mContext)
-                        .load(item.mImageUrl)//(Utils.getThumbnailUrl(item.mImageUrl, item.mImageId, UIOptions.THUMBNAIL_SIZE_LIST))
-                        .placeholder(R.color.invisible)
-                        .error(android.R.color.holo_red_dark)
-                        .fit()
-                        .transform(transformation)
-                        .centerCrop()
-                        .tag(mContext)
-                        .into(viewHolder.imageView);
-            }
-        }
-
         final GridSLM.LayoutParams lp = new GridSLM.LayoutParams(itemView.getLayoutParams());
         lp.setSlm(LinearSLM.ID);
         lp.setFirstPosition(item.mSectionFirstPosition);
         itemView.setLayoutParams(lp);
 
+        viewHolder.textViewTitle.setText(item.mTitle);
+
+        if (mLayoutMode == UIOptions.LIST_LAYOUT && getItemViewType(position) == VIEW_TYPE_CONTENT) {
+
+            Transformation transformation = new RoundedTransformationBuilder()
+                    .oval(true)
+                    .build();
+
+            PicassoCache.getPicassoInstance(mContext)
+                    .load(Utils.getThumbnailUrl(item.mImageUrl, item.mImageId, UIOptions.THUMBNAIL_SIZE_LIST))
+                    .placeholder(R.color.invisible)
+                    .error(android.R.color.holo_red_dark)
+                    .fit()
+                    .transform(transformation)
+                    .centerCrop()
+                    .tag(mContext)
+                    .into(viewHolder.imageView);
+        }
+
         if (mLayoutMode == UIOptions.CARD_LAYOUT) {
             CardViewHolder cardViewHolder = (CardViewHolder) viewHolder;
 
             PicassoCache.getPicassoInstance(mContext)
-                    .load(item.mImageUrl)//(Utils.getThumbnailUrl(item.mImageUrl, item.mImageId, UIOptions.THUMBNAIL_SIZE_CARD))
+                    .load(Utils.getThumbnailUrl(item.mImageUrl, item.mImageId, UIOptions.THUMBNAIL_SIZE_CARD))
                     .placeholder(android.R.color.holo_blue_bright)
                     .error(android.R.color.holo_red_dark)
                     .tag(mContext)
@@ -240,7 +217,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         }
     }
 
-    private static class LineItem {
+    static class LineItem {
 
         public int mSectionManager;
         public int mSectionFirstPosition;
@@ -275,4 +252,33 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         }
     }
 
+    public void getLineItems() {
+        // Insert headers into list of items.
+        String lastHeader = "";
+        int sectionManager = -1;
+        int headerCount = 0;
+        int sectionFirstPosition = 0;
+
+        for (int i = 0; i < mDataLoader.getItemCount(); i++) {
+
+            // Get some information (used for regular and/or header items)
+            String title = mDataLoader.getImageTitleAt(i);
+            String header = Utils.getHeaderTitle(title);
+            String imageUrl = mDataLoader.getImageUrlAt(i);
+            String imageId = mDataLoader.getImageIdAt(i);
+            String viewCount = mDataLoader.getViewCountAt(i);
+            String timeStamp = mDataLoader.getTimeStampAt(i);
+
+            if (!TextUtils.equals(lastHeader, header) && mLayoutMode == UIOptions.LIST_LAYOUT) {
+                // Insert new header view and update section data.
+                sectionManager = (sectionManager + 1) % 2;
+                sectionFirstPosition = i + headerCount;
+                lastHeader = header;
+                headerCount += 1;
+                mLineItems.add(new LineItem(header, true, sectionManager, sectionFirstPosition));
+            }
+            mLineItems.add(new LineItem(title, imageUrl, imageId, viewCount, timeStamp, false,
+                    sectionManager, sectionFirstPosition));
+        }
+    }
 }

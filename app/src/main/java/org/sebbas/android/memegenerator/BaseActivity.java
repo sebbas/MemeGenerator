@@ -53,4 +53,5 @@ public abstract class BaseActivity extends ActionBarActivity {
                     null, null, getResources().getColor(R.color.primaryDark)));
         }
     }
+
 }

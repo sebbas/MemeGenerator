@@ -40,31 +40,28 @@ final class Data {
     static final String getUrlForData(int pageIndex, int urlType) {
         switch (urlType) {
             case ViewPagerRecyclerViewFragment.VIRAL:
-                System.out.println("Called viral");
                 return BASE + SORT_VIRAL + pageIndex;
             case ViewPagerRecyclerViewFragment.TIME:
-                System.out.println("Called new");
                 return BASE + SORT_TIME + pageIndex;
             case ViewPagerRecyclerViewFragment.WINDOW_DAY:
-                System.out.println("Called day");
                 return BASE + SORT_TOP + WINDOW_DAY + pageIndex;
             case ViewPagerRecyclerViewFragment.WINDOW_WEEK:
-                System.out.println("Called week");
                 return BASE + SORT_TOP + WINDOW_WEEK + pageIndex;
             case ViewPagerRecyclerViewFragment.WINDOW_MONTH:
-                System.out.println("Called month");
                 return BASE + SORT_TOP + WINDOW_MONTH + pageIndex;
             case ViewPagerRecyclerViewFragment.WINDOW_YEAR:
-                System.out.println("Called year");
                 return BASE + SORT_TOP + WINDOW_YEAR + pageIndex;
             case ViewPagerRecyclerViewFragment.WINDOW_ALL:
-                System.out.println("Called all");
                 return BASE + SORT_TOP + WINDOW_ALL + pageIndex;
             case ViewPagerRecyclerViewFragment.DEFAULTS:
                 return BASE_DEFAULTS;
             default:
                 return BASE + SORT_TOP + WINDOW_DAY + pageIndex;
         }
+    }
+
+    static final String getUrlForEditor(String imageId) {
+        return BASE + imageId;
     }
 
     public static ArrayList<String> getListString(int fragmentType, String key) {

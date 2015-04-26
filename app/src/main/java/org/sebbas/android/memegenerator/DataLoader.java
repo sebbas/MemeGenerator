@@ -1,8 +1,10 @@
 package org.sebbas.android.memegenerator;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -20,6 +22,8 @@ import java.util.concurrent.TimeUnit;
 
 public class DataLoader {
 
+    private static final String TAG = "DataLoader";
+
     private List<String> mViewCounts;
     private List<String> mImageUrls;
     private List<String> mImageIds;
@@ -34,6 +38,10 @@ public class DataLoader {
     private DataLoaderCallback mDataLoaderCallback;
     private int mFragmentType;
 
+    public DataLoader(Activity activity) {
+        mDataLoaderCallback = (DataLoaderCallback) activity;
+    }
+
     public DataLoader(Fragment fragment, int fragmentType) {
         mFragmentType = fragmentType;
         mDataLoaderCallback = (DataLoaderCallback) fragment;
@@ -46,7 +54,7 @@ public class DataLoader {
         mTimeStamps = Data.getListString(fragmentType, "timeStamps");
     }
 
-    public void loadData(String url) {
+    public void load(String url) {
         AsyncLoader asyncLoader = new AsyncLoader();
         asyncLoader.execute(url);
     }
@@ -119,6 +127,7 @@ public class DataLoader {
                     Data.putListString(mFragmentType, mImageIds, "imageIds");
                     Data.putListString(mFragmentType, mImageTitles, "imageTitles");
                     Data.putListString(mFragmentType, mTimeStamps, "timeStamps");
+
                 }
             } else {
                 mConnectionUnavailable = true;
@@ -174,6 +183,7 @@ public class DataLoader {
     private void readAndParseJSON(String in) {
         try {
             JSONObject reader = new JSONObject(in);
+            //Log.d(TAG, in);
 
             // Only start loading json if success field is true
             if (isValid(reader)) {
@@ -210,14 +220,32 @@ public class DataLoader {
                 String timeStamp = Integer.toString(image.getInt("datetime"));
 
                 mViewCounts.add(views);
-
                 mImageUrls.add(imageUrl);
-
                 mImageIds.add(imageId);
-
                 mImageTitles.add(imageTitle);
-
                 mTimeStamps.add(timeStamp);
+
+
+
+                /*if (!mViewCounts.contains(views)) {
+                    mViewCounts.add(views);
+                }
+
+                if (!mImageUrls.contains(imageUrl)) {
+                    mImageUrls.add(imageUrl);
+                }
+
+                if (!mImageIds.contains(imageId)) {
+                    mImageIds.add(imageId);
+                }
+
+                if (!mImageTitles.contains(imageTitle)) {
+                    mImageTitles.add(imageTitle);
+                }
+
+                if (!mTimeStamps.contains(timeStamp)) {
+                    mTimeStamps.add(timeStamp);
+                }*/
             }
         }
     }

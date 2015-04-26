@@ -9,6 +9,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
+
 public class SearchActivity extends BaseActivity implements ItemClickCallback {
 
     @Override
@@ -41,10 +43,11 @@ public class SearchActivity extends BaseActivity implements ItemClickCallback {
     }
 
     @Override
-    public void onItemClick(int position, DataLoader dataLoader) {
+    public void onItemClick(int position, ArrayList<SimpleRecyclerAdapter.LineItem> lineItems) {
         Intent editorIntent = new Intent(this, EditorActivity.class);
 
-        String imageUrl = dataLoader.getImageUrlAt(position);
+        SimpleRecyclerAdapter.LineItem lineItem = lineItems.get(position);
+        String imageUrl = lineItem.mImageUrl;
 
         editorIntent.putExtra("imageUrl", imageUrl);
         startActivityForResult(editorIntent, 1);

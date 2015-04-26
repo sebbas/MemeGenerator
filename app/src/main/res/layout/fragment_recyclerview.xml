@@ -35,7 +35,6 @@
             android:layout_centerInParent="true"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:visibility="gone"
             app:cpv_indeterminate="true"
             app:cpv_thickness="3dp"
             app:cpv_color="@color/accent"/>

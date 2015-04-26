@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayoutForIcons;
 
+import java.util.ArrayList;
+
 public class MainActivity extends BaseActivity implements ItemClickCallback {
 
     private NonSwipeableViewPager mMainViewPager;
@@ -78,10 +80,12 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
     }
 
     @Override
-    public void onItemClick(int position, DataLoader dataLoader) {
+    public void onItemClick(int position, ArrayList<SimpleRecyclerAdapter.LineItem> lineItems) {
         Intent editorIntent = new Intent(this, EditorActivity.class);
 
-        String imageUrl = dataLoader.getImageUrlAt(position);
+        SimpleRecyclerAdapter.LineItem lineItem = lineItems.get(position);
+        String imageUrl = lineItem.mImageUrl;
+
 
         editorIntent.putExtra("imageUrl", imageUrl);
         startActivityForResult(editorIntent, 1);

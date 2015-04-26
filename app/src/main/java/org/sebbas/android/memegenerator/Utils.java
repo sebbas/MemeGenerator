@@ -1,8 +1,11 @@
 package org.sebbas.android.memegenerator;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.view.Display;
+import android.view.WindowManager;
 
 public class Utils {
 
@@ -40,5 +43,14 @@ public class Utils {
     public static String getImgurClientId() {
         return MemeGeneratorApplication.
                 getAppContext().getResources().getString(R.string.client_id);
+    }
+
+    public static String getHeaderTitle(String title) {
+        String firstLetter = title.substring(0, 1);
+        if (firstLetter.matches("[a-zA-Z]")) {
+            return firstLetter;
+        } else {
+            return "#";
+        }
     }
 }

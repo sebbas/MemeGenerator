@@ -24,7 +24,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -96,8 +95,7 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
             mLayoutMode = getArguments().getInt("layout_mode");
             mPageIndex = 0;
             mDataLoader = new DataLoader(this, mFragmentType);
-            mDataLoader.loadData(getCurrentPageDataUrl());
-            mSimpleRecyclerAdapter = new SimpleRecyclerAdapter(this, mDataLoader);
+            mDataLoader.load(getCurrentPageDataUrl());
         }
     }
 
@@ -108,6 +106,7 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
         mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
+        mSimpleRecyclerAdapter = new SimpleRecyclerAdapter(this, mDataLoader);
 
         return view;
     }
@@ -117,9 +116,9 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         super.onViewCreated(view, savedInstanceState);
 
         final MainActivity parentActivity = (MainActivity) getActivity();
+        setupSwipeRefreshLayout();
 
         mRecyclerView.setAdapter(mSimpleRecyclerAdapter);
-
         mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
         switch (mLayoutMode) {
@@ -140,9 +139,18 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
             mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
         }
 
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.accent);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setSwipeableChildren(R.id.scroll);
+    }
+
+    private void setupSwipeRefreshLayout() {
+        switch (mFragmentType) {
+            /*case ViewPagerRecyclerViewFragment.DEFAULTS:
+                mSwipeRefreshLayout.setEnabled(false);
+                break;*/
+            default:
+                mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.accent);
+                mSwipeRefreshLayout.setOnRefreshListener(this);
+                mSwipeRefreshLayout.setSwipeableChildren(R.id.scroll);
+        }
     }
 
     @Override
@@ -150,7 +158,7 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mDataLoader.loadData(getCurrentPageDataUrl());
+                mDataLoader.load(getCurrentPageDataUrl());
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         }, 2000);
@@ -158,8 +166,10 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
 
     @Override
     public void onDataLoadSuccessful() {
-        //mCircularProgressView.setVisibility(View.GONE);
+        mCircularProgressView.setVisibility(View.GONE);
+        mSimpleRecyclerAdapter.getLineItems();
         mSimpleRecyclerAdapter.notifyDataSetChanged();
+
     }
 
     private Fragment getCurrentFragmentFromViewPager() {
@@ -200,6 +210,11 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         }
     }
 
+    @Override
+    public void onDataLoadItemSuccessful(int position) {
+        mSimpleRecyclerAdapter.notifyItemInserted(position);
+    }
+
     private void showConnectionUnavailableNotification() {
         new SnackBar.Builder(this.getActivity())
                 .withOnClickListener(this)
@@ -222,7 +237,7 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
 
     @Override
     public void onMessageClick(Parcelable parcelable) {
-        mDataLoader.loadData(getCurrentPageDataUrl());
+        mDataLoader.load(getCurrentPageDataUrl());
     }
 
     private String getCurrentPageDataUrl() {
