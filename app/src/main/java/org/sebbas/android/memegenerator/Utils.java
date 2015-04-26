@@ -9,6 +9,8 @@ import android.view.WindowManager;
 
 public class Utils {
 
+    public static final int REFRESH_ICON_TIME_SHOWN = 2000;
+
     private Utils() {
         // No instances
     }
@@ -26,15 +28,18 @@ public class Utils {
     }
 
     /*
-     * Returns your personal client id for imgur. The file with my client id was
+     * Returns your personal client id for imgur. The file with my own client id was
      * omitted on purpose for security reasons.
      *
      * For this to work for you, you have to add your personal imgur client id to the
      * string resources in this project.
      *
-     * You can do so by creating a new file "imgur.xml" under /res/values containing the following:
+     * You can do so by creating a new file "imgur.xml" under /res/values which could
+     * contain the following:
      *
      * <?xml version="1.0" encoding="utf-8"?><resources><item name="client_id" type="string">your_client_id</item></resources>
+     *
+     * Remember to replace 'your_client_id' with your actual imgur client id :)
      *
      * If you plan to share (e.g on Github) your fork of this project, you should consider
      * placing the file "imgur.xml" in your '.gitignore'. That way your client id will not

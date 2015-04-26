@@ -24,6 +24,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,7 +60,7 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
     private SimpleRecyclerAdapter mSimpleRecyclerAdapter;
     private CircularProgressView mCircularProgressView;
     private ObservableRecyclerView mRecyclerView;
-    private DataLoader mDataLoader;
+    //private DataLoader mDataLoader;
     private int mFragmentType;
     private int mLayoutMode;
     private int mPageIndex;
@@ -94,8 +95,8 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
             mFragmentType = getArguments().getInt("fragment_type");
             mLayoutMode = getArguments().getInt("layout_mode");
             mPageIndex = 0;
-            mDataLoader = new DataLoader(this, mFragmentType);
-            mDataLoader.load(getCurrentPageDataUrl());
+            //mDataLoader = new DataLoader(this, mFragmentType);
+            //mDataLoader.load(getCurrentPageDataUrl());
         }
     }
 
@@ -106,7 +107,6 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
         mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
-        mSimpleRecyclerAdapter = new SimpleRecyclerAdapter(this, mDataLoader);
 
         return view;
     }
@@ -115,42 +115,9 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        final MainActivity parentActivity = (MainActivity) getActivity();
+        setupRecyclerView();
+        checkAdapterIsEmpty();
         setupSwipeRefreshLayout();
-
-        mRecyclerView.setAdapter(mSimpleRecyclerAdapter);
-        mRecyclerView.setHasFixedSize(false);
-        mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
-        switch (mLayoutMode) {
-            case UIOptions.GRID_LAYOUT:
-                mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(UIOptions.getGridColumnCount(), StaggeredGridLayoutManager.VERTICAL));
-                break;
-            case UIOptions.LIST_LAYOUT:
-                mRecyclerView.setLayoutManager(new LayoutManager(parentActivity));
-                break;
-            case UIOptions.CARD_LAYOUT:
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
-                break;
-            default:
-                mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, UIOptions.getGridColumnCount()));
-        }
-
-        if (parentActivity instanceof ObservableScrollViewCallbacks) {
-            mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
-        }
-
-    }
-
-    private void setupSwipeRefreshLayout() {
-        switch (mFragmentType) {
-            /*case ViewPagerRecyclerViewFragment.DEFAULTS:
-                mSwipeRefreshLayout.setEnabled(false);
-                break;*/
-            default:
-                mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.accent);
-                mSwipeRefreshLayout.setOnRefreshListener(this);
-                mSwipeRefreshLayout.setSwipeableChildren(R.id.scroll);
-        }
     }
 
     @Override
@@ -158,18 +125,16 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mDataLoader.load(getCurrentPageDataUrl());
+                mSimpleRecyclerAdapter.refreshData();
+                //mDataLoader.load(getCurrentPageDataUrl());
                 mSwipeRefreshLayout.setRefreshing(false);
             }
-        }, 2000);
+        }, Utils.REFRESH_ICON_TIME_SHOWN);
     }
 
     @Override
     public void onDataLoadSuccessful() {
-        mCircularProgressView.setVisibility(View.GONE);
-        mSimpleRecyclerAdapter.getLineItems();
-        mSimpleRecyclerAdapter.notifyDataSetChanged();
-
+        mSimpleRecyclerAdapter.refreshUI();
     }
 
     private Fragment getCurrentFragmentFromViewPager() {
@@ -210,11 +175,6 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         }
     }
 
-    @Override
-    public void onDataLoadItemSuccessful(int position) {
-        mSimpleRecyclerAdapter.notifyItemInserted(position);
-    }
-
     private void showConnectionUnavailableNotification() {
         new SnackBar.Builder(this.getActivity())
                 .withOnClickListener(this)
@@ -237,27 +197,69 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
 
     @Override
     public void onMessageClick(Parcelable parcelable) {
-        mDataLoader.load(getCurrentPageDataUrl());
+        //mDataLoader.load(getCurrentPageDataUrl());
+        mSimpleRecyclerAdapter.refreshData();
     }
 
-    private String getCurrentPageDataUrl() {
-        if (mFragmentType == ViewPagerRecyclerViewFragment.QUERY) {
-            System.out.println(Data.getUrlForQuery(mPageIndex, mQuery));
-            return Data.getUrlForQuery(mPageIndex, mQuery);
+    private void checkAdapterIsEmpty () {
+        if (mSimpleRecyclerAdapter.getItemCount() == 0) {
+            mCircularProgressView.setVisibility(View.VISIBLE);
+        } else {
+            mCircularProgressView.setVisibility(View.GONE);
         }
-        return Data.getUrlForData(mPageIndex, mFragmentType);
     }
 
-    private String getNextPageDataUrl() {
-        mPageIndex = mPageIndex++;
-        if (mFragmentType == ViewPagerRecyclerViewFragment.QUERY) {
-            return Data.getUrlForQuery(mPageIndex, mQuery);
+    protected void setupRecyclerView() {
+        mSimpleRecyclerAdapter = new SimpleRecyclerAdapter(this);
+
+        mSimpleRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                checkAdapterIsEmpty();
+            }
+        });
+
+        final MainActivity parentActivity = (MainActivity) getActivity();
+
+        mRecyclerView.setAdapter(mSimpleRecyclerAdapter);
+        mRecyclerView.setHasFixedSize(false);
+        mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
+        switch (mLayoutMode) {
+            case UIOptions.GRID_LAYOUT:
+                mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(UIOptions.getGridColumnCount(), StaggeredGridLayoutManager.VERTICAL));
+                break;
+            case UIOptions.LIST_LAYOUT:
+                mRecyclerView.setLayoutManager(new LayoutManager(parentActivity));
+                break;
+            case UIOptions.CARD_LAYOUT:
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
+                break;
+            default:
+                mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, UIOptions.getGridColumnCount()));
         }
-        return Data.getUrlForData(mPageIndex, mFragmentType);
+
+        if (parentActivity instanceof ObservableScrollViewCallbacks) {
+            mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
+        }
+    }
+
+    private void setupSwipeRefreshLayout() {
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.accent);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setSwipeableChildren(R.id.scroll);
     }
 
     public int getLayoutMode() {
         return mLayoutMode;
+    }
+
+    public int getFragmentType() {
+        return mFragmentType;
+    }
+
+    public String getQuery() {
+        return mQuery;
     }
 
 }

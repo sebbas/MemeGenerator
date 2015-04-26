@@ -20,7 +20,6 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,20 +43,26 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     private Context mContext;
     private LayoutInflater mInflater;
     private DataLoader mDataLoader;
-    private int mLayoutMode;
     private String mViewsString;
-    private final ArrayList<LineItem> mLineItems;
+    private int mLayoutMode;
+    private ViewPagerRecyclerViewFragment mFragment;
+    private ArrayList<LineItem> mLineItems = null;
+    private int mPageIndex = 0;
 
 
-    public SimpleRecyclerAdapter(Fragment fragment, DataLoader dataLoader) {
+    public SimpleRecyclerAdapter(Fragment fragment) {
         mContext = fragment.getActivity();
-        mDataLoader = dataLoader;
-        mLayoutMode = ((ViewPagerRecyclerViewFragment) fragment).getLayoutMode();
+        mFragment = (ViewPagerRecyclerViewFragment) fragment;
+        mLayoutMode = mFragment.getLayoutMode();
+        mDataLoader = new DataLoader(fragment, mFragment.getFragmentType());
         mInflater = LayoutInflater.from(mContext);
         mLineItems = new ArrayList<>();
 
         // String resources for google cards
         mViewsString = mContext.getResources().getString(R.string.image_views);
+
+        // Trigger initial data load
+        refreshData();
 
         // Fill up array list of line items with data from dataloader
         getLineItems();
@@ -252,7 +257,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         }
     }
 
-    public void getLineItems() {
+    private void getLineItems() {
         // Insert headers into list of items.
         String lastHeader = "";
         int sectionManager = -1;
@@ -280,5 +285,23 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             mLineItems.add(new LineItem(title, imageUrl, imageId, viewCount, timeStamp, false,
                     sectionManager, sectionFirstPosition));
         }
+    }
+
+    private String getCurrentPageDataUrl() {
+        int fragmentType = mFragment.getFragmentType();
+        if (fragmentType == ViewPagerRecyclerViewFragment.QUERY) {
+            String query = mFragment.getQuery();
+            return Data.getUrlForQuery(mPageIndex, query);
+        }
+        return Data.getUrlForData(mPageIndex, fragmentType);
+    }
+
+    public void refreshUI() {
+        getLineItems();
+        notifyDataSetChanged();
+    }
+
+    public void refreshData() {
+        mDataLoader.load(getCurrentPageDataUrl());
     }
 }
