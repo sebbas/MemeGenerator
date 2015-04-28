@@ -1,23 +1,35 @@
 package org.sebbas.android.memegenerator;
 
+import android.app.Activity;
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
+import android.widget.Filter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
 
+    private static final String TAG = "MainViewPagerAdapter";
     private int[] mIcons;
     private int mNumbOfTabs;
+    private ActionBarActivity mActivity;
 
     private SimpleFragment mTemplateFragment;
     private SlidingTabsFragment mInstanceFragment;
     private SlidingTabsFragment mGalleryFragment;
     private SimplePreferenceFragment mPreferencesFragment;
 
-    public MainViewPagerAdapter(FragmentManager fm, int[] icons, int numbOfTabs) {
+    public MainViewPagerAdapter(Activity activity, FragmentManager fm, int[] icons, int numbOfTabs) {
         super(fm);
 
+        mActivity = (ActionBarActivity) activity;
         mIcons = icons;
         mNumbOfTabs = numbOfTabs;
     }
@@ -68,4 +80,5 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
     public int getDrawableId(int position) {
         return mIcons[position];
     }
+
 }

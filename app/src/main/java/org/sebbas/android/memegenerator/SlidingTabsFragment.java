@@ -1,20 +1,25 @@
 package org.sebbas.android.memegenerator;
 
+import android.app.Activity;
+import android.app.SearchManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.github.ksoichiro.android.observablescrollview.CacheFragmentStatePagerAdapter;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
@@ -24,15 +29,13 @@ import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.ViewHelper;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public class SlidingTabsFragment extends BaseFragment implements ObservableScrollViewCallbacks {
 
     private View mToolbarView;
     private TouchInterceptionFrameLayout mInterceptionLayout;
     private ViewPager mViewPager;
-    private CacheFragmentStatePagerAdapter mPagerAdapter;
+    private SlidingTabsFragmentAdapter mPagerAdapter;
     private int mSlop;
     private boolean mScrolled;
     private ScrollState mLastScrollState;
@@ -71,7 +74,7 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
         setActionBarTitle(mTitleResource);
 
         // Choose adapter type depending on settings
-        mPagerAdapter = new SlidingTabsFragmentAdapter(getChildFragmentManager());
+        mPagerAdapter = new SlidingTabsFragmentAdapter(this, getChildFragmentManager());
 
         mViewPager = (ViewPager) view.findViewById(R.id.meme_pager);
         mViewPager.setAdapter(mPagerAdapter);
@@ -250,139 +253,11 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
         }
     }
 
-    public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
+    public String[] getTitles() {
+        return mTitles;
+    }
 
-        private Map<Integer, Fragment> mPageReferenceMap;
-
-        public SlidingTabsFragmentAdapter(FragmentManager fm) {
-            super(fm);
-            mPageReferenceMap = new HashMap<>();
-        }
-
-        @Override
-        protected Fragment createItem(int position) {
-
-            switch (mTitleResource) {
-
-                case R.string.instances:
-                    return getInstancesPartFragment(position);
-                case R.string.gallery:
-                    return getGalleryPartFragment(position);
-                default:
-                    return getInstancesPartFragment(position);
-            }
-        }
-
-        private Fragment getInstancesPartFragment(int position) {
-            int id;
-            int layout;
-            BaseFragment f;
-
-            switch (position) {
-                case 0:
-                    id = ViewPagerRecyclerViewFragment.VIRAL;
-                    layout = UIOptions.getLayoutMode(id);
-                    f = ViewPagerRecyclerViewFragment.newInstance(id, layout);
-                    mPageReferenceMap.put(0, f);
-                    break;
-                case 1:
-                    id = ViewPagerRecyclerViewFragment.TIME;
-                    layout = UIOptions.getLayoutMode(id);
-                    f = ViewPagerRecyclerViewFragment.newInstance(id, layout);
-                    mPageReferenceMap.put(1, f);
-                    break;
-                case 2:
-                    id = ViewPagerRecyclerViewFragment.WINDOW_DAY;
-                    layout = UIOptions.getLayoutMode(id);
-                    f = ViewPagerRecyclerViewFragment.newInstance(id, layout);
-                    mPageReferenceMap.put(2, f);
-                    break;
-                case 3:
-                    id = ViewPagerRecyclerViewFragment.WINDOW_WEEK;
-                    layout = UIOptions.getLayoutMode(id);
-                    f = ViewPagerRecyclerViewFragment.newInstance(id, layout);
-                    mPageReferenceMap.put(3, f);
-                    break;
-                case 4:
-                    id = ViewPagerRecyclerViewFragment.WINDOW_MONTH;
-                    layout = UIOptions.getLayoutMode(id);
-                    f = ViewPagerRecyclerViewFragment.newInstance(id, layout);
-                    mPageReferenceMap.put(4, f);
-                    break;
-                case 5:
-                    id = ViewPagerRecyclerViewFragment.WINDOW_YEAR;
-                    layout = UIOptions.getLayoutMode(id);
-                    f = ViewPagerRecyclerViewFragment.newInstance(id, layout);
-                    mPageReferenceMap.put(5, f);
-                    break;
-                default:
-                    id = ViewPagerRecyclerViewFragment.VIRAL;
-                    layout = UIOptions.getLayoutMode(id);
-                    f = ViewPagerRecyclerViewFragment.newInstance(id, layout);
-                    mPageReferenceMap.put(10, f);
-                    break;
-            }
-            return f;
-        }
-
-        private Fragment getGalleryPartFragment(int position) {
-            int id;
-            int layout;
-            BaseFragment f;
-
-            switch (position) {
-                case 0:
-                    id = ViewPagerRecyclerViewFragment.MY_MEMES;
-                    layout = UIOptions.getLayoutMode(id);
-                    f = ViewPagerRecyclerViewFragment.newInstance(id, layout);
-                    mPageReferenceMap.put(6, f);
-                    break;
-                case 1:
-                    id = ViewPagerRecyclerViewFragment.RECENT;
-                    layout = UIOptions.getLayoutMode(id);
-                    f = ViewPagerRecyclerViewFragment.newInstance(id, layout);
-                    mPageReferenceMap.put(7, f);
-                    break;
-                case 2:
-                    id = ViewPagerRecyclerViewFragment.FAVORITE_TEMPLATES;
-                    layout = UIOptions.getLayoutMode(id);
-                    f = ViewPagerRecyclerViewFragment.newInstance(id, layout);
-                    mPageReferenceMap.put(8, f);
-                    break;
-                case 3:
-                    id = ViewPagerRecyclerViewFragment.FAVORITE_INSTANCES;
-                    layout = UIOptions.getLayoutMode(id);
-                    f = ViewPagerRecyclerViewFragment.newInstance(id, layout);
-                    mPageReferenceMap.put(9, f);
-                    break;
-                default:
-                    id = ViewPagerRecyclerViewFragment.VIRAL;
-                    layout = UIOptions.getLayoutMode(id);
-                    f = ViewPagerRecyclerViewFragment.newInstance(id, layout);
-                    mPageReferenceMap.put(10, f);
-                    break;
-            }
-            return f;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            super.destroyItem(container, position, object);
-            mPageReferenceMap.remove(position);
-        }
-
-        public Fragment getFragment(int key) {
-            return mPageReferenceMap.get(key);
-        }
-
-        @Override
-        public int getCount() {
-            return mTitles.length;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mTitles[position];
-        }
+    public int getTitleResource() {
+        return mTitleResource;
     }
 }

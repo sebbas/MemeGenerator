@@ -14,29 +14,29 @@ public class UIOptions {
 
     public static int getLayoutMode(int id) {
         switch (id) {
-            case ViewPagerRecyclerViewFragment.VIRAL:
+            case ViewPagerRecyclerFragment.VIRAL:
                 return CARD_LAYOUT;
-            case ViewPagerRecyclerViewFragment.TIME:
+            case ViewPagerRecyclerFragment.TIME:
                 return CARD_LAYOUT;
-            case ViewPagerRecyclerViewFragment.WINDOW_DAY:
+            case ViewPagerRecyclerFragment.WINDOW_DAY:
                 return CARD_LAYOUT;
-            case ViewPagerRecyclerViewFragment.WINDOW_WEEK:
+            case ViewPagerRecyclerFragment.WINDOW_WEEK:
                 return CARD_LAYOUT;
-            case ViewPagerRecyclerViewFragment.WINDOW_MONTH:
+            case ViewPagerRecyclerFragment.WINDOW_MONTH:
                 return CARD_LAYOUT;
-            case ViewPagerRecyclerViewFragment.WINDOW_YEAR:
+            case ViewPagerRecyclerFragment.WINDOW_YEAR:
                 return CARD_LAYOUT;
-            case ViewPagerRecyclerViewFragment.WINDOW_ALL:
+            case ViewPagerRecyclerFragment.WINDOW_ALL:
                 return CARD_LAYOUT;
-            case ViewPagerRecyclerViewFragment.DEFAULTS:
+            case ViewPagerRecyclerFragment.DEFAULTS:
                 return LIST_LAYOUT;
-            case ViewPagerRecyclerViewFragment.MY_MEMES:
+            case ViewPagerRecyclerFragment.MY_MEMES:
                 return LIST_LAYOUT;
-            case ViewPagerRecyclerViewFragment.RECENT:
+            case ViewPagerRecyclerFragment.RECENT:
                 return LIST_LAYOUT;
-            case ViewPagerRecyclerViewFragment.FAVORITE_TEMPLATES:
+            case ViewPagerRecyclerFragment.FAVORITE_TEMPLATES:
                 return LIST_LAYOUT;
-            case ViewPagerRecyclerViewFragment.FAVORITE_INSTANCES:
+            case ViewPagerRecyclerFragment.FAVORITE_INSTANCES:
                 return LIST_LAYOUT;
             default:
                 return LIST_LAYOUT;

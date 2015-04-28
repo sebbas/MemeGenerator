@@ -5,11 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class SearchActivity extends BaseActivity implements ItemClickCallback {
 
@@ -43,11 +42,11 @@ public class SearchActivity extends BaseActivity implements ItemClickCallback {
     }
 
     @Override
-    public void onItemClick(int position, ArrayList<SimpleRecyclerAdapter.LineItem> lineItems) {
+    public void onItemClick(int position, List<SimpleRecyclerAdapter.LineItem> lineItems) {
         Intent editorIntent = new Intent(this, EditorActivity.class);
 
         SimpleRecyclerAdapter.LineItem lineItem = lineItems.get(position);
-        String imageUrl = lineItem.mImageUrl;
+        String imageUrl = lineItem.imageUrl;
 
         editorIntent.putExtra("imageUrl", imageUrl);
         startActivityForResult(editorIntent, 1);
@@ -62,10 +61,10 @@ public class SearchActivity extends BaseActivity implements ItemClickCallback {
             getSupportActionBar().setTitle(toolbarTitle);
 
             // Create a fragment that loads the query and data
-            int id = ViewPagerRecyclerViewFragment.SEARCH;
+            int id = ViewPagerRecyclerFragment.SEARCH;
             int layout = UIOptions.getLayoutMode(id);
-            ViewPagerRecyclerViewFragment searchContainer =
-                    ViewPagerRecyclerViewFragment.newInstance(id, layout, query);
+            ViewPagerRecyclerFragment searchContainer =
+                    ViewPagerRecyclerFragment.newInstance(id, layout, query);
 
             // Finally add the search container to the UI
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

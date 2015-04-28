@@ -1,21 +1,18 @@
 package org.sebbas.android.memegenerator;
 
-import android.app.SearchManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.SearchView;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayoutForIcons;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends BaseActivity implements ItemClickCallback {
+
+    private static final String TAG = "MainActivity";
 
     private NonSwipeableViewPager mMainViewPager;
     private MainViewPagerAdapter mMainViewPagerAdapter;
@@ -34,7 +31,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
         setCustomLollipopActionBar();
 
         mMainViewPagerAdapter =  new MainViewPagerAdapter(
-                getSupportFragmentManager(), mIcons, mNumbOfTabs);
+                this, getSupportFragmentManager(), mIcons, mNumbOfTabs);
 
         mMainViewPager = (NonSwipeableViewPager) findViewById(R.id.nonswipeable_viewpager);
         mMainViewPager.setAdapter(mMainViewPagerAdapter);
@@ -50,22 +47,45 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
                 return getResources().getColor(R.color.accent);
             }
         });
+        mMainTabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                supportInvalidateOptionsMenu();
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
 
         mMainTabs.setViewPager(mMainViewPager);
 
     }
 
     @Override
+    public void onItemClick(int position, List<SimpleRecyclerAdapter.LineItem> lineItems) {
+        Intent editorIntent = new Intent(this, EditorActivity.class);
+
+        SimpleRecyclerAdapter.LineItem lineItem = lineItems.get(position);
+        String imageUrl = lineItem.imageUrl;
+
+
+        editorIntent.putExtra("imageUrl", imageUrl);
+        startActivityForResult(editorIntent, 1);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        // Associate searchable configuration with the SearchView
-        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        ComponentName cn = new ComponentName(this, SearchActivity.class);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(cn));
+        // Actions handled in fragments
 
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -75,20 +95,33 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
         if (id == R.id.menu_search) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onItemClick(int position, ArrayList<SimpleRecyclerAdapter.LineItem> lineItems) {
-        Intent editorIntent = new Intent(this, EditorActivity.class);
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        int currentPage = mMainViewPager.getCurrentItem();
 
-        SimpleRecyclerAdapter.LineItem lineItem = lineItems.get(position);
-        String imageUrl = lineItem.mImageUrl;
+        switch (currentPage) {
+            case 0:
+                menu.findItem(R.id.menu_search).setVisible(true);
+                menu.findItem(R.id.action_settings).setVisible(false);
+                break;
+            case 1:
+                menu.findItem(R.id.menu_search).setVisible(true);
+                menu.findItem(R.id.action_settings).setVisible(false);
+                break;
+            case 2:
+                menu.findItem(R.id.menu_search).setVisible(true);
+                menu.findItem(R.id.action_settings).setVisible(false);
+                break;
+            case 3:
+                menu.findItem(R.id.menu_search).setVisible(false);
+                menu.findItem(R.id.action_settings).setVisible(false);
+                break;
+        }
 
-
-        editorIntent.putExtra("imageUrl", imageUrl);
-        startActivityForResult(editorIntent, 1);
+        return super.onPrepareOptionsMenu(menu);
     }
 
 }

@@ -38,10 +38,6 @@ public class DataLoader {
     private DataLoaderCallback mDataLoaderCallback;
     private int mFragmentType;
 
-    public DataLoader(Activity activity) {
-        mDataLoaderCallback = (DataLoaderCallback) activity;
-    }
-
     public DataLoader(Fragment fragment, int fragmentType) {
         mFragmentType = fragmentType;
         mDataLoaderCallback = (DataLoaderCallback) fragment;
@@ -202,12 +198,6 @@ public class DataLoader {
 
     private void parseJsonArray(JSONArray data) throws JSONException {
 
-        mViewCounts = new ArrayList<>();
-        mImageUrls = new ArrayList<>();
-        mImageIds = new ArrayList<>();
-        mImageTitles = new ArrayList<>();
-        mTimeStamps = new ArrayList<>();
-
         for (int i = 0; i < data.length(); i++) {
             JSONObject image = data.getJSONObject(i);
 
@@ -224,8 +214,6 @@ public class DataLoader {
                 mImageIds.add(imageId);
                 mImageTitles.add(imageTitle);
                 mTimeStamps.add(timeStamp);
-
-
 
                 /*if (!mViewCounts.contains(views)) {
                     mViewCounts.add(views);

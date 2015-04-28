@@ -50,12 +50,16 @@ public class Utils {
                 getAppContext().getResources().getString(R.string.client_id);
     }
 
-    public static String getHeaderTitle(String title) {
+    public static String getScrollHeaderTitleLetter(String title) {
         String firstLetter = title.substring(0, 1);
         if (firstLetter.matches("[a-zA-Z]")) {
             return firstLetter;
         } else {
             return "#";
         }
+    }
+
+    public static boolean stringPatternMatch(String sentence, String pattern) {
+        return sentence.toLowerCase().contains(pattern);
     }
 }

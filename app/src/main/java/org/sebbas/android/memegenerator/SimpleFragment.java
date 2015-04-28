@@ -35,9 +35,9 @@ public class SimpleFragment extends BaseFragment {
         setActionBarTitle(titleResource);
 
         // Get a recycler fragment
-        int id = ViewPagerRecyclerViewFragment.DEFAULTS;
+        int id = ViewPagerRecyclerFragment.DEFAULTS;
         int layout = UIOptions.getLayoutMode(id);
-        ViewPagerRecyclerViewFragment fragment = ViewPagerRecyclerViewFragment.newInstance(id, layout);
+        ViewPagerRecyclerFragment fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
 
         // Attach the just obtained fragment to frame layout
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
@@ -54,4 +54,5 @@ public class SimpleFragment extends BaseFragment {
 
         return view;
     }
+
 }

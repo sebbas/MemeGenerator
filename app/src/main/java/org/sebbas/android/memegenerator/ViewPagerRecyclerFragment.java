@@ -25,8 +25,12 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -38,8 +42,10 @@ import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.tonicartos.superslim.LayoutManager;
 
 
-public class ViewPagerRecyclerViewFragment extends BaseFragment implements
+public class ViewPagerRecyclerFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener {
+
+    private static final String TAG = "ViewPagerRecyclerFragment";
 
     static final int VIRAL = 0;
     static final int TIME = 1;
@@ -63,11 +69,10 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
     //private DataLoader mDataLoader;
     private int mFragmentType;
     private int mLayoutMode;
-    private int mPageIndex;
     private String mQuery;
 
-    public static ViewPagerRecyclerViewFragment newInstance(int fragmentType, int layoutMode) {
-        ViewPagerRecyclerViewFragment fragment = new ViewPagerRecyclerViewFragment();
+    public static ViewPagerRecyclerFragment newInstance(int fragmentType, int layoutMode) {
+        ViewPagerRecyclerFragment fragment = new ViewPagerRecyclerFragment();
         Bundle args = new Bundle();
         args.putInt("fragment_type", fragmentType);
         args.putInt("layout_mode", layoutMode);
@@ -75,8 +80,8 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         return fragment;
     }
 
-    public static ViewPagerRecyclerViewFragment newInstance(int fragmentType, int layoutMode, String query) {
-        ViewPagerRecyclerViewFragment fragment = new ViewPagerRecyclerViewFragment();
+    public static ViewPagerRecyclerFragment newInstance(int fragmentType, int layoutMode, String query) {
+        ViewPagerRecyclerFragment fragment = new ViewPagerRecyclerFragment();
         Bundle args = new Bundle();
         args.putInt("fragment_type", fragmentType);
         args.putInt("layout_mode", layoutMode);
@@ -94,15 +99,13 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         } finally {
             mFragmentType = getArguments().getInt("fragment_type");
             mLayoutMode = getArguments().getInt("layout_mode");
-            mPageIndex = 0;
-            //mDataLoader = new DataLoader(this, mFragmentType);
-            //mDataLoader.load(getCurrentPageDataUrl());
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
+        setHasOptionsMenu(true);
 
         mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
@@ -116,7 +119,7 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         super.onViewCreated(view, savedInstanceState);
 
         setupRecyclerView();
-        checkAdapterIsEmpty();
+        updatePlaceholder();
         setupSwipeRefreshLayout();
     }
 
@@ -126,7 +129,6 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
             @Override
             public void run() {
                 mSimpleRecyclerAdapter.refreshData();
-                //mDataLoader.load(getCurrentPageDataUrl());
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         }, Utils.REFRESH_ICON_TIME_SHOWN);
@@ -140,21 +142,23 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
     private Fragment getCurrentFragmentFromViewPager() {
         ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.meme_pager);
         int index = viewPager.getCurrentItem();
-        SlidingTabsFragment.SlidingTabsFragmentAdapter adapter = ((SlidingTabsFragment.SlidingTabsFragmentAdapter)
-                viewPager.getAdapter());
-        ViewPagerRecyclerViewFragment fragment = (ViewPagerRecyclerViewFragment)
-                adapter.getFragment(index);
+        SlidingTabsFragmentAdapter adapter = (SlidingTabsFragmentAdapter) viewPager.getAdapter();
+
+        ViewPagerRecyclerFragment fragment = (ViewPagerRecyclerFragment)
+                adapter.getFragment(Integer.toString(index));
         return fragment;
     }
 
     @Override
     public void onConnectionUnavailable() {
+        // Checks when no nested fragments are present
         if (getParentFragment() == null) {
-            if (isVisible()) {
+            if (getUserVisibleHint()) {
                 showConnectionUnavailableNotification();
             }
+        // Checks when nested fragments are present
         } else {
-            if (isVisible() && getCurrentFragmentFromViewPager() == this) {
+            if (getUserVisibleHint() && getCurrentFragmentFromViewPager() == this) {
                 showConnectionUnavailableNotification();
             }
         }
@@ -197,16 +201,19 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
 
     @Override
     public void onMessageClick(Parcelable parcelable) {
-        //mDataLoader.load(getCurrentPageDataUrl());
         mSimpleRecyclerAdapter.refreshData();
     }
 
-    private void checkAdapterIsEmpty () {
-        if (mSimpleRecyclerAdapter.getItemCount() == 0) {
+    private void updatePlaceholder() {
+        if (adapterIsEmpty()) {
             mCircularProgressView.setVisibility(View.VISIBLE);
         } else {
             mCircularProgressView.setVisibility(View.GONE);
         }
+    }
+
+    private boolean adapterIsEmpty() {
+        return (mSimpleRecyclerAdapter.getItemCount() == 0);
     }
 
     protected void setupRecyclerView() {
@@ -216,7 +223,7 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
             @Override
             public void onChanged() {
                 super.onChanged();
-                checkAdapterIsEmpty();
+                updatePlaceholder();
             }
         });
 
@@ -248,6 +255,27 @@ public class ViewPagerRecyclerViewFragment extends BaseFragment implements
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.accent);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setSwipeableChildren(R.id.scroll);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                if (mSimpleRecyclerAdapter != null) {
+                    mSimpleRecyclerAdapter.getFilter().filter(s);
+                }
+                return false;
+            }
+        });
     }
 
     public int getLayoutMode() {

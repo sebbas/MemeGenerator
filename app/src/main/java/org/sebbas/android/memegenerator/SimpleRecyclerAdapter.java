@@ -23,6 +23,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -32,9 +34,10 @@ import com.tonicartos.superslim.GridSLM;
 import com.tonicartos.superslim.LinearSLM;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
-public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAdapter.MainViewHolder> {
+public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAdapter.MainViewHolder> implements Filterable {
 
     private static final String TAG = "SimpleRecyclerAdapter";
     private static final int VIEW_TYPE_HEADER = 1;
@@ -45,14 +48,15 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     private DataLoader mDataLoader;
     private String mViewsString;
     private int mLayoutMode;
-    private ViewPagerRecyclerViewFragment mFragment;
-    private ArrayList<LineItem> mLineItems = null;
+    private ViewPagerRecyclerFragment mFragment;
+    private List<LineItem> mLineItems = null;
+    private ArrayList<LineItem> mFilteredLineItems = null;
     private int mPageIndex = 0;
 
 
     public SimpleRecyclerAdapter(Fragment fragment) {
         mContext = fragment.getActivity();
-        mFragment = (ViewPagerRecyclerViewFragment) fragment;
+        mFragment = (ViewPagerRecyclerFragment) fragment;
         mLayoutMode = mFragment.getLayoutMode();
         mDataLoader = new DataLoader(fragment, mFragment.getFragmentType());
         mInflater = LayoutInflater.from(mContext);
@@ -65,12 +69,12 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         refreshData();
 
         // Fill up array list of line items with data from dataloader
-        getLineItems();
+        mLineItems = getLineItems();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return mLineItems.get(position).mIsHeader ? VIEW_TYPE_HEADER : VIEW_TYPE_CONTENT;
+        return mLineItems.get(position).isHeader ? VIEW_TYPE_HEADER : VIEW_TYPE_CONTENT;
     }
 
     @Override
@@ -115,16 +119,15 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     @Override
     public void onBindViewHolder(MainViewHolder viewHolder, int position) {
-
         final LineItem item = mLineItems.get(position);
         final View itemView = viewHolder.itemView;
 
         final GridSLM.LayoutParams lp = new GridSLM.LayoutParams(itemView.getLayoutParams());
         lp.setSlm(LinearSLM.ID);
-        lp.setFirstPosition(item.mSectionFirstPosition);
+        lp.setFirstPosition(item.sectionFirstPosition);
         itemView.setLayoutParams(lp);
 
-        viewHolder.textViewTitle.setText(item.mTitle);
+        viewHolder.textViewTitle.setText(item.title);
 
         if (mLayoutMode == UIOptions.LIST_LAYOUT && getItemViewType(position) == VIEW_TYPE_CONTENT) {
 
@@ -133,7 +136,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                     .build();
 
             PicassoCache.getPicassoInstance(mContext)
-                    .load(Utils.getThumbnailUrl(item.mImageUrl, item.mImageId, UIOptions.THUMBNAIL_SIZE_LIST))
+                    .load(item.imageUrl)//(Utils.getThumbnailUrl(item.imageUrl, item.imageId, UIOptions.THUMBNAIL_SIZE_LIST))
                     .placeholder(R.color.invisible)
                     .error(android.R.color.holo_red_dark)
                     .fit()
@@ -147,15 +150,59 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             CardViewHolder cardViewHolder = (CardViewHolder) viewHolder;
 
             PicassoCache.getPicassoInstance(mContext)
-                    .load(Utils.getThumbnailUrl(item.mImageUrl, item.mImageId, UIOptions.THUMBNAIL_SIZE_CARD))
+                    .load(Utils.getThumbnailUrl(item.imageUrl, item.imageId, UIOptions.THUMBNAIL_SIZE_CARD))
                     .placeholder(android.R.color.holo_blue_bright)
                     .error(android.R.color.holo_red_dark)
                     .tag(mContext)
                     .into(viewHolder.imageView);
 
-            cardViewHolder.textViewViewCount.setText(item.mViewCount + " " + mViewsString);
-            cardViewHolder.textViewTimeStamp.setText(item.mTimeStamp);
+            cardViewHolder.textViewViewCount.setText(item.viewCount + " " + mViewsString);
+            cardViewHolder.textViewTimeStamp.setText(item.timeStamp);
         }
+    }
+
+    @Override
+    public Filter getFilter() {
+        return new Filter() {
+
+            List<LineItem> filteredResult;
+
+            @Override
+            protected FilterResults performFiltering(CharSequence charSequence) {
+                filteredResult = getFilteredResults(charSequence);
+
+                FilterResults results = new FilterResults();
+                results.values = filteredResult;
+                //results.count = filteredResult.size();
+
+                return results;
+            }
+
+            @Override
+            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+                mFilteredLineItems = (ArrayList<LineItem>) filterResults.values;
+                refreshUI();
+            }
+
+
+            private ArrayList<LineItem> getFilteredResults(CharSequence constraint){
+                if (constraint.length() == 0) {
+                    return null;
+                }
+
+                ArrayList<LineItem> listResult = new ArrayList<>();
+                for (int i = 0; i < mLineItems.size(); i++) {
+                    LineItem currentLineItem = mLineItems.get(i);
+                    String currentLineItemTitle = currentLineItem.title;
+
+                    if (Utils.stringPatternMatch(currentLineItemTitle, (String) constraint)) {
+                        listResult.add(currentLineItem);
+                    }
+                }
+
+                return listResult;
+            }
+        };
     }
 
     abstract static class MainViewHolder extends RecyclerView.ViewHolder {
@@ -224,55 +271,73 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     static class LineItem {
 
-        public int mSectionManager;
-        public int mSectionFirstPosition;
-        public boolean mIsHeader;
-        public String mTitle;
-        public String mImageUrl;
-        public String mImageId;
-        public String mViewCount;
-        public String mTimeStamp;
+        public int sectionManager;
+        public int sectionFirstPosition;
+        public boolean isHeader;
+        public String title;
+        public String imageUrl;
+        public String imageId;
+        public String viewCount;
+        public String timeStamp;
 
         // Section header item constructor
         public LineItem(String title, boolean isHeader, int sectionManager,
                         int sectionFirstPosition) {
-            mTitle = title;
-            mIsHeader = isHeader;
-            mSectionManager = sectionManager;
-            mSectionFirstPosition = sectionFirstPosition;
+            this.title = title;
+            this.isHeader = isHeader;
+            this.sectionManager = sectionManager;
+            this.sectionFirstPosition = sectionFirstPosition;
         }
 
         // Regular item constructor
         public LineItem(String title, String imageUrl, String imageId, String viewCount,
                         String timeStamp, boolean isHeader, int sectionManager,
                         int sectionFirstPosition) {
-            mTitle = title;
-            mImageUrl = imageUrl;
-            mImageId = imageId;
-            mViewCount = viewCount;
-            mTimeStamp = timeStamp;
-            mIsHeader = isHeader;
-            mSectionManager = sectionManager;
-            mSectionFirstPosition = sectionFirstPosition;
+            this.title = title;
+            this.imageUrl = imageUrl;
+            this.imageId = imageId;
+            this.viewCount = viewCount;
+            this.timeStamp = timeStamp;
+            this.isHeader = isHeader;
+            this.sectionManager = sectionManager;
+            this.sectionFirstPosition = sectionFirstPosition;
         }
     }
 
-    private void getLineItems() {
-        // Insert headers into list of items.
+    private List<LineItem> getLineItems() {
         String lastHeader = "";
         int sectionManager = -1;
         int headerCount = 0;
         int sectionFirstPosition = 0;
+        int lineItemCount = 0;
 
-        for (int i = 0; i < mDataLoader.getItemCount(); i++) {
+        String title, header, imageUrl, imageId, viewCount, timeStamp;
+        ArrayList<LineItem> lineItems = new ArrayList<>();
+
+        if (isFiltering()) {
+            lineItemCount = mFilteredLineItems.size();
+        } else {
+            lineItemCount = mDataLoader.getItemCount();
+        }
+
+        for (int i = 0; i < lineItemCount; i++) {
 
             // Get some information (used for regular and/or header items)
-            String title = mDataLoader.getImageTitleAt(i);
-            String header = Utils.getHeaderTitle(title);
-            String imageUrl = mDataLoader.getImageUrlAt(i);
-            String imageId = mDataLoader.getImageIdAt(i);
-            String viewCount = mDataLoader.getViewCountAt(i);
-            String timeStamp = mDataLoader.getTimeStampAt(i);
+            if (isFiltering()) {
+                title = mFilteredLineItems.get(i).title;
+                header = Utils.getScrollHeaderTitleLetter(title);
+                imageUrl = mFilteredLineItems.get(i).imageUrl;
+                imageId = mFilteredLineItems.get(i).imageId;
+                viewCount = mFilteredLineItems.get(i).viewCount;
+                timeStamp = mFilteredLineItems.get(i).timeStamp;
+            } else {
+                title = mDataLoader.getImageTitleAt(i);
+                header = Utils.getScrollHeaderTitleLetter(title);
+                imageUrl = mDataLoader.getImageUrlAt(i);
+                imageId = mDataLoader.getImageIdAt(i);
+                viewCount = mDataLoader.getViewCountAt(i);
+                timeStamp = mDataLoader.getTimeStampAt(i);
+            }
 
             if (!TextUtils.equals(lastHeader, header) && mLayoutMode == UIOptions.LIST_LAYOUT) {
                 // Insert new header view and update section data.
@@ -280,16 +345,21 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                 sectionFirstPosition = i + headerCount;
                 lastHeader = header;
                 headerCount += 1;
-                mLineItems.add(new LineItem(header, true, sectionManager, sectionFirstPosition));
+                lineItems.add(new LineItem(header, true, sectionManager, sectionFirstPosition));
             }
-            mLineItems.add(new LineItem(title, imageUrl, imageId, viewCount, timeStamp, false,
+            lineItems.add(new LineItem(title, imageUrl, imageId, viewCount, timeStamp, false,
                     sectionManager, sectionFirstPosition));
         }
+        return lineItems;
+    }
+
+    private boolean isFiltering() {
+        return (mFilteredLineItems != null);
     }
 
     private String getCurrentPageDataUrl() {
         int fragmentType = mFragment.getFragmentType();
-        if (fragmentType == ViewPagerRecyclerViewFragment.QUERY) {
+        if (fragmentType == ViewPagerRecyclerFragment.QUERY) {
             String query = mFragment.getQuery();
             return Data.getUrlForQuery(mPageIndex, query);
         }
@@ -297,7 +367,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     public void refreshUI() {
-        getLineItems();
+        mLineItems = getLineItems();
         notifyDataSetChanged();
     }
 

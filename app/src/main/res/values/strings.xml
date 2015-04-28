@@ -8,6 +8,8 @@
     <string name="gallery">Gallery</string>
     <string name="preferences">Settings</string>
     <string name="search">Search:</string>
+    <string name="action_settings">Settings</string>
+
 
     <string name="search_title">Search Meme</string>
     <string name="search_hint">Enter meme name</string>

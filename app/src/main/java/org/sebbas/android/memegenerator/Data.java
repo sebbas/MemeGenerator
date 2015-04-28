@@ -6,9 +6,7 @@ import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 final class Data {
 
@@ -39,21 +37,21 @@ final class Data {
 
     static final String getUrlForData(int pageIndex, int urlType) {
         switch (urlType) {
-            case ViewPagerRecyclerViewFragment.VIRAL:
+            case ViewPagerRecyclerFragment.VIRAL:
                 return BASE + SORT_VIRAL + pageIndex;
-            case ViewPagerRecyclerViewFragment.TIME:
+            case ViewPagerRecyclerFragment.TIME:
                 return BASE + SORT_TIME + pageIndex;
-            case ViewPagerRecyclerViewFragment.WINDOW_DAY:
+            case ViewPagerRecyclerFragment.WINDOW_DAY:
                 return BASE + SORT_TOP + WINDOW_DAY + pageIndex;
-            case ViewPagerRecyclerViewFragment.WINDOW_WEEK:
+            case ViewPagerRecyclerFragment.WINDOW_WEEK:
                 return BASE + SORT_TOP + WINDOW_WEEK + pageIndex;
-            case ViewPagerRecyclerViewFragment.WINDOW_MONTH:
+            case ViewPagerRecyclerFragment.WINDOW_MONTH:
                 return BASE + SORT_TOP + WINDOW_MONTH + pageIndex;
-            case ViewPagerRecyclerViewFragment.WINDOW_YEAR:
+            case ViewPagerRecyclerFragment.WINDOW_YEAR:
                 return BASE + SORT_TOP + WINDOW_YEAR + pageIndex;
-            case ViewPagerRecyclerViewFragment.WINDOW_ALL:
+            case ViewPagerRecyclerFragment.WINDOW_ALL:
                 return BASE + SORT_TOP + WINDOW_ALL + pageIndex;
-            case ViewPagerRecyclerViewFragment.DEFAULTS:
+            case ViewPagerRecyclerFragment.DEFAULTS:
                 return BASE_DEFAULTS;
             default:
                 return BASE + SORT_TOP + WINDOW_DAY + pageIndex;
