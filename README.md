@@ -25,3 +25,7 @@
   - Add option: manage custom categoried from SlidingTabsFragment
 - Setup Website
 - Check package name
+- Create app icon
+- Add drawable for all screen sizes
+-UI:
+  - Custom layout for landscape

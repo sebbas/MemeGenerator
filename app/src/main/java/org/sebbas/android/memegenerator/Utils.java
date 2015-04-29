@@ -9,7 +9,7 @@ import android.view.WindowManager;
 
 public class Utils {
 
-    public static final int REFRESH_ICON_TIME_SHOWN = 2000;
+    public static final int REFRESH_ICON_TIME_SHOWN = 3000;
     private static final String NUMBERS_HEADER_LETTER = "#";
 
     private Utils() {

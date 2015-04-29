@@ -125,37 +125,6 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     }
 
     @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                if (mSimpleRecyclerAdapter != null) {
-                    mSimpleRecyclerAdapter.getFilter().filter(s);
-                    recyclerViewMoveUp();
-                }
-                return false;
-            }
-        });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_refresh:
-                onRefresh();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onRefresh() {
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -244,7 +213,6 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     }
 
     private boolean adapterIsEmpty() {
-        //mSimpleRecyclerAdapter.refreshData();
         return (mSimpleRecyclerAdapter.getItemCount() == 0);
     }
 
@@ -317,7 +285,7 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
 
     @Override
     public void refreshAdapter() {
+        mSwipeRefreshLayout.setRefreshing(true);
         onRefresh();
-        Toast.makeText(this.getActivity(), "Refreshing", Toast.LENGTH_SHORT).show();
     }
 }

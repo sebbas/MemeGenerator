@@ -47,43 +47,36 @@ public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
                 id = ViewPagerRecyclerFragment.VIRAL;
                 layout = UIOptions.getLayoutMode(id);
                 fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
-                //mPageReferenceMap.put(0, fragment);
                 break;
             case 1:
                 id = ViewPagerRecyclerFragment.TIME;
                 layout = UIOptions.getLayoutMode(id);
                 fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
-                //mPageReferenceMap.put(1, fragment);
                 break;
             case 2:
                 id = ViewPagerRecyclerFragment.WINDOW_DAY;
                 layout = UIOptions.getLayoutMode(id);
                 fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
-                //mPageReferenceMap.put(2, fragment);
                 break;
             case 3:
                 id = ViewPagerRecyclerFragment.WINDOW_WEEK;
                 layout = UIOptions.getLayoutMode(id);
                 fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
-                //mPageReferenceMap.put(3, fragment);
                 break;
             case 4:
                 id = ViewPagerRecyclerFragment.WINDOW_MONTH;
                 layout = UIOptions.getLayoutMode(id);
                 fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
-                //mPageReferenceMap.put(4, fragment);
                 break;
             case 5:
                 id = ViewPagerRecyclerFragment.WINDOW_YEAR;
                 layout = UIOptions.getLayoutMode(id);
                 fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
-                //mPageReferenceMap.put(5, fragment);
                 break;
             default:
                 id = ViewPagerRecyclerFragment.VIRAL;
                 layout = UIOptions.getLayoutMode(id);
                 fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
-                //mPageReferenceMap.put(10, fragment);
                 break;
         }
         mFragmentManager.beginTransaction().add(fragment, Integer.toString(position));
@@ -100,31 +93,26 @@ public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
                 id = ViewPagerRecyclerFragment.MY_MEMES;
                 layout = UIOptions.getLayoutMode(id);
                 fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
-                //mPageReferenceMap.put(6, fragment);
                 break;
             case 1:
                 id = ViewPagerRecyclerFragment.RECENT;
                 layout = UIOptions.getLayoutMode(id);
                 fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
-                //mPageReferenceMap.put(7, fragment);
                 break;
             case 2:
                 id = ViewPagerRecyclerFragment.FAVORITE_TEMPLATES;
                 layout = UIOptions.getLayoutMode(id);
                 fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
-                //mPageReferenceMap.put(8, fragment);
                 break;
             case 3:
                 id = ViewPagerRecyclerFragment.FAVORITE_INSTANCES;
                 layout = UIOptions.getLayoutMode(id);
                 fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
-                //mPageReferenceMap.put(9, fragment);
                 break;
             default:
                 id = ViewPagerRecyclerFragment.VIRAL;
                 layout = UIOptions.getLayoutMode(id);
                 fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
-                //mPageReferenceMap.put(10, fragment);
                 break;
         }
         mFragmentManager.beginTransaction().add(fragment, Integer.toString(position));
@@ -141,7 +129,6 @@ public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
     }
 
     public Fragment getFragment(String id) {
-        //return mPageReferenceMap.get(id);
         return mFragmentManager.findFragmentByTag(id);
     }
 
