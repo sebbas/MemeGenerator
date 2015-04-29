@@ -124,6 +124,28 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                if (mSimpleRecyclerAdapter != null) {
+                    mSimpleRecyclerAdapter.getFilter().filter(s);
+                    recyclerViewMoveUp();
+                }
+                return false;
+            }
+        });
+    }
+
+    @Override
     public void onRefresh() {
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -201,7 +223,6 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
 
     @Override
     public void onMessageClick(Parcelable parcelable) {
-        mSimpleRecyclerAdapter.refreshData();
     }
 
     private void updatePlaceholder() {
@@ -213,6 +234,7 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     }
 
     private boolean adapterIsEmpty() {
+        mSimpleRecyclerAdapter.refreshData();
         return (mSimpleRecyclerAdapter.getItemCount() == 0);
     }
 
@@ -257,25 +279,10 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
         mSwipeRefreshLayout.setSwipeableChildren(R.id.scroll);
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-
-        SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                if (mSimpleRecyclerAdapter != null) {
-                    mSimpleRecyclerAdapter.getFilter().filter(s);
-                }
-                return false;
-            }
-        });
+    private void recyclerViewMoveUp() {
+        if (mRecyclerView.getChildCount() > 0) {
+            mRecyclerView.scrollToPosition(0);
+        }
     }
 
     public int getLayoutMode() {

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.squareup.okhttp.OkHttpClient;
@@ -95,12 +96,59 @@ public class DataLoader {
         return timeStamp;
     }
 
+    public List<LineItem> getLineItems(List<Integer> allowedLineItemPositions) {
+        String lastHeader = "";
+        int sectionManager = -1;
+        int headerCount = 0;
+        int sectionFirstPosition = 0;
+        ArrayList<LineItem> resultItems = new ArrayList<>();
+
+        int tmp = 0;
+        for (int i = 0; i < getItemCount(); i++) {
+
+            boolean isAllowedPosition = isAllowedPosition(i, allowedLineItemPositions);
+
+            if (isAllowedPosition) {
+                String title = getImageTitleAt(i);
+                String imageUrl = getImageUrlAt(i);
+                String imageId = getImageIdAt(i);
+                String viewCount = getViewCountAt(i);
+                String timeStamp = getTimeStampAt(i);
+                String header = Utils.getScrollHeaderTitleLetter(getImageTitleAt(i));
+
+                if (!TextUtils.equals(lastHeader, header)) {
+                    // Insert new header view and update section data.
+                    sectionManager = (sectionManager + 1) % 2;
+                    sectionFirstPosition = tmp + headerCount;
+                    lastHeader = header;
+                    headerCount += 1;
+                    resultItems.add(LineItem.newHeaderInstance(
+                            header, true, sectionManager, sectionFirstPosition));
+                }
+                resultItems.add(LineItem.newInstance(
+                        title, imageUrl, imageId, viewCount, timeStamp, false,
+                        sectionManager, sectionFirstPosition));
+                tmp++;
+            }
+        }
+        return resultItems;
+    }
+
     public int getItemCount() {
         int count = 0;
         if (mImageUrls != null) {
             count = mImageUrls.size();
         }
         return count;
+    }
+
+    private boolean isAllowedPosition(int i, List<Integer> excludedLineItemPositions) {
+        // If the are no excluded line items then all items are allowed -> return true
+        if (excludedLineItemPositions == null || excludedLineItemPositions.isEmpty()) {
+            return true;
+        }
+        // If excluded line item position matches i, then this item is not allowed -> return false
+        return !excludedLineItemPositions.contains(i);
     }
 
     private class AsyncLoader extends AsyncTask<String, Void, Void> {
@@ -197,6 +245,12 @@ public class DataLoader {
     }
 
     private void parseJsonArray(JSONArray data) throws JSONException {
+
+        mViewCounts.clear();
+        mImageUrls.clear();
+        mImageIds.clear();
+        mImageTitles.clear();
+        mTimeStamps.clear();
 
         for (int i = 0; i < data.length(); i++) {
             JSONObject image = data.getJSONObject(i);

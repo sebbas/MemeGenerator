@@ -19,7 +19,6 @@ package org.sebbas.android.memegenerator;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,9 +49,8 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     private int mLayoutMode;
     private ViewPagerRecyclerFragment mFragment;
     private List<LineItem> mLineItems = null;
-    private ArrayList<LineItem> mFilteredLineItems = null;
+    private List<Integer> mAllowedLineItemPositions = null;
     private int mPageIndex = 0;
-
 
     public SimpleRecyclerAdapter(Fragment fragment) {
         mContext = fragment.getActivity();
@@ -61,6 +59,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         mDataLoader = new DataLoader(fragment, mFragment.getFragmentType());
         mInflater = LayoutInflater.from(mContext);
         mLineItems = new ArrayList<>();
+        mAllowedLineItemPositions = new ArrayList<>();
 
         // String resources for google cards
         mViewsString = mContext.getResources().getString(R.string.image_views);
@@ -74,7 +73,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     @Override
     public int getItemViewType(int position) {
-        return mLineItems.get(position).isHeader ? VIEW_TYPE_HEADER : VIEW_TYPE_CONTENT;
+        return mLineItems.get(position).isHeaderItem() ? VIEW_TYPE_HEADER : VIEW_TYPE_CONTENT;
     }
 
     @Override
@@ -121,13 +120,13 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     public void onBindViewHolder(MainViewHolder viewHolder, int position) {
         final LineItem item = mLineItems.get(position);
         final View itemView = viewHolder.itemView;
-
         final GridSLM.LayoutParams lp = new GridSLM.LayoutParams(itemView.getLayoutParams());
+
         lp.setSlm(LinearSLM.ID);
-        lp.setFirstPosition(item.sectionFirstPosition);
+        lp.setFirstPosition(item.getSectionFirstPosition());
         itemView.setLayoutParams(lp);
 
-        viewHolder.textViewTitle.setText(item.title);
+        viewHolder.textViewTitle.setText(item.getTitle());
 
         if (mLayoutMode == UIOptions.LIST_LAYOUT && getItemViewType(position) == VIEW_TYPE_CONTENT) {
 
@@ -136,7 +135,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                     .build();
 
             PicassoCache.getPicassoInstance(mContext)
-                    .load(item.imageUrl)//(Utils.getThumbnailUrl(item.imageUrl, item.imageId, UIOptions.THUMBNAIL_SIZE_LIST))
+                    .load(item.getImageUrl())//(Utils.getThumbnailUrl(item.imageUrl, item.imageId, UIOptions.THUMBNAIL_SIZE_LIST))
                     .placeholder(R.color.invisible)
                     .error(android.R.color.holo_red_dark)
                     .fit()
@@ -150,14 +149,14 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             CardViewHolder cardViewHolder = (CardViewHolder) viewHolder;
 
             PicassoCache.getPicassoInstance(mContext)
-                    .load(Utils.getThumbnailUrl(item.imageUrl, item.imageId, UIOptions.THUMBNAIL_SIZE_CARD))
+                    .load(item.getImageUrl())//(Utils.getThumbnailUrl(item.getImageUrl(), item.getImageId(), UIOptions.THUMBNAIL_SIZE_CARD))
                     .placeholder(android.R.color.holo_blue_bright)
                     .error(android.R.color.holo_red_dark)
                     .tag(mContext)
                     .into(viewHolder.imageView);
 
-            cardViewHolder.textViewViewCount.setText(item.viewCount + " " + mViewsString);
-            cardViewHolder.textViewTimeStamp.setText(item.timeStamp);
+            cardViewHolder.textViewViewCount.setText(item.getViewCount() + " " + mViewsString);
+            cardViewHolder.textViewTimeStamp.setText(item.getTimeStamp());
         }
     }
 
@@ -165,7 +164,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     public Filter getFilter() {
         return new Filter() {
 
-            List<LineItem> filteredResult;
+            private List<Integer> filteredResult;
 
             @Override
             protected FilterResults performFiltering(CharSequence charSequence) {
@@ -173,34 +172,34 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
                 FilterResults results = new FilterResults();
                 results.values = filteredResult;
-                //results.count = filteredResult.size();
+                results.count = filteredResult.size();
 
                 return results;
             }
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredLineItems = (ArrayList<LineItem>) filterResults.values;
+                mAllowedLineItemPositions = (ArrayList<Integer>) filterResults.values;
                 refreshUI();
             }
 
 
-            private ArrayList<LineItem> getFilteredResults(CharSequence constraint){
+            private List<Integer> getFilteredResults(CharSequence constraint){
                 if (constraint.length() == 0) {
-                    return null;
+                    mAllowedLineItemPositions.clear();
+                    return mAllowedLineItemPositions;
                 }
 
-                ArrayList<LineItem> listResult = new ArrayList<>();
-                for (int i = 0; i < mLineItems.size(); i++) {
-                    LineItem currentLineItem = mLineItems.get(i);
-                    String currentLineItemTitle = currentLineItem.title;
+                ArrayList<Integer> filteredItems = new ArrayList<>();
 
-                    if (Utils.stringPatternMatch(currentLineItemTitle, (String) constraint)) {
-                        listResult.add(currentLineItem);
+                for (int i = 0; i < mDataLoader.getItemCount(); i++) {
+                    String currentLineItemTitle = mDataLoader.getImageTitleAt(i);
+
+                    if (!Utils.stringPatternMatch(currentLineItemTitle, (String) constraint)) {
+                        filteredItems.add(i);
                     }
                 }
-
-                return listResult;
+                return filteredItems;
             }
         };
     }
@@ -269,92 +268,8 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         }
     }
 
-    static class LineItem {
-
-        public int sectionManager;
-        public int sectionFirstPosition;
-        public boolean isHeader;
-        public String title;
-        public String imageUrl;
-        public String imageId;
-        public String viewCount;
-        public String timeStamp;
-
-        // Section header item constructor
-        public LineItem(String title, boolean isHeader, int sectionManager,
-                        int sectionFirstPosition) {
-            this.title = title;
-            this.isHeader = isHeader;
-            this.sectionManager = sectionManager;
-            this.sectionFirstPosition = sectionFirstPosition;
-        }
-
-        // Regular item constructor
-        public LineItem(String title, String imageUrl, String imageId, String viewCount,
-                        String timeStamp, boolean isHeader, int sectionManager,
-                        int sectionFirstPosition) {
-            this.title = title;
-            this.imageUrl = imageUrl;
-            this.imageId = imageId;
-            this.viewCount = viewCount;
-            this.timeStamp = timeStamp;
-            this.isHeader = isHeader;
-            this.sectionManager = sectionManager;
-            this.sectionFirstPosition = sectionFirstPosition;
-        }
-    }
-
     private List<LineItem> getLineItems() {
-        String lastHeader = "";
-        int sectionManager = -1;
-        int headerCount = 0;
-        int sectionFirstPosition = 0;
-        int lineItemCount = 0;
-
-        String title, header, imageUrl, imageId, viewCount, timeStamp;
-        ArrayList<LineItem> lineItems = new ArrayList<>();
-
-        if (isFiltering()) {
-            lineItemCount = mFilteredLineItems.size();
-        } else {
-            lineItemCount = mDataLoader.getItemCount();
-        }
-
-        for (int i = 0; i < lineItemCount; i++) {
-
-            // Get some information (used for regular and/or header items)
-            if (isFiltering()) {
-                title = mFilteredLineItems.get(i).title;
-                header = Utils.getScrollHeaderTitleLetter(title);
-                imageUrl = mFilteredLineItems.get(i).imageUrl;
-                imageId = mFilteredLineItems.get(i).imageId;
-                viewCount = mFilteredLineItems.get(i).viewCount;
-                timeStamp = mFilteredLineItems.get(i).timeStamp;
-            } else {
-                title = mDataLoader.getImageTitleAt(i);
-                header = Utils.getScrollHeaderTitleLetter(title);
-                imageUrl = mDataLoader.getImageUrlAt(i);
-                imageId = mDataLoader.getImageIdAt(i);
-                viewCount = mDataLoader.getViewCountAt(i);
-                timeStamp = mDataLoader.getTimeStampAt(i);
-            }
-
-            if (!TextUtils.equals(lastHeader, header) && mLayoutMode == UIOptions.LIST_LAYOUT) {
-                // Insert new header view and update section data.
-                sectionManager = (sectionManager + 1) % 2;
-                sectionFirstPosition = i + headerCount;
-                lastHeader = header;
-                headerCount += 1;
-                lineItems.add(new LineItem(header, true, sectionManager, sectionFirstPosition));
-            }
-            lineItems.add(new LineItem(title, imageUrl, imageId, viewCount, timeStamp, false,
-                    sectionManager, sectionFirstPosition));
-        }
-        return lineItems;
-    }
-
-    private boolean isFiltering() {
-        return (mFilteredLineItems != null);
+        return mDataLoader.getLineItems(mAllowedLineItemPositions);
     }
 
     private String getCurrentPageDataUrl() {
@@ -368,10 +283,12 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     public void refreshUI() {
         mLineItems = getLineItems();
+
         notifyDataSetChanged();
     }
 
     public void refreshData() {
-        mDataLoader.load(getCurrentPageDataUrl());
+        String url = getCurrentPageDataUrl();
+        mDataLoader.load(url);
     }
 }

@@ -67,12 +67,11 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
     }
 
     @Override
-    public void onItemClick(int position, List<SimpleRecyclerAdapter.LineItem> lineItems) {
+    public void onItemClick(int position, List<LineItem> lineItems) {
         Intent editorIntent = new Intent(this, EditorActivity.class);
 
-        SimpleRecyclerAdapter.LineItem lineItem = lineItems.get(position);
-        String imageUrl = lineItem.imageUrl;
-
+        LineItem lineItem = lineItems.get(position);
+        String imageUrl = lineItem.getImageUrl();
 
         editorIntent.putExtra("imageUrl", imageUrl);
         startActivityForResult(editorIntent, 1);
