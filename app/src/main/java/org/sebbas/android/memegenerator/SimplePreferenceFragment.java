@@ -5,11 +5,17 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class SimplePreferenceFragment extends BaseFragment {
+public class SimplePreferenceFragment extends BaseFragment implements ToolbarCallback {
+
+    private static final String TAG = "SimplePreferenceFragment";
 
     public static SimplePreferenceFragment newInstance(int titleResource) {
         SimplePreferenceFragment simplePreferenceFragment = new SimplePreferenceFragment();
@@ -22,17 +28,11 @@ public class SimplePreferenceFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
         View view = inflater.inflate(R.layout.fragment_preferences, container, false);
 
         // Setup the toolbar
-        ActionBarActivity parentActivity = (ActionBarActivity) getActivity();
-        parentActivity.setSupportActionBar((Toolbar) view.findViewById(R.id.toolbar));
-        ViewCompat.setElevation(view.findViewById(R.id.header), getResources().getDimension(R.dimen.toolbar_elevation));
-
-        // Set custom fragment title
         int titleResource = getArguments().getInt("fragment_title");
-        setActionBarTitle(titleResource);
+        setupToolbar(this, view, titleResource, 0);
 
         // Get a preferences fragment
         PreferencesFragment fragment = PreferencesFragment.newInstance();
@@ -49,4 +49,17 @@ public class SimplePreferenceFragment extends BaseFragment {
         return view;
     }
 
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        return false;
+    }
+
+    @Override
+    public void onRefreshClicked() {
+    }
 }

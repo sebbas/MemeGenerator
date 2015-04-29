@@ -86,7 +86,7 @@ public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
                 //mPageReferenceMap.put(10, fragment);
                 break;
         }
-        mFragmentManager.beginTransaction().add(fragment, Integer.toString(id));
+        mFragmentManager.beginTransaction().add(fragment, Integer.toString(position));
         return fragment;
     }
 
@@ -127,7 +127,7 @@ public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
                 //mPageReferenceMap.put(10, fragment);
                 break;
         }
-        mFragmentManager.beginTransaction().add(fragment, Integer.toString(id));
+        mFragmentManager.beginTransaction().add(fragment, Integer.toString(position));
         return fragment;
     }
 

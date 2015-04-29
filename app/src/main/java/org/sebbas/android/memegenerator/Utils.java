@@ -10,6 +10,7 @@ import android.view.WindowManager;
 public class Utils {
 
     public static final int REFRESH_ICON_TIME_SHOWN = 2000;
+    private static final String NUMBERS_HEADER_LETTER = "#";
 
     private Utils() {
         // No instances
@@ -55,7 +56,7 @@ public class Utils {
         if (firstLetter.matches("[a-zA-Z]")) {
             return firstLetter;
         } else {
-            return "#";
+            return NUMBERS_HEADER_LETTER;
         }
     }
 

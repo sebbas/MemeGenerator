@@ -96,7 +96,7 @@ public class DataLoader {
         return timeStamp;
     }
 
-    public List<LineItem> getLineItems(List<Integer> allowedLineItemPositions) {
+    public List<LineItem> getLineItems(List<Integer> allowedLineItemPositions, int layoutMode) {
         String lastHeader = "";
         int sectionManager = -1;
         int headerCount = 0;
@@ -116,7 +116,7 @@ public class DataLoader {
                 String timeStamp = getTimeStampAt(i);
                 String header = Utils.getScrollHeaderTitleLetter(getImageTitleAt(i));
 
-                if (!TextUtils.equals(lastHeader, header)) {
+                if (!TextUtils.equals(lastHeader, header) && layoutMode == UIOptions.LIST_LAYOUT) {
                     // Insert new header view and update section data.
                     sectionManager = (sectionManager + 1) % 2;
                     sectionFirstPosition = tmp + headerCount;

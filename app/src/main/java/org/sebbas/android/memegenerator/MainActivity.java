@@ -2,7 +2,9 @@ package org.sebbas.android.memegenerator;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -22,6 +24,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
                             R.drawable.selector_gallery_icon,
                             R.drawable.selector_preferences_icon};
     private int mNumbOfTabs = 4;
+    private Menu mMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +57,8 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
 
             @Override
             public void onPageSelected(int position) {
-                supportInvalidateOptionsMenu();
+                Log.d(TAG, "position is " + position);
+                //invalidateFragmentMenus(position);
             }
 
             @Override
@@ -63,6 +67,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
         });
 
         mMainTabs.setViewPager(mMainViewPager);
+        //invalidateFragmentMenus(mMainViewPager.getCurrentItem());
 
     }
 
@@ -77,17 +82,20 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
         startActivityForResult(editorIntent, 1);
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
+        mMenu = menu;
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
+
         // Actions handled in fragments
+        Log.d(TAG, "onCreateOptionsMenu");
 
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
+    /*@Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
@@ -95,31 +103,45 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
-    @Override
+    /*@Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         int currentPage = mMainViewPager.getCurrentItem();
-
         switch (currentPage) {
             case 0:
-                menu.findItem(R.id.menu_search).setVisible(true);
-                menu.findItem(R.id.menu_refresh).setVisible(false);
+                Log.d(TAG, "case 0");
+                menu.findItem(R.id.menu_search).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                menu.findItem(R.id.menu_settings).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                menu.findItem(R.id.menu_refresh).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
                 break;
             case 1:
-                menu.findItem(R.id.menu_search).setVisible(true);
-                menu.findItem(R.id.menu_refresh).setVisible(true);
+                Log.d(TAG, "case 1");
+                menu.findItem(R.id.menu_search).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                menu.findItem(R.id.menu_settings).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                menu.findItem(R.id.menu_refresh).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
                 break;
             case 2:
-                menu.findItem(R.id.menu_search).setVisible(true);
-                menu.findItem(R.id.menu_refresh).setVisible(true);
+                Log.d(TAG, "case 2");
+                menu.findItem(R.id.menu_search).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                menu.findItem(R.id.menu_settings).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                menu.findItem(R.id.menu_refresh).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
                 break;
             case 3:
-                menu.findItem(R.id.menu_search).setVisible(false);
-                menu.findItem(R.id.menu_refresh).setVisible(false);
+                Log.d(TAG, "case 3");
+                menu.findItem(R.id.menu_search).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                menu.findItem(R.id.menu_settings).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+                menu.findItem(R.id.menu_refresh).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
                 break;
         }
         return super.onPrepareOptionsMenu(menu);
-    }
+    }*/
 
+    private void invalidateFragmentMenus(int position) {
+        for (int i = 0; i < mMainViewPagerAdapter.getCount(); i++) {
+            Fragment fragment = mMainViewPagerAdapter.getItem(i);
+            fragment.setHasOptionsMenu(i == position);
+        }
+        supportInvalidateOptionsMenu();
+    }
 }

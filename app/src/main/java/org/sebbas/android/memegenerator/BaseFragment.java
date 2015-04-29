@@ -19,9 +19,13 @@ package org.sebbas.android.memegenerator;
 import android.app.Activity;
 import android.content.res.TypedArray;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
@@ -53,16 +57,50 @@ public abstract class BaseFragment extends Fragment {
         return activity.findViewById(android.R.id.content).getHeight();
     }
 
-    protected void setActionBarTitle(String title) {
+    protected void setupToolbar(final ToolbarCallback toolbarCallback, View view, int titleResource, int menuResource) {
+        ViewCompat.setElevation(view.findViewById(R.id.header), getResources().getDimension(R.dimen.toolbar_elevation));
+        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+
+        // Setup toolbar title
         ActionBarActivity actionBarActivity = (ActionBarActivity) getActivity();
-        actionBarActivity.getSupportActionBar().setTitle(title);
+        String title = actionBarActivity.getResources().getString(titleResource);
+        toolbar.setTitle(title);
+
+        // Setup toolbar menu
+        if (menuResource != 0) {
+            toolbar.inflateMenu(menuResource);
+        }
+
+        // Setup toolbar actions
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.menu_search:
+                        setupSearchView(menuItem, toolbarCallback);
+                        break;
+                    case R.id.menu_refresh:
+                        toolbarCallback.onRefreshClicked();
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
-    protected void setActionBarTitle(int titleResource) {
-        ActionBarActivity actionBarActivity = (ActionBarActivity) getActivity();
+    private void setupSearchView(MenuItem menuItem, final ToolbarCallback toolbarCallback) {
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return toolbarCallback.onQueryTextSubmit(s);
+            }
 
-        String title = actionBarActivity.getResources().getString(titleResource);
-        actionBarActivity.getSupportActionBar().setTitle(title);
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return toolbarCallback.onQueryTextChange(s);
+            }
+        });
     }
 
 }

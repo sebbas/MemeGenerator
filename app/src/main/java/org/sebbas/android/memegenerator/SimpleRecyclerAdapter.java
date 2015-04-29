@@ -135,7 +135,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                     .build();
 
             PicassoCache.getPicassoInstance(mContext)
-                    .load(item.getImageUrl())//(Utils.getThumbnailUrl(item.imageUrl, item.imageId, UIOptions.THUMBNAIL_SIZE_LIST))
+                    .load(Utils.getThumbnailUrl(item.getImageUrl(), item.getImageId(), UIOptions.THUMBNAIL_SIZE_LIST))
                     .placeholder(R.color.invisible)
                     .error(android.R.color.holo_red_dark)
                     .fit()
@@ -149,7 +149,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             CardViewHolder cardViewHolder = (CardViewHolder) viewHolder;
 
             PicassoCache.getPicassoInstance(mContext)
-                    .load(item.getImageUrl())//(Utils.getThumbnailUrl(item.getImageUrl(), item.getImageId(), UIOptions.THUMBNAIL_SIZE_CARD))
+                    .load(Utils.getThumbnailUrl(item.getImageUrl(), item.getImageId(), UIOptions.THUMBNAIL_SIZE_CARD))
                     .placeholder(android.R.color.holo_blue_bright)
                     .error(android.R.color.holo_red_dark)
                     .tag(mContext)
@@ -269,7 +269,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     private List<LineItem> getLineItems() {
-        return mDataLoader.getLineItems(mAllowedLineItemPositions);
+        return mDataLoader.getLineItems(mAllowedLineItemPositions, mLayoutMode);
     }
 
     private String getCurrentPageDataUrl() {

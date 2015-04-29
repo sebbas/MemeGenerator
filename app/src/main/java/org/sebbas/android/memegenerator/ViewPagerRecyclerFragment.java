@@ -27,13 +27,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
@@ -44,7 +43,8 @@ import com.tonicartos.superslim.LayoutManager;
 
 
 public class ViewPagerRecyclerFragment extends BaseFragment implements
-        SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener {
+        SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener,
+        RecyclerViewListener {
 
     private static final String TAG = "ViewPagerRecyclerFragment";
 
@@ -125,8 +125,8 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
 
         SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -307,4 +307,17 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
         return mQuery;
     }
 
+    @Override
+    public void filterAdapterWith(String s) {
+        if (mSimpleRecyclerAdapter != null) {
+            mSimpleRecyclerAdapter.getFilter().filter(s);
+            recyclerViewMoveUp();
+        }
+    }
+
+    @Override
+    public void refreshAdapter() {
+        onRefresh();
+        Toast.makeText(this.getActivity(), "Refreshing", Toast.LENGTH_SHORT).show();
+    }
 }

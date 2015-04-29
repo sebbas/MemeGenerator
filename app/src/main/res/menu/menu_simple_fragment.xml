@@ -1,0 +1,20 @@
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+
+    <item
+        android:id="@+id/menu_search"
+        android:title="@string/action_search"
+        android:icon="@drawable/ic_search_white_24dp"
+        app:showAsAction="collapseActionView|ifRoom"
+        app:actionViewClass="android.support.v7.widget.SearchView" />
+
+   <!-- <item
+        android:id="@+id/menu_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        app:showAsAction="collapseActionView" />-->
+
+</menu>
