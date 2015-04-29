@@ -104,22 +104,21 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
         switch (currentPage) {
             case 0:
                 menu.findItem(R.id.menu_search).setVisible(true);
-                menu.findItem(R.id.action_settings).setVisible(false);
+                menu.findItem(R.id.menu_refresh).setVisible(false);
                 break;
             case 1:
                 menu.findItem(R.id.menu_search).setVisible(true);
-                menu.findItem(R.id.action_settings).setVisible(false);
+                menu.findItem(R.id.menu_refresh).setVisible(true);
                 break;
             case 2:
                 menu.findItem(R.id.menu_search).setVisible(true);
-                menu.findItem(R.id.action_settings).setVisible(false);
+                menu.findItem(R.id.menu_refresh).setVisible(true);
                 break;
             case 3:
                 menu.findItem(R.id.menu_search).setVisible(false);
-                menu.findItem(R.id.action_settings).setVisible(false);
+                menu.findItem(R.id.menu_refresh).setVisible(false);
                 break;
         }
-
         return super.onPrepareOptionsMenu(menu);
     }
 

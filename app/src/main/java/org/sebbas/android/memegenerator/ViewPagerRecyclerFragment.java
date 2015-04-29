@@ -31,6 +31,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -146,6 +147,15 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_refresh:
+                onRefresh();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onRefresh() {
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -234,7 +244,7 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     }
 
     private boolean adapterIsEmpty() {
-        mSimpleRecyclerAdapter.refreshData();
+        //mSimpleRecyclerAdapter.refreshData();
         return (mSimpleRecyclerAdapter.getItemCount() == 0);
     }
 

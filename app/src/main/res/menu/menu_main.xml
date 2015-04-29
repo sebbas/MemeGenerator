@@ -5,14 +5,35 @@
 
     <item
         android:id="@+id/menu_search"
-        android:title="@string/search_title"
+        android:title="@string/action_search"
         android:icon="@drawable/ic_search_white_24dp"
         app:showAsAction="collapseActionView|ifRoom"
         app:actionViewClass="android.support.v7.widget.SearchView" />
 
     <item
+        android:id="@+id/menu_refresh"
+        android:title="@string/action_refresh"
+        android:icon="@drawable/ic_refresh_white_24dp"
+        app:showAsAction="collapseActionView|ifRoom" />
+
+
+    <!--<item
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
-        app:showAsAction="never" />
+        app:showAsAction="collapseActionView" >
+
+        <menu>
+            <item
+                android:id="@+id/create_new"
+                android:title="@string/app_name" />
+            <item
+                android:id="@+id/open"
+                android:title="@string/app_name" />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/create_new2"
+        android:title="@string/app_name" />-->
+
 </menu>
