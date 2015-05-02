@@ -8,7 +8,7 @@ import android.view.WindowManager;
 public class UIOptions {
 
     static final String THUMBNAIL_SIZE_LIST = "m";
-    static final String THUMBNAIL_SIZE_CARD = "m";
+    static final String THUMBNAIL_SIZE_CARD = "l";
 
     // Meme fragment recycler view layout
     static final int GRID_LAYOUT = 0;

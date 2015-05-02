@@ -3,6 +3,7 @@ package org.sebbas.android.memegenerator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
@@ -17,14 +18,9 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
     private static final String TAG = "MainActivity";
 
     private NonSwipeableViewPager mMainViewPager;
-    private MainViewPagerAdapter mMainViewPagerAdapter;
+    private FragmentStatePagerAdapter mMainViewPagerAdapter;
     private SlidingTabLayoutForIcons mMainTabs;
-    private int mIcons[] = {R.drawable.selector_template_icon,
-                            R.drawable.selector_instances_icon,
-                            R.drawable.selector_gallery_icon,
-                            R.drawable.selector_preferences_icon,
-                            R.drawable.selector_template_icon};
-    private int mNumbOfTabs = 5;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +29,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
 
         setCustomLollipopActionBar();
 
-        mMainViewPagerAdapter =  new MainViewPagerAdapter(
-                getSupportFragmentManager(), mIcons, mNumbOfTabs);
+        mMainViewPagerAdapter =  new MainViewPagerAdapter(getSupportFragmentManager());
 
         mMainViewPager = (NonSwipeableViewPager) findViewById(R.id.nonswipeable_viewpager);
         mMainViewPager.setAdapter(mMainViewPagerAdapter);
@@ -51,6 +46,61 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
             }
         });
         mMainTabs.setViewPager(mMainViewPager);
+        mMainTabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                setupFragmentToolbars(position);
+                registerFragmentToolbarCallbacks(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+
+        // Initial toolbar setup at position 0
+        setupFragmentToolbars(0);
+        registerFragmentToolbarCallbacks(0);
+    }
+
+    private void setupFragmentToolbars(int position) {
+        int titleResource = 0;
+        int menuResource = 0;
+        switch(position) {
+            case 0:
+                titleResource = R.string.templates;
+                menuResource = R.menu.menu_simple_fragment;
+                break;
+            case 1:
+                titleResource = R.string.instances;
+                menuResource = R.menu.menu_sliding_tabs_fragment;
+                break;
+            case 2:
+                titleResource = R.string.explore;
+                break;
+            case 3:
+                titleResource = R.string.gallery;
+                menuResource = R.menu.menu_sliding_tabs_fragment;
+                break;
+            case 4:
+                titleResource = R.string.preferences;
+                break;
+            default:
+                titleResource = R.string.app_name;
+                menuResource = R.menu.menu_simple_fragment;
+                break;
+        }
+        setupToolbar(this, titleResource, menuResource);
+    }
+
+    private void registerFragmentToolbarCallbacks(int position) {
+        BaseFragment baseFragment = (BaseFragment) mMainViewPagerAdapter
+                .instantiateItem(mMainViewPager, position);
+        registerToolbarCallback(baseFragment);
     }
 
     @Override

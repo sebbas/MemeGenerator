@@ -2,14 +2,30 @@
 <resources>
 
     <string name="app_name">Meme Generator</string>
+
+    <!-- Main tabs titles -->
     <string name="editor">Editor</string>
     <string name="templates">Templates</string>
     <string name="instances">Instances</string>
+    <string name="explore">Explore</string>
     <string name="gallery">Gallery</string>
     <string name="preferences">Settings</string>
+
+    <!-- Other Activities strings -->
     <string name="search">Search:</string>
 
 
+    <!-- Sliding tabs titles -->
+    <string name="all_images">All</string>
+    <string name="memes">Memes</string>
+    <string name="gifs">Gifs</string>
+
+    <string name="my_memes">My Memes</string>
+    <string name="favorites">Favorites</string>
+    <string name="recent">Recent</string>
+
+
+    <!-- Toolbar icons -->
     <string name="action_settings">Settings</string>
     <string name="action_search">Search Meme</string>
     <string name="action_refresh">Refresh</string>

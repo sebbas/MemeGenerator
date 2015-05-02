@@ -10,6 +10,8 @@ import android.view.WindowManager;
 public class Utils {
 
     public static final int REFRESH_ICON_TIME_SHOWN = 3000;
+    public static final short NO_CONNECTION_HINT_TIME = 4000;
+    public static final short TIMEOUT_HINT_TIME = 4000;
     private static final String NUMBERS_HEADER_LETTER = "#";
 
     private Utils() {
@@ -60,5 +62,14 @@ public class Utils {
 
     public static boolean stringPatternMatch(String sentence, String pattern) {
         return sentence.toLowerCase().contains(pattern);
+    }
+
+    public static String[] resourceArrayToStringArray(Context context, int[] intArray) {
+        String[] stringArray = new String[intArray.length];
+        for (int i = 0; i < intArray.length; i++) {
+            int titleResource = intArray[i];
+            stringArray[i] = context.getResources().getString(titleResource);
+        }
+        return stringArray;
     }
 }

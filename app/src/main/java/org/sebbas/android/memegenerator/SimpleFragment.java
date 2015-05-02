@@ -2,6 +2,7 @@ package org.sebbas.android.memegenerator;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,23 +12,14 @@ public class SimpleFragment extends BaseFragment implements ToolbarCallback{
     private static final String TAG = "SimpleFragment";
     private ViewPagerRecyclerFragment mRootFragment;
 
-    public static SimpleFragment newInstance(int titleResource) {
-        SimpleFragment simpleFragment = new SimpleFragment();
-        Bundle args = new Bundle();
-        args.putInt("fragment_title", titleResource);
-        simpleFragment.setArguments(args);
-        return simpleFragment;
+    public static SimpleFragment newInstance() {
+        return new SimpleFragment();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_simple, container, false);
-
-        // Setup the toolbar
-        int titleResource = getArguments().getInt("fragment_title");
-        int menuResource = R.menu.menu_simple_fragment;
-        setupToolbar(this, view, titleResource, menuResource);
 
         // Get a recycler fragment
         int id = ViewPagerRecyclerFragment.DEFAULTS;
@@ -46,6 +38,16 @@ public class SimpleFragment extends BaseFragment implements ToolbarCallback{
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        BaseActivity parentActivity = (BaseActivity) getActivity();
+        parentActivity.unregisterToolbarCallback();
+    }
+
+    /*
+     * Toolbar Callbacks
+     */
     @Override
     public boolean onQueryTextSubmit(String s) {
         return false;

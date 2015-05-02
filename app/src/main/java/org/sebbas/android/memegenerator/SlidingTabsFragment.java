@@ -3,7 +3,6 @@ package org.sebbas.android.memegenerator;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,16 +34,15 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
     private int mSlop;
     private boolean mScrolled;
     private ScrollState mLastScrollState;
-    private int mTitleResource;
-    private String[] mTitles;
+    private int[] mTitleResources;
     private WeakReference<MainActivity> mWeakReference;
 
 
-    public static SlidingTabsFragment newInstance(int titleResource, String[] titles) {
+    public static SlidingTabsFragment newInstance(int position, int[] titles) {
         SlidingTabsFragment slidingTabsFragment = new SlidingTabsFragment();
         Bundle args = new Bundle();
-        args.putInt("fragment_title", titleResource);
-        args.putStringArray("titles", titles);
+        args.putInt("parent_viewpager_position", position);
+        args.putIntArray("titles", titles);
         slidingTabsFragment.setArguments(args);
         return slidingTabsFragment;
     }
@@ -52,8 +50,7 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTitleResource =  getArguments().getInt("fragment_title");
-        mTitles = getArguments().getStringArray("titles");
+        mTitleResources = getArguments().getIntArray("titles");
         mWeakReference = new WeakReference<>((MainActivity) getActivity());
     }
 
@@ -67,9 +64,9 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
         // Setup the toolbar
         int titleResource = getArguments().getInt("fragment_title");
         int menuResource = R.menu.menu_sliding_tabs_fragment;
-        setupToolbar(this, view, titleResource, menuResource);
+        //setupToolbar(this, titleResource, menuResource);
 
-        mToolbarView = view.findViewById(R.id.toolbar);
+        mToolbarView = getActivity().findViewById(R.id.toolbar);
 
         // Choose adapter type depending on settings
         mSlidingTabsFragmentAdapter = new SlidingTabsFragmentAdapter(this, getChildFragmentManager());
@@ -98,6 +95,13 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
         mInterceptionLayout.setScrollInterceptionListener(mInterceptionListener);
 
         return view;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        BaseActivity parentActivity = (BaseActivity) getActivity();
+        parentActivity.unregisterToolbarCallback();
     }
 
     @Override
@@ -253,13 +257,16 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
     }
 
     public String[] getTitles() {
-        return mTitles;
+        return Utils.resourceArrayToStringArray(getActivity(), mTitleResources);
     }
 
-    public int getTitleResource() {
-        return mTitleResource;
+    public int getParentViewPagerPosition() {
+        return getArguments().getInt("parent_viewpager_position");
     }
 
+    /*
+     * Toolbar Callbacks
+     */
     @Override
     public boolean onQueryTextSubmit(String s) {
         /*int fragmentId = mViewPager.getCurrentItem();
@@ -276,9 +283,16 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
 
     @Override
     public void onRefreshClicked() {
-        int fragmentId = mViewPager.getCurrentItem();
+        /*int fragmentId = mViewPager.getCurrentItem();
         Fragment visibleFragment = getChildFragmentManager().findFragmentByTag(Integer.toString(fragmentId));
         RecyclerViewListener recyclerViewListener = (RecyclerViewListener) visibleFragment;
+        recyclerViewListener.refreshAdapter();*/
+
+        int position = mViewPager.getCurrentItem();
+        BaseFragment baseFragment = (BaseFragment) mSlidingTabsFragmentAdapter
+                .instantiateItem(mViewPager, position);
+        RecyclerViewListener recyclerViewListener = (RecyclerViewListener) baseFragment;
         recyclerViewListener.refreshAdapter();
+
     }
 }

@@ -26,11 +26,11 @@ public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
     @Override
     protected Fragment createItem(int position) {
 
-        switch (mFragment.getTitleResource()) {
+        switch (mFragment.getParentViewPagerPosition()) {
 
-            case R.string.instances:
+            case MainViewPagerAdapter.INSTANCES_FRAGMENT_POSITION:
                 return getInstancesFragment(position);
-            case R.string.gallery:
+            case MainViewPagerAdapter.GALLERY_FRAGMENT_POSITION:
                 return getGalleryFragment(position);
             default:
                 return getInstancesFragment(position);
@@ -79,7 +79,6 @@ public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
                 fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
                 break;
         }
-        //mFragmentManager.beginTransaction().add(fragment, Integer.toString(position)).commit();
         return fragment;
     }
 
@@ -115,19 +114,7 @@ public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
                 fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
                 break;
         }
-        //mFragmentManager.beginTransaction().add(fragment, Integer.toString(position)).commit();
         return fragment;
-    }
-
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-        super.destroyItem(container, position, object);
-        Log.d(TAG, "Destroying fragment");
-        if (position <= getCount()) {
-            FragmentTransaction trans = mFragmentManager.beginTransaction();
-            trans.remove((Fragment) object);
-            trans.commit();
-        }
     }
 
     public Fragment getFragment(String id) {
@@ -136,7 +123,8 @@ public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return mFragment.getTitles().length;
+        return 3;
+        //return mFragment.getTitles().length;
     }
 
     @Override

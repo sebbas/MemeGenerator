@@ -16,7 +16,6 @@
 
 package org.sebbas.android.memegenerator;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -26,14 +25,10 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
@@ -74,6 +69,7 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     private int mLayoutMode;
     private String mQuery;
     private WeakReference<MainActivity> mWeakReference;
+    private RecyclerView.AdapterDataObserver mAdapterObserver;
 
     public static ViewPagerRecyclerFragment newInstance(int fragmentType, int layoutMode) {
         ViewPagerRecyclerFragment fragment = new ViewPagerRecyclerFragment();
@@ -112,9 +108,15 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
 
         mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.swipe_container);
-        //mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
+        mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
         mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
-
+        mAdapterObserver = new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                updatePlaceholder();
+            }
+        };
         return view;
     }
 
@@ -125,6 +127,14 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
         setupRecyclerView();
         updatePlaceholder();
         setupSwipeRefreshLayout();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        resetRecyclerView();
+        resetSwipeRefreshLayout();
     }
 
     @Override
@@ -188,7 +198,7 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
                 .withOnClickListener(this)
                 .withMessageId(R.string.connection_unavailable)
                 .withActionMessageId(R.string.retry)
-                .withDuration((short) 5000)
+                .withDuration(Utils.NO_CONNECTION_HINT_TIME)
                 .withBackgroundColorId(R.color.accent)
                 .show();
     }
@@ -198,7 +208,7 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
                 .withOnClickListener(this)
                 .withMessageId(R.string.connection_timeout)
                 .withActionMessageId(R.string.retry)
-                .withDuration((short) 5000)
+                .withDuration(Utils.TIMEOUT_HINT_TIME)
                 .withBackgroundColorId(R.color.accent)
                 .show();
     }
@@ -207,18 +217,12 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     public void onMessageClick(Parcelable parcelable) {
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mRecyclerView.setScrollViewCallbacks(null);
-    }
-
     private void updatePlaceholder() {
-        /*if (adapterIsEmpty()) {
+        if (adapterIsEmpty()) {
             mCircularProgressView.setVisibility(View.VISIBLE);
         } else {
             mCircularProgressView.setVisibility(View.GONE);
-        }*/
+        }
     }
 
     private boolean adapterIsEmpty() {
@@ -228,13 +232,7 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     protected void setupRecyclerView() {
         mSimpleRecyclerAdapter = new SimpleRecyclerAdapter(this);
 
-        mSimpleRecyclerAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                updatePlaceholder();
-            }
-        });
+        mSimpleRecyclerAdapter.registerAdapterDataObserver(mAdapterObserver);
 
         MainActivity parentActivity = (MainActivity) getActivity(); //mWeakReference.get();
 
@@ -269,8 +267,17 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
 
     private void recyclerViewMoveUp() {
         if (mRecyclerView.getChildCount() > 0) {
-            mRecyclerView.scrollToPosition(0);
+            mRecyclerView.smoothScrollToPosition(0);
         }
+    }
+
+    private void resetRecyclerView() {
+        mSimpleRecyclerAdapter.unregisterAdapterDataObserver(mAdapterObserver);
+        mRecyclerView.setScrollViewCallbacks(null);
+    }
+
+    private void resetSwipeRefreshLayout() {
+        mSwipeRefreshLayout.setOnRefreshListener(null);
     }
 
     public int getLayoutMode() {
@@ -297,5 +304,6 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     public void refreshAdapter() {
         mSwipeRefreshLayout.setRefreshing(true);
         onRefresh();
+        recyclerViewMoveUp();
     }
 }

@@ -28,9 +28,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedTransformationBuilder;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.tonicartos.superslim.GridSLM;
 import com.tonicartos.superslim.LinearSLM;
@@ -87,7 +84,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     @Override
     public MainViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        MainViewHolder.ViewHolderCalback mainViewHolderCallback = new MainViewHolder.ViewHolderCalback() {
+        MainViewHolder.ViewHolderCallback mainViewHolderCallback = new MainViewHolder.ViewHolderCallback() {
             @Override
             public void onItemClick(int position) {
                 // Only trigger click event for content items
@@ -212,18 +209,18 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     abstract static class MainViewHolder extends RecyclerView.ViewHolder {
         ImageView imageView;
         TextView textViewTitle;
-        ViewHolderCalback mViewHolderCallback;
+        ViewHolderCallback mViewHolderCallback;
 
-        public MainViewHolder(View view, ViewHolderCalback viewHolderCalback) {
+        public MainViewHolder(View view, ViewHolderCallback viewHolderCallback) {
             super(view);
 
             imageView = (ImageView) view.findViewById(R.id.item_image);
             textViewTitle = (TextView) view.findViewById(R.id.item_title);
 
-            mViewHolderCallback = viewHolderCalback;
+            mViewHolderCallback = viewHolderCallback;
         }
 
-        static interface ViewHolderCalback {
+        static interface ViewHolderCallback {
             public void onItemClick(int position);
         }
     }
@@ -233,8 +230,8 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         TextView textViewTimeStamp;
 
 
-        public CardViewHolder(View view, ViewHolderCalback viewHolderCalback) {
-            super(view, viewHolderCalback);
+        public CardViewHolder(View view, ViewHolderCallback viewHolderCallback) {
+            super(view, viewHolderCallback);
             view.setOnClickListener(this);
 
             textViewViewCount = (TextView) view.findViewById(R.id.item_viewcount);
@@ -249,8 +246,8 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     static class ListViewHolder extends MainViewHolder implements View.OnClickListener {
 
-        public ListViewHolder(View view, ViewHolderCalback viewHolderCalback) {
-            super(view, viewHolderCalback);
+        public ListViewHolder(View view, ViewHolderCallback viewHolderCallback) {
+            super(view, viewHolderCallback);
             view.setOnClickListener(this);
         }
 
@@ -262,8 +259,8 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     static class GridViewHolder extends MainViewHolder implements View.OnClickListener {
 
-        public GridViewHolder(View view, ViewHolderCalback viewHolderCalback) {
-            super(view, viewHolderCalback);
+        public GridViewHolder(View view, ViewHolderCallback viewHolderCallback) {
+            super(view, viewHolderCallback);
             view.setOnClickListener(this);
         }
 

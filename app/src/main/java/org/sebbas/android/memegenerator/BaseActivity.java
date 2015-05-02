@@ -17,11 +17,16 @@
 package org.sebbas.android.memegenerator;
 
 import android.app.ActivityManager;
+import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
@@ -54,4 +59,60 @@ public abstract class BaseActivity extends ActionBarActivity {
         }
     }
 
+    protected void setupToolbar(ActionBarActivity actionBarActivity, int titleResource, int menuResource) {
+        Toolbar toolbar = (Toolbar) actionBarActivity.findViewById(R.id.toolbar);
+
+        // Make sure that toolbar is clear
+        toolbar.getMenu().clear();
+
+        // Setup toolbar title
+        String title = actionBarActivity.getResources().getString(titleResource);
+        toolbar.setTitle(title);
+
+        // Setup toolbar menu
+        if (menuResource != 0) {
+            toolbar.inflateMenu(menuResource);
+        }
+    }
+
+    protected void registerToolbarCallback(BaseFragment baseFragment) {
+        final ToolbarCallback toolbarCallback = (ToolbarCallback) baseFragment;
+        Toolbar toolbar = (Toolbar) this.findViewById(R.id.toolbar);
+
+        // Setup toolbar actions
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                switch (menuItem.getItemId()) {
+                    case R.id.menu_search:
+                        setupSearchView(menuItem, toolbarCallback);
+                        break;
+                    case R.id.menu_refresh:
+                        toolbarCallback.onRefreshClicked();
+                        break;
+                }
+                return true;
+            }
+        });
+    }
+
+    protected void unregisterToolbarCallback() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setOnMenuItemClickListener(null);
+    }
+
+    private void setupSearchView(MenuItem menuItem, final ToolbarCallback toolbarCallback) {
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return toolbarCallback.onQueryTextSubmit(s);
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                return toolbarCallback.onQueryTextChange(s);
+            }
+        });
+    }
 }

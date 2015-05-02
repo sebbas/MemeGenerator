@@ -17,22 +17,14 @@ public class SimplePreferenceFragment extends BaseFragment implements ToolbarCal
 
     private static final String TAG = "SimplePreferenceFragment";
 
-    public static SimplePreferenceFragment newInstance(int titleResource) {
-        SimplePreferenceFragment simplePreferenceFragment = new SimplePreferenceFragment();
-        Bundle args = new Bundle();
-        args.putInt("fragment_title", titleResource);
-        simplePreferenceFragment.setArguments(args);
-        return simplePreferenceFragment;
+    public static SimplePreferenceFragment newInstance() {
+        return new SimplePreferenceFragment();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_preferences, container, false);
-
-        // Setup the toolbar
-        int titleResource = getArguments().getInt("fragment_title");
-        setupToolbar(this, view, titleResource, 0);
 
         // Get a preferences fragment
         PreferencesFragment fragment = PreferencesFragment.newInstance();
@@ -49,6 +41,16 @@ public class SimplePreferenceFragment extends BaseFragment implements ToolbarCal
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        BaseActivity parentActivity = (BaseActivity) getActivity();
+        parentActivity.unregisterToolbarCallback();
+    }
+
+    /*
+     * Toolbar Callbacks
+     */
     @Override
     public boolean onQueryTextSubmit(String s) {
         return false;
