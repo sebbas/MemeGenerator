@@ -62,14 +62,12 @@ final class Data {
         return BASE + imageId;
     }
 
-    public static ArrayList<String> getListString(int fragmentType, String key) {
-        Context context = MemeGeneratorApplication.getAppContext();
+    public static ArrayList<String> getListString(Context context, int fragmentType, String key) {
         SharedPreferences preferences = context.getSharedPreferences(Integer.toString(fragmentType), Context.MODE_PRIVATE);
         return new ArrayList<>(Arrays.asList(TextUtils.split(preferences.getString(key, ""), "‚‗‚")));
     }
 
-    public static void putListString(int fragmentType, List<String> stringList, String key) {
-        Context context = MemeGeneratorApplication.getAppContext();
+    public static void putListString(Context context, int fragmentType, List<String> stringList, String key) {
         SharedPreferences preferences = context.getSharedPreferences(Integer.toString(fragmentType), Context.MODE_PRIVATE);
         String[] myStringList = stringList.toArray(new String[stringList.size()]);
         preferences.edit().putString(key, TextUtils.join("‚‗‚", myStringList)).apply();

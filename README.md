@@ -19,6 +19,7 @@
     - Cats
     - Cute
   - Option for custom categories 
+  - indicator/ floating button for "new posts" when loading button was clicked and scroll position is not at top
 - SettingsFragment:
   - Cleanup: remove unused preferences
   - Add option: disable "recents" tab
@@ -29,3 +30,6 @@
 - Add drawable for all screen sizes
 -UI:
   - Custom layout for landscape
+  - Floating action buttons
+  - Show and hide bottom sliding bar
+  - 

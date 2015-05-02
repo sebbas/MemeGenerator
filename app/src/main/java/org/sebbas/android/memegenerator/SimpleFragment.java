@@ -23,7 +23,6 @@ public class SimpleFragment extends BaseFragment implements ToolbarCallback{
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_simple, container, false);
-        setHasOptionsMenu(true);
 
         // Setup the toolbar
         int titleResource = getArguments().getInt("fragment_title");

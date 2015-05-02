@@ -16,10 +16,9 @@ public class Utils {
         // No instances
     }
 
-    public static boolean isNetworkAvailable() {
+    public static boolean isNetworkAvailable(Context context) {
         ConnectivityManager connectivityManager
-                = (ConnectivityManager) MemeGeneratorApplication.getAppContext()
-                    .getSystemService(Context.CONNECTIVITY_SERVICE);
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
@@ -46,9 +45,8 @@ public class Utils {
      * placing the file "imgur.xml" in your '.gitignore'. That way your client id will not
      * be compromised.
      */
-    public static String getImgurClientId() {
-        return MemeGeneratorApplication.
-                getAppContext().getResources().getString(R.string.client_id);
+    public static String getImgurClientId(Context context) {
+        return context.getResources().getString(R.string.client_id);
     }
 
     public static String getScrollHeaderTitleLetter(String title) {

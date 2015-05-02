@@ -10,65 +10,57 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.widget.Filter;
 
+import com.github.ksoichiro.android.observablescrollview.CacheFragmentStatePagerAdapter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
+public class MainViewPagerAdapter extends CacheFragmentStatePagerAdapter {
 
     private static final String TAG = "MainViewPagerAdapter";
+    private static final String[] TITLES_INSTANCES = {"Viral", "New", "Top Today", "Top Week",
+            "Top Month", "Top Year", "Top All"};
+    private static final String[] TITLES_GALLERY = {"My Memes", "Recent", "Favorites"};
+
     private int[] mIcons;
     private int mNumbOfTabs;
-    private ActionBarActivity mActivity;
 
-    private SimpleFragment mTemplateFragment;
-    private SlidingTabsFragment mInstanceFragment;
-    private SlidingTabsFragment mGalleryFragment;
-    private SimplePreferenceFragment mPreferencesFragment;
-
-    public MainViewPagerAdapter(Activity activity, FragmentManager fm, int[] icons, int numbOfTabs) {
+    public MainViewPagerAdapter(FragmentManager fm, int[] icons, int numbOfTabs) {
         super(fm);
-
-        mActivity = (ActionBarActivity) activity;
         mIcons = icons;
         mNumbOfTabs = numbOfTabs;
     }
 
-    @Override
+    /*@Override
     public Fragment getItem(int position) {
-        String[] tabTitlesInstances = MemeGeneratorApplication.getAppContext()
-                .getResources().getStringArray(R.array.tab_titles_instances);
-
-        String[] tabTitlesGallery = MemeGeneratorApplication.getAppContext()
-                .getResources().getStringArray(R.array.tab_titles_gallery);
-
         switch (position) {
             case 0:
-                if (mTemplateFragment == null) {
-                    mTemplateFragment = SimpleFragment.newInstance(
-                            R.string.templates);
-                }
-                return mTemplateFragment;
+                return SimpleFragment.newInstance(R.string.templates);
             case 1:
-                if (mInstanceFragment == null) {
-                    mInstanceFragment = SlidingTabsFragment.newInstance(
-                            R.string.instances, tabTitlesInstances);
-                }
-                return mInstanceFragment;
+                return SlidingTabsFragment.newInstance(R.string.instances, TITLES_INSTANCES);
             case 2:
-                if (mGalleryFragment == null) {
-                    mGalleryFragment = SlidingTabsFragment.newInstance(
-                            R.string.gallery, tabTitlesGallery);
-                }
-                return mGalleryFragment;
+                return SlidingTabsFragment.newInstance(R.string.gallery, TITLES_GALLERY);
             case 3:
-                if (mPreferencesFragment == null) {
-                    mPreferencesFragment = SimplePreferenceFragment.newInstance(
-                            R.string.preferences);
-                }
-                return mPreferencesFragment;
+                return SimplePreferenceFragment.newInstance(R.string.preferences);
             default:
-                return PreferencesFragment.newInstance();
+                return SlidingTabsFragment.newInstance(R.string.instances, TITLES_INSTANCES);
+        }
+    }*/
+
+    @Override
+    protected Fragment createItem(int position) {
+        switch (position) {
+            case 0:
+                return SimpleFragment.newInstance(R.string.templates);
+            case 1:
+                return SlidingTabsFragment.newInstance(R.string.instances, TITLES_INSTANCES);
+            case 2:
+                return SlidingTabsFragment.newInstance(R.string.gallery, TITLES_GALLERY);
+            case 3:
+                return SimplePreferenceFragment.newInstance(R.string.preferences);
+            default:
+                return SlidingTabsFragment.newInstance(R.string.instances, TITLES_INSTANCES);
         }
     }
 

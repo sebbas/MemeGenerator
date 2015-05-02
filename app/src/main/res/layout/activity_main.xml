@@ -34,7 +34,7 @@
             android:id="@+id/main_tabs"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tab_height"
-            android:background="?attr/colorPrimary"
+            android:background="@color/primary"
             android:fillViewport="false" />
     </LinearLayout>
 </RelativeLayout>

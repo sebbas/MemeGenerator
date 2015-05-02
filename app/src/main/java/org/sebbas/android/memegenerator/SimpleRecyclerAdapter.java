@@ -28,6 +28,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedTransformationBuilder;
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import com.tonicartos.superslim.GridSLM;
 import com.tonicartos.superslim.LinearSLM;
@@ -130,7 +133,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
         if (mLayoutMode == UIOptions.LIST_LAYOUT && getItemViewType(position) == VIEW_TYPE_CONTENT) {
 
-            Transformation transformation = new RoundedTransformationBuilder()
+            Transformation roundedTransformation = new RoundedTransformationBuilder()
                     .oval(true)
                     .build();
 
@@ -139,7 +142,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                     .placeholder(R.color.invisible)
                     .error(android.R.color.holo_red_dark)
                     .fit()
-                    .transform(transformation)
+                    .transform(roundedTransformation)
                     .centerCrop()
                     .tag(mContext)
                     .into(viewHolder.imageView);
@@ -153,6 +156,8 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                     .placeholder(android.R.color.holo_blue_bright)
                     .error(android.R.color.holo_red_dark)
                     .tag(mContext)
+                    .centerInside()
+                    .fit()
                     .into(viewHolder.imageView);
 
             cardViewHolder.textViewViewCount.setText(item.getViewCount() + " " + mViewsString);
@@ -291,4 +296,5 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         String url = getCurrentPageDataUrl();
         mDataLoader.load(url);
     }
+
 }

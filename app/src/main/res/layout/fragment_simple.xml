@@ -28,5 +28,4 @@
             app:theme="@style/Toolbar" />
 
     </LinearLayout>
-
 </FrameLayout>

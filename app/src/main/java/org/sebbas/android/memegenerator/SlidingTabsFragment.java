@@ -20,6 +20,8 @@ import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.ViewHelper;
 
+import java.lang.ref.WeakReference;
+
 
 public class SlidingTabsFragment extends BaseFragment implements ObservableScrollViewCallbacks,
         ToolbarCallback {
@@ -35,6 +37,8 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
     private ScrollState mLastScrollState;
     private int mTitleResource;
     private String[] mTitles;
+    private WeakReference<MainActivity> mWeakReference;
+
 
     public static SlidingTabsFragment newInstance(int titleResource, String[] titles) {
         SlidingTabsFragment slidingTabsFragment = new SlidingTabsFragment();
@@ -50,15 +54,15 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
         super.onCreate(savedInstanceState);
         mTitleResource =  getArguments().getInt("fragment_title");
         mTitles = getArguments().getStringArray("titles");
+        mWeakReference = new WeakReference<>((MainActivity) getActivity());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_slidingtabs, container, false);
-        setHasOptionsMenu(true);
 
-        ActionBarActivity parentActivity = (ActionBarActivity) getActivity();
+        MainActivity parentActivity = (MainActivity) getActivity(); //mWeakReference.get();
 
         // Setup the toolbar
         int titleResource = getArguments().getInt("fragment_title");
@@ -74,7 +78,8 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
         mViewPager.setAdapter(mSlidingTabsFragmentAdapter);
 
         // Always preload all pages in viewpager
-        mViewPager.setOffscreenPageLimit(mSlidingTabsFragmentAdapter.getCount());
+        //mViewPager.setOffscreenPageLimit(mSlidingTabsFragmentAdapter.getCount());
+        mViewPager.setOffscreenPageLimit(1);
 
         // Padding for ViewPager must be set outside the ViewPager itself
         // because with padding, EdgeEffect of ViewPager become strange.
@@ -202,8 +207,8 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
         } else if (!toolbarIsShown() && !toolbarIsHidden()) {
             // Toolbar is moving but doesn't know which to move:
             // you can change this to hideToolbar()
-            showToolbar();
-            //hideToolbar();
+            //showToolbar();
+            hideToolbar();
         }
     }
 

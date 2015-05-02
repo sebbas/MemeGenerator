@@ -16,6 +16,7 @@
 
 package org.sebbas.android.memegenerator;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -40,6 +41,8 @@ import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCal
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.tonicartos.superslim.LayoutManager;
+
+import java.lang.ref.WeakReference;
 
 
 public class ViewPagerRecyclerFragment extends BaseFragment implements
@@ -67,10 +70,10 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     private SimpleRecyclerAdapter mSimpleRecyclerAdapter;
     private CircularProgressView mCircularProgressView;
     private ObservableRecyclerView mRecyclerView;
-    //private DataLoader mDataLoader;
     private int mFragmentType;
     private int mLayoutMode;
     private String mQuery;
+    private WeakReference<MainActivity> mWeakReference;
 
     public static ViewPagerRecyclerFragment newInstance(int fragmentType, int layoutMode) {
         ViewPagerRecyclerFragment fragment = new ViewPagerRecyclerFragment();
@@ -100,16 +103,16 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
         } finally {
             mFragmentType = getArguments().getInt("fragment_type");
             mLayoutMode = getArguments().getInt("layout_mode");
+            mWeakReference = new WeakReference<>((MainActivity) getActivity());
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
-        setHasOptionsMenu(true);
 
         mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.swipe_container);
-        mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
+        //mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
         mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
 
         return view;
@@ -204,12 +207,18 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     public void onMessageClick(Parcelable parcelable) {
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mRecyclerView.setScrollViewCallbacks(null);
+    }
+
     private void updatePlaceholder() {
-        if (adapterIsEmpty()) {
+        /*if (adapterIsEmpty()) {
             mCircularProgressView.setVisibility(View.VISIBLE);
         } else {
             mCircularProgressView.setVisibility(View.GONE);
-        }
+        }*/
     }
 
     private boolean adapterIsEmpty() {
@@ -227,7 +236,7 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
             }
         });
 
-        final MainActivity parentActivity = (MainActivity) getActivity();
+        MainActivity parentActivity = (MainActivity) getActivity(); //mWeakReference.get();
 
         mRecyclerView.setAdapter(mSimpleRecyclerAdapter);
         mRecyclerView.setHasFixedSize(false);
@@ -246,6 +255,7 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
                 mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, UIOptions.getGridColumnCount()));
         }
 
+        // TODO parentActivity does not implement ObservableScrollViewCallbacks
         if (parentActivity instanceof ObservableScrollViewCallbacks) {
             mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
         }

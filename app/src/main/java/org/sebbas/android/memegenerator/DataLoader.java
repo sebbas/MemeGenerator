@@ -2,6 +2,7 @@ package org.sebbas.android.memegenerator;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -34,21 +35,23 @@ public class DataLoader {
     private volatile boolean mParsingComplete = false;
     private volatile boolean mParsingSuccessful = false;
     private boolean mConnectionUnavailable = false;
+    private Context mContext;
 
 
     private DataLoaderCallback mDataLoaderCallback;
     private int mFragmentType;
 
     public DataLoader(Fragment fragment, int fragmentType) {
+        mContext = fragment.getActivity();
         mFragmentType = fragmentType;
         mDataLoaderCallback = (DataLoaderCallback) fragment;
 
         // Restore array lists from previous session or if restore not possible (on startup) then get new lists
-        mViewCounts = Data.getListString(fragmentType, "viewCounts");
-        mImageUrls = Data.getListString(fragmentType, "imageUrls");
-        mImageIds = Data.getListString(fragmentType, "imageIds");
-        mImageTitles = Data.getListString(fragmentType, "imageTitles");
-        mTimeStamps = Data.getListString(fragmentType, "timeStamps");
+        mViewCounts = Data.getListString(mContext, fragmentType, "viewCounts");
+        mImageUrls = Data.getListString(mContext, fragmentType, "imageUrls");
+        mImageIds = Data.getListString(mContext, fragmentType, "imageIds");
+        mImageTitles = Data.getListString(mContext, fragmentType, "imageTitles");
+        mTimeStamps = Data.getListString(mContext, fragmentType, "timeStamps");
     }
 
     public void load(String url) {
@@ -156,7 +159,7 @@ public class DataLoader {
         @Override
         protected Void doInBackground(String... params) {
 
-            if (Utils.isNetworkAvailable()) {
+            if (Utils.isNetworkAvailable(mContext)) {
                 mConnectionUnavailable = false;
 
                 String url = params[0];
@@ -166,12 +169,11 @@ public class DataLoader {
 
                 if (mParsingSuccessful) {
                     // Save array lists for next session
-                    Data.putListString(mFragmentType, mViewCounts, "viewCounts");
-                    Data.putListString(mFragmentType, mImageUrls, "imageUrls");
-                    Data.putListString(mFragmentType, mImageIds, "imageIds");
-                    Data.putListString(mFragmentType, mImageTitles, "imageTitles");
-                    Data.putListString(mFragmentType, mTimeStamps, "timeStamps");
-
+                    Data.putListString(mContext, mFragmentType, mViewCounts, "viewCounts");
+                    Data.putListString(mContext, mFragmentType, mImageUrls, "imageUrls");
+                    Data.putListString(mContext, mFragmentType, mImageIds, "imageIds");
+                    Data.putListString(mContext, mFragmentType, mImageTitles, "imageTitles");
+                    Data.putListString(mContext, mFragmentType, mTimeStamps, "timeStamps");
                 }
             } else {
                 mConnectionUnavailable = true;
@@ -201,7 +203,7 @@ public class DataLoader {
 
             Request request = new Request.Builder()
                     .url(urlString)
-                    .addHeader("Authorization", "Client-ID " + Utils.getImgurClientId())
+                    .addHeader("Authorization", "Client-ID " + Utils.getImgurClientId(mContext))
                     .build();
 
             Response response = okHttpClient.newCall(request).execute();

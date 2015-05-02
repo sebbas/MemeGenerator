@@ -1,9 +1,14 @@
 package org.sebbas.android.memegenerator;
 
+import android.content.Context;
+import android.graphics.Point;
+import android.view.Display;
+import android.view.WindowManager;
+
 public class UIOptions {
 
     static final String THUMBNAIL_SIZE_LIST = "m";
-    static final String THUMBNAIL_SIZE_CARD = "l";
+    static final String THUMBNAIL_SIZE_CARD = "m";
 
     // Meme fragment recycler view layout
     static final int GRID_LAYOUT = 0;
@@ -45,5 +50,22 @@ public class UIOptions {
 
     public static int getGridColumnCount() {
         return GRID_COLUMN_COUNT;
+    }
+
+    /*public static int getScreenWidth() {
+        Context context = MemeGeneratorApplication.getAppContext();
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        return size.x;
+    }*/
+
+    public static int getCardImageHeight() {
+        return getCardImageWidth();
+    }
+
+    public static int getCardImageWidth() {
+        return 500;
     }
 }

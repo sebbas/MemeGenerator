@@ -2,24 +2,24 @@ package org.sebbas.android.memegenerator;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.ViewGroup;
 
 import com.github.ksoichiro.android.observablescrollview.CacheFragmentStatePagerAdapter;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
 
+    private static final String TAG = "SlidingTabsFragmentAdapter";
     private SlidingTabsFragment mFragment;
-    private Map<Integer, Fragment> mPageReferenceMap;
     private FragmentManager mFragmentManager;
 
     public SlidingTabsFragmentAdapter(Fragment fragment, FragmentManager fragmentManager) {
         super(fragmentManager);
 
         mFragment = (SlidingTabsFragment) fragment;
-        mPageReferenceMap = new HashMap<>();
         mFragmentManager = fragmentManager;
     }
 
@@ -79,7 +79,7 @@ public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
                 fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
                 break;
         }
-        mFragmentManager.beginTransaction().add(fragment, Integer.toString(position));
+        //mFragmentManager.beginTransaction().add(fragment, Integer.toString(position)).commit();
         return fragment;
     }
 
@@ -115,17 +115,19 @@ public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
                 fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
                 break;
         }
-        mFragmentManager.beginTransaction().add(fragment, Integer.toString(position));
+        //mFragmentManager.beginTransaction().add(fragment, Integer.toString(position)).commit();
         return fragment;
     }
 
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         super.destroyItem(container, position, object);
-        //mPageReferenceMap.remove(position);
-
-        Fragment fragment = mFragmentManager.getFragments().get(position);
-        mFragmentManager.beginTransaction().remove(fragment);
+        Log.d(TAG, "Destroying fragment");
+        if (position <= getCount()) {
+            FragmentTransaction trans = mFragmentManager.beginTransaction();
+            trans.remove((Fragment) object);
+            trans.commit();
+        }
     }
 
     public Fragment getFragment(String id) {

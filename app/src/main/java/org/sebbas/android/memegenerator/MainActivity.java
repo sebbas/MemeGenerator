@@ -22,8 +22,9 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
     private int mIcons[] = {R.drawable.selector_template_icon,
                             R.drawable.selector_instances_icon,
                             R.drawable.selector_gallery_icon,
-                            R.drawable.selector_preferences_icon};
-    private int mNumbOfTabs = 4;
+                            R.drawable.selector_preferences_icon,
+                            R.drawable.selector_template_icon};
+    private int mNumbOfTabs = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +34,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
         setCustomLollipopActionBar();
 
         mMainViewPagerAdapter =  new MainViewPagerAdapter(
-                this, getSupportFragmentManager(), mIcons, mNumbOfTabs);
+                getSupportFragmentManager(), mIcons, mNumbOfTabs);
 
         mMainViewPager = (NonSwipeableViewPager) findViewById(R.id.nonswipeable_viewpager);
         mMainViewPager.setAdapter(mMainViewPagerAdapter);
