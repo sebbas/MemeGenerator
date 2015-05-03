@@ -110,13 +110,7 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
         mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
         mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
-        mAdapterObserver = new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                updatePlaceholder();
-            }
-        };
+
         return view;
     }
 
@@ -232,6 +226,14 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     protected void setupRecyclerView() {
         mSimpleRecyclerAdapter = new SimpleRecyclerAdapter(this);
 
+        // Register observer
+        mAdapterObserver = new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                updatePlaceholder();
+            }
+        };
         mSimpleRecyclerAdapter.registerAdapterDataObserver(mAdapterObserver);
 
         MainActivity parentActivity = (MainActivity) getActivity(); //mWeakReference.get();
@@ -239,6 +241,8 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
         mRecyclerView.setAdapter(mSimpleRecyclerAdapter);
         mRecyclerView.setHasFixedSize(false);
         mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
+
+        int scrollDuration = getResources().getInteger(R.integer.scroll_duration);
         switch (mLayoutMode) {
             case UIOptions.GRID_LAYOUT:
                 mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(UIOptions.getGridColumnCount(), StaggeredGridLayoutManager.VERTICAL));
@@ -247,7 +251,11 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
                 mRecyclerView.setLayoutManager(new LayoutManager(parentActivity));
                 break;
             case UIOptions.CARD_LAYOUT:
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
+                mRecyclerView.setLayoutManager(new ScrollingLinearLayoutManager(
+                        getActivity(),
+                        LinearLayoutManager.VERTICAL,
+                        false,
+                        scrollDuration));
                 break;
             default:
                 mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, UIOptions.getGridColumnCount()));

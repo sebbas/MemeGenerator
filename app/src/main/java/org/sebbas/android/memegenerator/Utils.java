@@ -1,11 +1,8 @@
 package org.sebbas.android.memegenerator;
 
 import android.content.Context;
-import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.view.Display;
-import android.view.WindowManager;
 
 public class Utils {
 
@@ -71,5 +68,44 @@ public class Utils {
             stringArray[i] = context.getResources().getString(titleResource);
         }
         return stringArray;
+    }
+
+   /*
+    * Taken from https://gist.github.com/dmsherazi/5985a093076a8c4e7c38 and slightly adapted
+    */
+    public static String getTimeAgoString(Context context, long timeStamp) {
+
+        long timeDifference;
+        long unixTime = System.currentTimeMillis() / 1000L;  //get current time in seconds.
+        int j;
+
+        // Get string resources
+        String tense = context.getResources().getString(R.string.ago);
+
+        double[] lengths = {60, 60, 24, 7, 4.35, 12, 10};
+        timeDifference = unixTime - timeStamp;
+        for (j = 0; timeDifference >= lengths[j] && j < lengths.length - 1; j++) {
+            timeDifference /= lengths[j];
+        }
+
+        if (timeDifference == 1) {
+            String[] periodsSingular = context.getResources().getStringArray(R.array.time_formats_singular);
+            return timeDifference + " " + periodsSingular[j] + " " + tense;
+        } else {
+            String[] periodsPlural = context.getResources().getStringArray(R.array.time_formats_plural);
+            return timeDifference + " " + periodsPlural[j] + " " + tense;
+        }
+    }
+
+    public static String getViewCountString(Context context, String viewCount) {
+        int count = Integer.valueOf(viewCount);
+
+        if (count == 1) {
+            String viewSingular = context.getResources().getString(R.string.view_singular);
+            return count + " " + viewSingular;
+        } else {
+            String viewPlural = context.getResources().getString(R.string.view_plural);
+            return count + " " + viewPlural;
+        }
     }
 }

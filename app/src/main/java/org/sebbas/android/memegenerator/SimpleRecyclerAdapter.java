@@ -45,7 +45,6 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     private Context mContext;
     private LayoutInflater mInflater;
     private DataLoader mDataLoader;
-    private String mViewsString;
     private int mLayoutMode;
     private ViewPagerRecyclerFragment mFragment;
     private List<LineItem> mLineItems = null;
@@ -60,9 +59,6 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         mInflater = LayoutInflater.from(mContext);
         mLineItems = new ArrayList<>();
         mAllowedLineItemPositions = new ArrayList<>();
-
-        // String resources for google cards
-        mViewsString = mContext.getResources().getString(R.string.image_views);
 
         // Trigger initial data load
         refreshData();
@@ -157,8 +153,8 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                     .fit()
                     .into(viewHolder.imageView);
 
-            cardViewHolder.textViewViewCount.setText(item.getViewCount() + " " + mViewsString);
-            cardViewHolder.textViewTimeStamp.setText(item.getTimeStamp());
+            cardViewHolder.textViewViewCount.setText(Utils.getViewCountString(mContext, item.getViewCount()));
+            cardViewHolder.textViewTimeStamp.setText(Utils.getTimeAgoString(mContext, Integer.valueOf(item.getTimeStamp())));
         }
     }
 

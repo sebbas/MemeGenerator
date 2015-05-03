@@ -1,15 +1,25 @@
 package org.sebbas.android.memegenerator;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.OrientationEventListener;
+import android.view.ViewGroup;
+import android.widget.ActionMenuView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayoutForIcons;
+import com.tonicartos.superslim.LayoutManager;
 
 import java.util.List;
 
@@ -20,7 +30,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
     private NonSwipeableViewPager mMainViewPager;
     private FragmentStatePagerAdapter mMainViewPagerAdapter;
     private SlidingTabLayoutForIcons mMainTabs;
-
+    private OrientationEventListener mOrientationListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +71,22 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
             public void onPageScrollStateChanged(int state) {
             }
         });
+
+        // Listen for orientation changes
+        mOrientationListener = new OrientationEventListener(getApplicationContext()) {
+            @Override
+            public void onOrientationChanged(int orientation) {
+                /*LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        400, LinearLayout.LayoutParams.MATCH_PARENT);
+                mMainTabs.setLayoutParams(layoutParams);
+                mMainTabs.invalidate();*/
+                mMainTabs = new SlidingTabLayoutForIcons(MainActivity.this);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        400, LinearLayout.LayoutParams.MATCH_PARENT);
+                mMainTabs.setLayoutParams(layoutParams);
+            }
+        };
+        mOrientationListener.enable();
 
         // Initial toolbar setup at position 0
         setupFragmentToolbars(0);
@@ -103,6 +129,9 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
         registerToolbarCallback(baseFragment);
     }
 
+    /*
+     * ItemClickCallback
+     */
     @Override
     public void onItemClick(int position, List<LineItem> lineItems) {
         Intent editorIntent = new Intent(this, EditorActivity.class);
@@ -113,4 +142,5 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
         editorIntent.putExtra("imageUrl", imageUrl);
         startActivityForResult(editorIntent, 1);
     }
+
 }

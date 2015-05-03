@@ -39,14 +39,36 @@
     <string name="layout_cards">Cards</string>
     <string name="layout_list">List</string>
 
-    <!-- Google card strings -->
-    <string name="image_views">Views</string>
-    <string name="image_timestamp">ago</string>
 
     <!-- Preferences strings -->
     <string name="category_downloads">Downloads</string>
     <string name="preference_download_favorites">Download favorite memes</string>
 
+    <!-- Google card strings -->
+    <!-- Time format for unix timestamps -->
+    <string-array name="time_formats_singular">
+        <item>second</item>
+        <item>minute</item>
+        <item>hour</item>
+        <item>day</item>
+        <item>week</item>
+        <item>month</item>
+        <item>year</item>
+        <item>decade</item>
+    </string-array>
+    <string-array name="time_formats_plural">
+        <item>seconds</item>
+        <item>minutes</item>
+        <item>hours</item>
+        <item>days</item>
+        <item>weeks</item>
+        <item>months</item>
+        <item>years</item>
+        <item>decades</item>
+    </string-array>
+    <string name="ago">ago</string>
+    <string name="view_singular">Views</string>
+    <string name="view_plural">Views</string>
 
 
     <string name="category_view">View</string>
