@@ -29,6 +29,7 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
@@ -149,16 +150,19 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
 
     private Fragment getCurrentFragmentFromViewPager() {
         ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.meme_pager);
-        int index = viewPager.getCurrentItem();
+        int position = viewPager.getCurrentItem();
         SlidingTabsFragmentAdapter adapter = (SlidingTabsFragmentAdapter) viewPager.getAdapter();
 
-        ViewPagerRecyclerFragment fragment = (ViewPagerRecyclerFragment)
-                adapter.getFragment(Integer.toString(index));
-        return fragment;
+        ViewPagerRecyclerFragment viewPagerRecyclerFragment = (ViewPagerRecyclerFragment)
+                adapter.getFragment(Integer.toString(position));
+
+        return viewPagerRecyclerFragment;
     }
 
     @Override
     public void onConnectionUnavailable() {
+        mSimpleRecyclerAdapter.refreshUI();
+
         // Checks when no nested fragments are present
         if (getParentFragment() == null) {
             if (getUserVisibleHint()) {
@@ -174,6 +178,8 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
 
     @Override
     public void onConnectionTimeout() {
+        mSimpleRecyclerAdapter.refreshUI();
+
         // Checks when no nested fragments are present
         if (getParentFragment() == null) {
             if (isVisible()) {
@@ -209,6 +215,7 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
 
     @Override
     public void onMessageClick(Parcelable parcelable) {
+        refreshAdapter();
     }
 
     private void updatePlaceholder() {

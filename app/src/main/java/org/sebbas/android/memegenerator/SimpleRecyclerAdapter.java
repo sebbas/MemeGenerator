@@ -19,6 +19,7 @@ package org.sebbas.android.memegenerator;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,9 +63,6 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
         // Trigger initial data load
         refreshData();
-
-        // Fill up array list of line items with data from dataloader
-        mLineItems = getLineItems();
     }
 
     @Override
@@ -279,9 +277,18 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         return Data.getUrlForData(mPageIndex, fragmentType);
     }
 
+    private void preloadImages() {
+        Log.d(TAG, "size is: " + mLineItems.size());
+        for (int i = 0; i < mLineItems.size(); i++) {
+            LineItem item = mLineItems.get(i);
+            PicassoCache.getPicassoInstance(mContext)
+                    .load(Utils.getThumbnailUrl(item.getImageUrl(), item.getImageId(), UIOptions.THUMBNAIL_SIZE_CARD))
+                    .fetch();
+        }
+    }
+
     public void refreshUI() {
         mLineItems = getLineItems();
-
         notifyDataSetChanged();
     }
 

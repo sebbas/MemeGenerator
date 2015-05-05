@@ -76,14 +76,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback {
         mOrientationListener = new OrientationEventListener(getApplicationContext()) {
             @Override
             public void onOrientationChanged(int orientation) {
-                /*LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                        400, LinearLayout.LayoutParams.MATCH_PARENT);
-                mMainTabs.setLayoutParams(layoutParams);
-                mMainTabs.invalidate();*/
-                mMainTabs = new SlidingTabLayoutForIcons(MainActivity.this);
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                        400, LinearLayout.LayoutParams.MATCH_PARENT);
-                mMainTabs.setLayoutParams(layoutParams);
+                // TODO
             }
         };
         mOrientationListener.enable();

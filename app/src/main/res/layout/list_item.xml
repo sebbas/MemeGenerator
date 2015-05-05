@@ -24,7 +24,7 @@
 
         <TextView
             android:id="@+id/item_title"
-            style="@android:style/TextAppearance.DeviceDefault.Widget.ActionBar.Menu"
+            style="@android:style/TextAppearance.DeviceDefault.Medium.Inverse"
             android:text="No title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,6 +32,7 @@
             android:ellipsize="marquee"
             android:singleLine="false"
             android:minLines="1"
+            android:textStyle="bold"
             android:paddingLeft="@dimen/margin_short"
             android:layout_gravity="center_vertical"
             android:textColor="?android:attr/textColorPrimary"/>

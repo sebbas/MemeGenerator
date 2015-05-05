@@ -123,8 +123,7 @@ public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
-        //return mFragment.getTitles().length;
+        return mFragment.getTitles().length;
     }
 
     @Override

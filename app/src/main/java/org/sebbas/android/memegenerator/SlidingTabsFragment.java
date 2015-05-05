@@ -283,11 +283,6 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
 
     @Override
     public void onRefreshClicked() {
-        /*int fragmentId = mViewPager.getCurrentItem();
-        Fragment visibleFragment = getChildFragmentManager().findFragmentByTag(Integer.toString(fragmentId));
-        RecyclerViewListener recyclerViewListener = (RecyclerViewListener) visibleFragment;
-        recyclerViewListener.refreshAdapter();*/
-
         int position = mViewPager.getCurrentItem();
         BaseFragment baseFragment = (BaseFragment) mSlidingTabsFragmentAdapter
                 .instantiateItem(mViewPager, position);
