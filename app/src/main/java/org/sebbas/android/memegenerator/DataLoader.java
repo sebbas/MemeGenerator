@@ -7,6 +7,7 @@ import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -38,7 +39,6 @@ public class DataLoader {
     private boolean mConnectionUnavailable = false;
     private Context mContext;
 
-
     private DataLoaderCallback mDataLoaderCallback;
     private int mFragmentType;
 
@@ -48,11 +48,11 @@ public class DataLoader {
         mDataLoaderCallback = (DataLoaderCallback) fragment;
 
         // Restore array lists from previous session or if restore not possible (on startup) then get new lists
-        mViewCounts = Data.getListString(mContext, fragmentType, "viewCounts");
-        mImageUrls = Data.getListString(mContext, fragmentType, "imageUrls");
-        mImageIds = Data.getListString(mContext, fragmentType, "imageIds");
-        mTitles = Data.getListString(mContext, fragmentType, "imageTitles");
-        mTimeStamps = Data.getListString(mContext, fragmentType, "timeStamps");
+        mViewCounts = Utils.getListString(mContext, fragmentType, "viewCounts");
+        mImageUrls = Utils.getListString(mContext, fragmentType, "imageUrls");
+        mImageIds = Utils.getListString(mContext, fragmentType, "imageIds");
+        mTitles = Utils.getListString(mContext, fragmentType, "imageTitles");
+        mTimeStamps = Utils.getListString(mContext, fragmentType, "timeStamps");
     }
 
     public void load(String url) {
@@ -60,12 +60,7 @@ public class DataLoader {
         asyncLoader.execute(url);
     }
 
-    private void loadTopics() {
-        String[] topics = mContext.getResources().getStringArray(R.array.main_topics);
-        mTitles = Arrays.asList(topics);
-    }
-
-    public String getViewCountAt(int position) {
+    private String getViewCountAt(int position) {
         String count = "";
         if (mViewCounts != null && mViewCounts.size() > position) {
             count = mViewCounts.get(position);
@@ -73,7 +68,7 @@ public class DataLoader {
         return count;
     }
 
-    public String getImageUrlAt(int position) {
+    private String getImageUrlAt(int position) {
         String url = "";
         if (mImageUrls != null && mImageUrls.size() > position) {
             url = mImageUrls.get(position);
@@ -81,7 +76,7 @@ public class DataLoader {
         return url;
     }
 
-    public String getImageIdAt(int position) {
+    private String getImageIdAt(int position) {
         String imageId = "";
         if (mImageIds != null && mImageIds.size() > position) {
             imageId = mImageIds.get(position);
@@ -97,42 +92,12 @@ public class DataLoader {
         return imageTitle;
     }
 
-    public String getTimeStampAt(int position) {
+    private String getTimeStampAt(int position) {
         String timeStamp = "";
         if (mTimeStamps != null && mTimeStamps.size() > position) {
             timeStamp = mTimeStamps.get(position);
         }
         return timeStamp;
-    }
-
-    public String[] getSubTopicTitles(int position) {
-        Resources resources = mContext.getResources();
-
-        // Get typed array that contains subtopics array ids
-        TypedArray subTopics = resources.obtainTypedArray(R.array.sub_topics);
-
-        // Get array id at position
-        int resId = subTopics.getResourceId(position, 0);
-        subTopics.recycle();
-
-        return resources.getStringArray(resId);
-    }
-
-    public String[] getSubTopicImageUrls(int position) {
-        Resources resources = mContext.getResources();
-
-        // Get typed array that contains subtopics array ids
-        TypedArray subTopicUrls = resources.obtainTypedArray(R.array.sub_topics_urls);
-
-        // Get array id at position
-        int resId = subTopicUrls.getResourceId(position, 0);
-        subTopicUrls.recycle();
-
-        return resources.getStringArray(resId);
-    }
-
-    public int getTopicsCount() {
-        return mContext.getResources().obtainTypedArray(R.array.sub_topics).length();
     }
 
     public List<LineItem> getLineItems(List<Integer> allowedLineItemPositions, int layoutMode) {
@@ -190,33 +155,33 @@ public class DataLoader {
         return !excludedLineItemPositions.contains(i);
     }
 
-    private class AsyncLoader extends AsyncTask<String, Void, Void> {
+    private class AsyncLoader extends AsyncTask<Object, Void, Void> {
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected Void doInBackground(Object... params) {
 
             if (Utils.isNetworkAvailable(mContext)) {
                 mConnectionUnavailable = false;
+                String url = (String) params[0];
 
-                String url = params[0];
-
-                if (url != null) {
-                    fetchJSON(url);
-                } else {
+                // Load data depending on url
+                if (url.equals(SimpleRecyclerAdapter.TOPICS_URL)) {
                     loadTopics();
                     mParsingComplete = true;
                     mParsingSuccessful = true;
+                } else {
+                    fetchJSON(url);
                 }
 
                 while (!mParsingComplete);
 
                 if (mParsingSuccessful) {
                     // Save array lists for next session
-                    Data.putListString(mContext, mFragmentType, mViewCounts, "viewCounts");
-                    Data.putListString(mContext, mFragmentType, mImageUrls, "imageUrls");
-                    Data.putListString(mContext, mFragmentType, mImageIds, "imageIds");
-                    Data.putListString(mContext, mFragmentType, mTitles, "imageTitles");
-                    Data.putListString(mContext, mFragmentType, mTimeStamps, "timeStamps");
+                    Utils.putListString(mContext, mFragmentType, mViewCounts, "viewCounts");
+                    Utils.putListString(mContext, mFragmentType, mImageUrls, "imageUrls");
+                    Utils.putListString(mContext, mFragmentType, mImageIds, "imageIds");
+                    Utils.putListString(mContext, mFragmentType, mTitles, "imageTitles");
+                    Utils.putListString(mContext, mFragmentType, mTimeStamps, "timeStamps");
                 }
             } else {
                 mConnectionUnavailable = true;
@@ -258,6 +223,7 @@ public class DataLoader {
 
         } catch (Exception e) {
             e.printStackTrace();
+            Log.e(TAG, "Exception while fetching JSON");
             mParsingComplete = true;
             mParsingSuccessful = false;
         }
@@ -313,8 +279,6 @@ public class DataLoader {
                 mImageIds.add(imageId);
                 mTitles.add(imageTitle);
                 mTimeStamps.add(timeStamp);
-
-
             }
         }
     }
@@ -341,4 +305,8 @@ public class DataLoader {
         return reader.getBoolean("success");
     }
 
+    private void loadTopics() {
+        String[] topics = mContext.getResources().getStringArray(R.array.main_topics);
+        mTitles = Arrays.asList(topics);
+    }
 }

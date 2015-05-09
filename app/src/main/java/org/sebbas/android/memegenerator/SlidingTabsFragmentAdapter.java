@@ -2,10 +2,6 @@ package org.sebbas.android.memegenerator;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
-import android.view.ViewGroup;
 
 import com.github.ksoichiro.android.observablescrollview.CacheFragmentStatePagerAdapter;
 
@@ -44,39 +40,24 @@ public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                id = ViewPagerRecyclerFragment.VIRAL;
+                id = RecyclerFragment.ALL;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
+                fragment = RecyclerFragment.newInstance(id, layout, true);
                 break;
             case 1:
-                id = ViewPagerRecyclerFragment.TIME;
+                id = RecyclerFragment.MEMES;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
+                fragment = RecyclerFragment.newInstance(id, layout, true);
                 break;
             case 2:
-                id = ViewPagerRecyclerFragment.WINDOW_DAY;
+                id = RecyclerFragment.GIFS;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
-                break;
-            case 3:
-                id = ViewPagerRecyclerFragment.WINDOW_WEEK;
-                layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
-                break;
-            case 4:
-                id = ViewPagerRecyclerFragment.WINDOW_MONTH;
-                layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
-                break;
-            case 5:
-                id = ViewPagerRecyclerFragment.WINDOW_YEAR;
-                layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
+                fragment = RecyclerFragment.newInstance(id, layout, true);
                 break;
             default:
-                id = ViewPagerRecyclerFragment.VIRAL;
+                id = RecyclerFragment.ALL;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
+                fragment = RecyclerFragment.newInstance(id, layout, true);
                 break;
         }
         return fragment;
@@ -89,29 +70,29 @@ public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                id = ViewPagerRecyclerFragment.MY_MEMES;
+                id = RecyclerFragment.MY_MEMES;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
+                fragment = RecyclerFragment.newInstance(id, layout, true);
                 break;
             case 1:
-                id = ViewPagerRecyclerFragment.RECENT;
+                id = RecyclerFragment.RECENT;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
+                fragment = RecyclerFragment.newInstance(id, layout, true);
                 break;
             case 2:
-                id = ViewPagerRecyclerFragment.FAVORITE_TEMPLATES;
+                id = RecyclerFragment.FAVORITE_TEMPLATES;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
+                fragment = RecyclerFragment.newInstance(id, layout, true);
                 break;
             case 3:
-                id = ViewPagerRecyclerFragment.FAVORITE_INSTANCES;
+                id = RecyclerFragment.FAVORITE_INSTANCES;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
+                fragment = RecyclerFragment.newInstance(id, layout, true);
                 break;
             default:
-                id = ViewPagerRecyclerFragment.VIRAL;
+                id = RecyclerFragment.ALL;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
+                fragment = RecyclerFragment.newInstance(id, layout, true);
                 break;
         }
         return fragment;

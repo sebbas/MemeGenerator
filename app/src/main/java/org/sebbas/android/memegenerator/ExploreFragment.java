@@ -21,9 +21,9 @@ public class ExploreFragment extends BaseFragment implements ToolbarCallback {
         View view = inflater.inflate(R.layout.fragment_explore, container, false);
 
         // Get a recycler fragment
-        int id = ViewPagerRecyclerFragment.EXPLORE;
+        int id = RecyclerFragment.EXPLORE;
         int layout = UIOptions.getLayoutMode(id);
-        ViewPagerRecyclerFragment rootFragment = ViewPagerRecyclerFragment.newInstance(id, layout, false);
+        RecyclerFragment rootFragment = RecyclerFragment.newInstance(id, layout, false);
 
         // Attach the just obtained fragment to frame layout
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();

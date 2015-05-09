@@ -1,10 +1,5 @@
 package org.sebbas.android.memegenerator;
 
-import android.content.Context;
-import android.graphics.Point;
-import android.view.Display;
-import android.view.WindowManager;
-
 public class UIOptions {
 
     static final String THUMBNAIL_SIZE_LIST = "m";
@@ -20,31 +15,23 @@ public class UIOptions {
 
     public static int getLayoutMode(int id) {
         switch (id) {
-            case ViewPagerRecyclerFragment.VIRAL:
+            case RecyclerFragment.ALL:
                 return CARD_LAYOUT;
-            case ViewPagerRecyclerFragment.TIME:
+            case RecyclerFragment.MEMES:
                 return CARD_LAYOUT;
-            case ViewPagerRecyclerFragment.WINDOW_DAY:
+            case RecyclerFragment.GIFS:
                 return CARD_LAYOUT;
-            case ViewPagerRecyclerFragment.WINDOW_WEEK:
-                return CARD_LAYOUT;
-            case ViewPagerRecyclerFragment.WINDOW_MONTH:
-                return CARD_LAYOUT;
-            case ViewPagerRecyclerFragment.WINDOW_YEAR:
-                return CARD_LAYOUT;
-            case ViewPagerRecyclerFragment.WINDOW_ALL:
-                return CARD_LAYOUT;
-            case ViewPagerRecyclerFragment.DEFAULTS:
+            case RecyclerFragment.DEFAULTS:
                 return LIST_LAYOUT;
-            case ViewPagerRecyclerFragment.MY_MEMES:
+            case RecyclerFragment.MY_MEMES:
                 return LIST_LAYOUT;
-            case ViewPagerRecyclerFragment.RECENT:
+            case RecyclerFragment.RECENT:
                 return LIST_LAYOUT;
-            case ViewPagerRecyclerFragment.FAVORITE_TEMPLATES:
+            case RecyclerFragment.FAVORITE_TEMPLATES:
                 return LIST_LAYOUT;
-            case ViewPagerRecyclerFragment.FAVORITE_INSTANCES:
+            case RecyclerFragment.FAVORITE_INSTANCES:
                 return LIST_LAYOUT;
-            case ViewPagerRecyclerFragment.EXPLORE:
+            case RecyclerFragment.EXPLORE:
                 return SCROLLBOX_LAYOUT;
             default:
                 return LIST_LAYOUT;

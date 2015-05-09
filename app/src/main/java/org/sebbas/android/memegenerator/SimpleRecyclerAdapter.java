@@ -41,6 +41,8 @@ import java.util.List;
 public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAdapter.MainViewHolder> implements Filterable {
 
     private static final String TAG = "SimpleRecyclerAdapter";
+    public static final String TOPICS_URL = "Topics";
+
     private static final int VIEW_TYPE_HEADER = 1;
     private static final int VIEW_TYPE_CONTENT = 0;
 
@@ -48,14 +50,14 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     private LayoutInflater mInflater;
     private DataLoader mDataLoader;
     private int mLayoutMode;
-    private ViewPagerRecyclerFragment mFragment;
+    private RecyclerFragment mFragment;
     private List<LineItem> mLineItems = null;
     private List<Integer> mAllowedLineItemPositions = null;
     private int mPageIndex = 0;
 
     public SimpleRecyclerAdapter(Fragment fragment) {
         mContext = fragment.getActivity();
-        mFragment = (ViewPagerRecyclerFragment) fragment;
+        mFragment = (RecyclerFragment) fragment;
         mLayoutMode = mFragment.getLayoutMode();
         mDataLoader = new DataLoader(fragment, mFragment.getFragmentType());
         mInflater = LayoutInflater.from(mContext);
@@ -110,7 +112,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                 return new GridViewHolder(view, mainViewHolderCallback);
             case UIOptions.SCROLLBOX_LAYOUT:
                 view = mInflater.inflate(R.layout.horizontal_scroll, parent, false);
-                return new ScrollBoxViewHolder(view, mContext);
+                return new ScrollBoxViewHolder(view);
             default:
                 view = mInflater.inflate(R.layout.list_item, parent, false);
                 return new ListViewHolder(view, mainViewHolderCallback);
@@ -137,7 +139,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                     .build();
 
             PicassoCache.getPicassoInstance(mContext)
-                    .load(Utils.getThumbnailUrl(item.getImageUrl(), item.getImageId(), UIOptions.THUMBNAIL_SIZE_LIST))
+                    .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), UIOptions.THUMBNAIL_SIZE_LIST))
                     .placeholder(R.color.invisible)
                     .error(android.R.color.holo_red_dark)
                     .fit()
@@ -151,7 +153,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             CardViewHolder cardViewHolder = (CardViewHolder) viewHolder;
 
             PicassoCache.getPicassoInstance(mContext)
-                    .load(Utils.getThumbnailUrl(item.getImageUrl(), item.getImageId(), UIOptions.THUMBNAIL_SIZE_CARD))
+                    .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), UIOptions.THUMBNAIL_SIZE_CARD))
                     .placeholder(android.R.color.holo_blue_bright)
                     .error(android.R.color.holo_red_dark)
                     .tag(mContext)
@@ -166,13 +168,9 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         if (mLayoutMode == UIOptions.SCROLLBOX_LAYOUT) {
             ScrollBoxViewHolder scrollBoxViewHolder = (ScrollBoxViewHolder) viewHolder;
 
-            // Get data for horizontal recycler view
-            String[] titles = mDataLoader.getSubTopicTitles(position);
-            String[] imageUrls = mDataLoader.getSubTopicImageUrls(position);
-
             // Setup horizontal scroll box
             scrollBoxViewHolder.horizontalRecyclerView.setAdapter(
-                    new HorizontalRecyclerAdapter(mFragment, titles, imageUrls));
+                    new HorizontalRecyclerAdapter(mFragment, position));
             scrollBoxViewHolder.horizontalRecyclerView.setLayoutManager(
                     new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
         }
@@ -241,7 +239,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         }
     }
 
-    static class CardViewHolder extends MainViewHolder implements View.OnClickListener{
+    static class CardViewHolder extends MainViewHolder implements View.OnClickListener {
         ImageView imageView;
         TextView textViewViewCount;
         TextView textViewTimeStamp;
@@ -295,7 +293,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     static class ScrollBoxViewHolder extends MainViewHolder {
         RecyclerView horizontalRecyclerView;
 
-        public ScrollBoxViewHolder(View view, Context context) {
+        public ScrollBoxViewHolder(View view) {
             super(view);
             horizontalRecyclerView = (RecyclerView) view.findViewById(R.id.horizontal_recyclerview);
         }
@@ -307,11 +305,16 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     private String getCurrentPageDataUrl() {
         int fragmentType = mFragment.getFragmentType();
-        if (fragmentType == ViewPagerRecyclerFragment.QUERY) {
-            String query = mFragment.getQuery();
-            return Data.getUrlForQuery(mPageIndex, query);
+
+        switch (fragmentType) {
+            case RecyclerFragment.QUERY:
+                String query = mFragment.getQuery();
+                return Utils.getUrlForQuery(mPageIndex, query);
+            case RecyclerFragment.EXPLORE:
+                return TOPICS_URL;
+            default:
+                return Utils.getUrlForData(mPageIndex, fragmentType);
         }
-        return Data.getUrlForData(mPageIndex, fragmentType);
     }
 
     private void preloadImages() {
@@ -319,7 +322,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         for (int i = 0; i < mLineItems.size(); i++) {
             LineItem item = mLineItems.get(i);
             PicassoCache.getPicassoInstance(mContext)
-                    .load(Utils.getThumbnailUrl(item.getImageUrl(), item.getImageId(), UIOptions.THUMBNAIL_SIZE_CARD))
+                    .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), UIOptions.THUMBNAIL_SIZE_CARD))
                     .fetch();
         }
     }
@@ -330,12 +333,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     public void refreshData() {
-        String url;
-        if (mLayoutMode == UIOptions.SCROLLBOX_LAYOUT) {
-            url = null;
-        } else {
-            url = getCurrentPageDataUrl();
-        }
+        String url = getCurrentPageDataUrl();
         mDataLoader.load(url);
     }
 

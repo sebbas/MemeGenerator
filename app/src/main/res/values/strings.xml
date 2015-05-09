@@ -106,6 +106,7 @@
         <item>Leonardo DiCaprio</item>
         <item>Bradley Cooper</item>
         <item>Joseph Gordon-Levitt</item>
+        <item>Anna Kendrick</item>
     </string-array>
 
     <string-array name="comic_topics">
@@ -121,34 +122,35 @@
     </string-array>
 
     <string-array name="animals_topics_urls">
-        <item>https://i.imgur.com/Cxagvm.jpg</item>
-        <item>https://i.imgur.com/rnKASWkm.jpg</item>
-        <item>https://i.imgur.com/bQ8C5q0m.jpg</item>
-        <item>https://i.imgur.com/zzCRZUHm.jpg</item>
-        <item>https://i.imgur.com/pbY83XYm.jpg</item>
-        <item>https://i.imgur.com/7eGFo3Im.jpg</item>
-        <item>https://i.imgur.com/pb00Qyom.jpg</item>
+        <item>Cxagv</item>
+        <item>rnKASWk</item>
+        <item>bQ8C5q0</item>
+        <item>zzCRZUH</item>
+        <item>pbY83XY</item>
+        <item>7eGFo3I</item>
+        <item>pb00Qyo</item>
     </string-array>
 
     <string-array name="celebrities_topics_urls">
-        <item>https://i.imgur.com/crIQrm.jpg</item>
-        <item>https://i.imgur.com/gtzUbmZm.jpg</item>
-        <item>http://i.imgur.com/rDTA6CIm.jpg</item>
-        <item>http://i.imgur.com/zI4lCCJm.jpg</item>
-        <item>http://i.imgur.com/xJkPkFJm.jpg</item>
-        <item>https://i.imgur.com/X3tUX.jpg</item>
+        <item>crIQr</item>
+        <item>gtzUbmZ</item>
+        <item>rDTA6CI</item>
+        <item>zI4lCCJ</item>
+        <item>xJkPkFJ</item>
+        <item>X3tUX</item>
+        <item>ZzWOCdB</item>
     </string-array>
 
     <string-array name="comic_topics_urls">
-        <item>http://i.imgur.com/crIQrm.jpg</item>
+        <item>crIQr</item>
     </string-array>
 
     <string-array name="miscellaneous_topics_urls">
-        <item>http://i.imgur.com/crIQrm.jpg</item>
-        <item>http://i.imgur.com/crIQrm.jpg</item>
-        <item>http://i.imgur.com/crIQrm.jpg</item>
-        <item>http://i.imgur.com/crIQrm.jpg</item>
-        <item>http://i.imgur.com/crIQrm.jpg</item>
+        <item>crIQr</item>
+        <item>crIQr</item>
+        <item>crIQr</item>
+        <item>crIQr</item>
+        <item>crIQr</item>
     </string-array>
 
 

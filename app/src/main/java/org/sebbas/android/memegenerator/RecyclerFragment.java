@@ -29,7 +29,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
@@ -40,27 +39,23 @@ import com.tonicartos.superslim.LayoutManager;
 
 import java.lang.ref.WeakReference;
 
-public class ViewPagerRecyclerFragment extends BaseFragment implements
+public class RecyclerFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener,
         RecyclerViewListener {
 
-    private static final String TAG = "ViewPagerRecyclerFragment";
+    private static final String TAG = "RecyclerFragment";
 
-    static final int VIRAL = 0;
-    static final int TIME = 1;
-    static final int WINDOW_DAY = 2;
-    static final int WINDOW_WEEK = 3;
-    static final int WINDOW_MONTH = 4;
-    static final int WINDOW_YEAR = 5;
-    static final int WINDOW_ALL = 6;
-    static final int QUERY = 7;
-    static final int DEFAULTS = 8;
-    static final int MY_MEMES = 9;
-    static final int RECENT = 10;
-    static final int FAVORITE_TEMPLATES = 11;
-    static final int FAVORITE_INSTANCES = 12;
-    static final int SEARCH = 13;
-    static final int EXPLORE = 14;
+    static final int ALL = 0;
+    static final int MEMES = 1;
+    static final int GIFS = 2;
+    static final int QUERY = 3;
+    static final int DEFAULTS = 4;
+    static final int MY_MEMES = 5;
+    static final int RECENT = 6;
+    static final int FAVORITE_TEMPLATES = 7;
+    static final int FAVORITE_INSTANCES = 8;
+    static final int SEARCH = 9;
+    static final int EXPLORE = 10;
 
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
     private SimpleRecyclerAdapter mSimpleRecyclerAdapter;
@@ -73,8 +68,8 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     private WeakReference<MainActivity> mWeakReference;
     private RecyclerView.AdapterDataObserver mAdapterObserver;
 
-    public static ViewPagerRecyclerFragment newInstance(int fragmentType, int layoutMode, boolean refreshable) {
-        ViewPagerRecyclerFragment fragment = new ViewPagerRecyclerFragment();
+    public static RecyclerFragment newInstance(int fragmentType, int layoutMode, boolean refreshable) {
+        RecyclerFragment fragment = new RecyclerFragment();
         Bundle args = new Bundle();
         args.putInt("fragment_type", fragmentType);
         args.putInt("layout_mode", layoutMode);
@@ -83,8 +78,8 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
         return fragment;
     }
 
-    public static ViewPagerRecyclerFragment newInstance(int fragmentType, int layoutMode, boolean refreshable, String query) {
-        ViewPagerRecyclerFragment fragment = new ViewPagerRecyclerFragment();
+    public static RecyclerFragment newInstance(int fragmentType, int layoutMode, boolean refreshable, String query) {
+        RecyclerFragment fragment = new RecyclerFragment();
         Bundle args = new Bundle();
         args.putInt("fragment_type", fragmentType);
         args.putInt("layout_mode", layoutMode);
@@ -160,10 +155,10 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
         int position = viewPager.getCurrentItem();
         SlidingTabsFragmentAdapter adapter = (SlidingTabsFragmentAdapter) viewPager.getAdapter();
 
-        ViewPagerRecyclerFragment viewPagerRecyclerFragment = (ViewPagerRecyclerFragment)
+        RecyclerFragment recyclerFragment = (RecyclerFragment)
                 adapter.getFragment(Integer.toString(position));
 
-        return viewPagerRecyclerFragment;
+        return recyclerFragment;
     }
 
     @Override

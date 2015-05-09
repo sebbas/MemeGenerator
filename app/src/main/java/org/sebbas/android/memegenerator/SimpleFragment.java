@@ -2,7 +2,6 @@ package org.sebbas.android.memegenerator;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +9,7 @@ import android.view.ViewGroup;
 public class SimpleFragment extends BaseFragment implements ToolbarCallback {
 
     private static final String TAG = "SimpleFragment";
-    private ViewPagerRecyclerFragment mRootFragment;
+    private RecyclerFragment mRootFragment;
 
     public static SimpleFragment newInstance() {
         return new SimpleFragment();
@@ -22,9 +21,9 @@ public class SimpleFragment extends BaseFragment implements ToolbarCallback {
         View view = inflater.inflate(R.layout.fragment_simple, container, false);
 
         // Get a recycler fragment
-        int id = ViewPagerRecyclerFragment.DEFAULTS;
+        int id = RecyclerFragment.DEFAULTS;
         int layout = UIOptions.getLayoutMode(id);
-        mRootFragment = ViewPagerRecyclerFragment.newInstance(id, layout, false);
+        mRootFragment = RecyclerFragment.newInstance(id, layout, false);
 
         // Attach the just obtained fragment to frame layout
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();

@@ -19,21 +19,15 @@ package org.sebbas.android.memegenerator;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.squareup.picasso.Transformation;
-import com.tonicartos.superslim.GridSLM;
-import com.tonicartos.superslim.LinearSLM;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -43,48 +37,50 @@ public class HorizontalRecyclerAdapter extends RecyclerView.Adapter<HorizontalRe
 
     private Context mContext;
     private LayoutInflater mInflater;
-    private String[] mTitles = null;
-    private String[] mImageUrls = null;
+    private List<LineItem> mLineItems = null;
 
-    public HorizontalRecyclerAdapter(Fragment fragment, String[] titles, String[] imageUrls) {
+    public HorizontalRecyclerAdapter(Fragment fragment, int position) {
         mContext = fragment.getActivity();
         mInflater = LayoutInflater.from(mContext);
-        mTitles = titles;
-        mImageUrls = imageUrls;
+
+        RecyclerFragment recyclerFragment = (RecyclerFragment) fragment;
+        int fragmentType = recyclerFragment.getFragmentType();
+
+        LocalDataLoader localDataLoader = new LocalDataLoader(fragment, fragmentType, position);
+        mLineItems = localDataLoader.getLineItems();
     }
 
     @Override
     public int getItemCount() {
-        return mTitles.length;
+        return mLineItems.size();
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(final ViewGroup parent, int viewType) {
 
-        ViewHolder.ViewHolderCallback mainViewHolderCallback = new ViewHolder.ViewHolderCallback() {
+        ViewHolder.ViewHolderCallback viewHolderCallback = new ViewHolder.ViewHolderCallback() {
             @Override
             public void onItemClick(int position) {
-                //((ItemClickCallback) mContext).onItemClick(position, mLineItems);
+                ((ItemClickCallback) mContext).onItemClick(position, mLineItems);
             }
         };
 
         View view = mInflater.inflate(R.layout.list_item_horizontal, parent, false);
-        return new ViewHolder(view, mainViewHolderCallback);
+        return new ViewHolder(view, viewHolderCallback);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        String title = mTitles[position];
-        String imageUrl = mImageUrls[position];
+        final LineItem item = mLineItems.get(position);
 
-        viewHolder.textViewTitle.setText(title);
+        viewHolder.textViewTitle.setText(item.getTitle());
 
         Transformation roundedTransformation = new RoundedTransformationBuilder()
                 .oval(true)
                 .build();
 
         PicassoCache.getPicassoInstance(mContext)
-                .load(imageUrl) //(Utils.getThumbnailUrl(imageUrl, item.getImageId(), UIOptions.THUMBNAIL_SIZE_LIST))
+                .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
                 .placeholder(android.R.color.holo_blue_bright)
                 .error(android.R.color.holo_red_dark)
                 .fit()
@@ -94,13 +90,14 @@ public class HorizontalRecyclerAdapter extends RecyclerView.Adapter<HorizontalRe
                 .into(viewHolder.imageView);
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView imageView;
         TextView textViewTitle;
         ViewHolderCallback mViewHolderCallback;
 
         public ViewHolder(View view, ViewHolderCallback viewHolderCallback) {
             super(view);
+            view.setOnClickListener(this);
 
             imageView = (ImageView) view.findViewById(R.id.item_image);
             textViewTitle = (TextView) view.findViewById(R.id.item_title);
@@ -108,8 +105,14 @@ public class HorizontalRecyclerAdapter extends RecyclerView.Adapter<HorizontalRe
             mViewHolderCallback = viewHolderCallback;
         }
 
+        @Override
+        public void onClick(View v) {
+            mViewHolderCallback.onItemClick(getPosition());
+        }
+
         interface ViewHolderCallback {
             void onItemClick(int position);
         }
+
     }
 }
