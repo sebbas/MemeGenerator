@@ -14,6 +14,7 @@ public class UIOptions {
     static final int GRID_LAYOUT = 0;
     static final int LIST_LAYOUT = 1;
     static final int CARD_LAYOUT = 2;
+    static final int SCROLLBOX_LAYOUT = 3;
 
     private static final int GRID_COLUMN_COUNT = 2;
 
@@ -43,6 +44,8 @@ public class UIOptions {
                 return LIST_LAYOUT;
             case ViewPagerRecyclerFragment.FAVORITE_INSTANCES:
                 return LIST_LAYOUT;
+            case ViewPagerRecyclerFragment.EXPLORE:
+                return SCROLLBOX_LAYOUT;
             default:
                 return LIST_LAYOUT;
         }

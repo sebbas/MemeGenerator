@@ -40,7 +40,6 @@ import com.tonicartos.superslim.LayoutManager;
 
 import java.lang.ref.WeakReference;
 
-
 public class ViewPagerRecyclerFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener,
         RecyclerViewListener {
@@ -61,6 +60,7 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     static final int FAVORITE_TEMPLATES = 11;
     static final int FAVORITE_INSTANCES = 12;
     static final int SEARCH = 13;
+    static final int EXPLORE = 14;
 
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
     private SimpleRecyclerAdapter mSimpleRecyclerAdapter;
@@ -68,24 +68,27 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
     private ObservableRecyclerView mRecyclerView;
     private int mFragmentType;
     private int mLayoutMode;
+    private boolean mIsRefreshable;
     private String mQuery;
     private WeakReference<MainActivity> mWeakReference;
     private RecyclerView.AdapterDataObserver mAdapterObserver;
 
-    public static ViewPagerRecyclerFragment newInstance(int fragmentType, int layoutMode) {
+    public static ViewPagerRecyclerFragment newInstance(int fragmentType, int layoutMode, boolean refreshable) {
         ViewPagerRecyclerFragment fragment = new ViewPagerRecyclerFragment();
         Bundle args = new Bundle();
         args.putInt("fragment_type", fragmentType);
         args.putInt("layout_mode", layoutMode);
+        args.putBoolean("refreshable", refreshable);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public static ViewPagerRecyclerFragment newInstance(int fragmentType, int layoutMode, String query) {
+    public static ViewPagerRecyclerFragment newInstance(int fragmentType, int layoutMode, boolean refreshable, String query) {
         ViewPagerRecyclerFragment fragment = new ViewPagerRecyclerFragment();
         Bundle args = new Bundle();
         args.putInt("fragment_type", fragmentType);
         args.putInt("layout_mode", layoutMode);
+        args.putBoolean("refreshable", refreshable);
         args.putString("query", query);
         fragment.setArguments(args);
         return fragment;
@@ -100,6 +103,7 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
         } finally {
             mFragmentType = getArguments().getInt("fragment_type");
             mLayoutMode = getArguments().getInt("layout_mode");
+            mIsRefreshable = getArguments().getBoolean("refreshable");
             mWeakReference = new WeakReference<>((MainActivity) getActivity());
         }
     }
@@ -111,6 +115,9 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
         mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.swipe_container);
         mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
         mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
+
+        // Depending on arguments, enable or disable swipe refresh
+        mSwipeRefreshLayout.setEnabled(mIsRefreshable);
 
         return view;
     }
@@ -258,6 +265,7 @@ public class ViewPagerRecyclerFragment extends BaseFragment implements
                 mRecyclerView.setLayoutManager(new LayoutManager(parentActivity));
                 break;
             case UIOptions.CARD_LAYOUT:
+            case UIOptions.SCROLLBOX_LAYOUT:
                 mRecyclerView.setLayoutManager(new ScrollingLinearLayoutManager(
                         getActivity(),
                         LinearLayoutManager.VERTICAL,

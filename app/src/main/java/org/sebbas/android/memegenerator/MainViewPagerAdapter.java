@@ -43,7 +43,7 @@ public class MainViewPagerAdapter extends FragmentStatePagerAdapter {
             case 1:
                 return SlidingTabsFragment.newInstance(INSTANCES_FRAGMENT_POSITION, TITLES_INSTANCES);
             case 2:
-                return SimplePreferenceFragment.newInstance();
+                return ExploreFragment.newInstance();
             case 3:
                 return SlidingTabsFragment.newInstance(GALLERY_FRAGMENT_POSITION, TITLES_GALLERY);
             case 4:

@@ -46,37 +46,37 @@ public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
             case 0:
                 id = ViewPagerRecyclerFragment.VIRAL;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
+                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
                 break;
             case 1:
                 id = ViewPagerRecyclerFragment.TIME;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
+                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
                 break;
             case 2:
                 id = ViewPagerRecyclerFragment.WINDOW_DAY;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
+                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
                 break;
             case 3:
                 id = ViewPagerRecyclerFragment.WINDOW_WEEK;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
+                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
                 break;
             case 4:
                 id = ViewPagerRecyclerFragment.WINDOW_MONTH;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
+                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
                 break;
             case 5:
                 id = ViewPagerRecyclerFragment.WINDOW_YEAR;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
+                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
                 break;
             default:
                 id = ViewPagerRecyclerFragment.VIRAL;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
+                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
                 break;
         }
         return fragment;
@@ -91,27 +91,27 @@ public class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
             case 0:
                 id = ViewPagerRecyclerFragment.MY_MEMES;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
+                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
                 break;
             case 1:
                 id = ViewPagerRecyclerFragment.RECENT;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
+                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
                 break;
             case 2:
                 id = ViewPagerRecyclerFragment.FAVORITE_TEMPLATES;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
+                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
                 break;
             case 3:
                 id = ViewPagerRecyclerFragment.FAVORITE_INSTANCES;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
+                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
                 break;
             default:
                 id = ViewPagerRecyclerFragment.VIRAL;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = ViewPagerRecyclerFragment.newInstance(id, layout);
+                fragment = ViewPagerRecyclerFragment.newInstance(id, layout, true);
                 break;
         }
         return fragment;

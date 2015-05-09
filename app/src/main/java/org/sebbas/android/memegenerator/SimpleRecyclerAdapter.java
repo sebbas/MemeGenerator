@@ -18,6 +18,7 @@ package org.sebbas.android.memegenerator;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -67,7 +68,10 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     @Override
     public int getItemViewType(int position) {
-        return mLineItems.get(position).isHeaderItem() ? VIEW_TYPE_HEADER : VIEW_TYPE_CONTENT;
+        if (mLayoutMode != UIOptions.SCROLLBOX_LAYOUT) {
+            return mLineItems.get(position).isHeaderItem() ? VIEW_TYPE_HEADER : VIEW_TYPE_CONTENT;
+        }
+        return VIEW_TYPE_CONTENT;
     }
 
     @Override
@@ -104,6 +108,9 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             case UIOptions.GRID_LAYOUT:
                 view = mInflater.inflate(R.layout.grid_item, parent, false);
                 return new GridViewHolder(view, mainViewHolderCallback);
+            case UIOptions.SCROLLBOX_LAYOUT:
+                view = mInflater.inflate(R.layout.horizontal_scroll, parent, false);
+                return new ScrollBoxViewHolder(view, mContext);
             default:
                 view = mInflater.inflate(R.layout.list_item, parent, false);
                 return new ListViewHolder(view, mainViewHolderCallback);
@@ -123,6 +130,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         viewHolder.textViewTitle.setText(item.getTitle());
 
         if (mLayoutMode == UIOptions.LIST_LAYOUT && getItemViewType(position) == VIEW_TYPE_CONTENT) {
+            ListViewHolder listViewHolder = (ListViewHolder) viewHolder;
 
             Transformation roundedTransformation = new RoundedTransformationBuilder()
                     .oval(true)
@@ -136,7 +144,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                     .transform(roundedTransformation)
                     .centerCrop()
                     .tag(mContext)
-                    .into(viewHolder.imageView);
+                    .into(listViewHolder.imageView);
         }
 
         if (mLayoutMode == UIOptions.CARD_LAYOUT) {
@@ -149,10 +157,24 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                     .tag(mContext)
                     .centerInside()
                     .fit()
-                    .into(viewHolder.imageView);
+                    .into(cardViewHolder.imageView);
 
             cardViewHolder.textViewViewCount.setText(Utils.getViewCountString(mContext, item.getViewCount()));
             cardViewHolder.textViewTimeStamp.setText(Utils.getTimeAgoString(mContext, Integer.valueOf(item.getTimeStamp())));
+        }
+
+        if (mLayoutMode == UIOptions.SCROLLBOX_LAYOUT) {
+            ScrollBoxViewHolder scrollBoxViewHolder = (ScrollBoxViewHolder) viewHolder;
+
+            // Get data for horizontal recycler view
+            String[] titles = mDataLoader.getSubTopicTitles(position);
+            String[] imageUrls = mDataLoader.getSubTopicImageUrls(position);
+
+            // Setup horizontal scroll box
+            scrollBoxViewHolder.horizontalRecyclerView.setAdapter(
+                    new HorizontalRecyclerAdapter(mFragment, titles, imageUrls));
+            scrollBoxViewHolder.horizontalRecyclerView.setLayoutManager(
+                    new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
         }
     }
 
@@ -189,7 +211,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                 ArrayList<Integer> filteredItems = new ArrayList<>();
 
                 for (int i = 0; i < mDataLoader.getItemCount(); i++) {
-                    String currentLineItemTitle = mDataLoader.getImageTitleAt(i);
+                    String currentLineItemTitle = mDataLoader.getTitleAt(i);
 
                     if (!Utils.stringPatternMatch(currentLineItemTitle, (String) constraint)) {
                         filteredItems.add(i);
@@ -201,33 +223,34 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     abstract static class MainViewHolder extends RecyclerView.ViewHolder {
-        ImageView imageView;
         TextView textViewTitle;
         ViewHolderCallback mViewHolderCallback;
 
-        public MainViewHolder(View view, ViewHolderCallback viewHolderCallback) {
+        public MainViewHolder(View view) {
             super(view);
-
-            imageView = (ImageView) view.findViewById(R.id.item_image);
             textViewTitle = (TextView) view.findViewById(R.id.item_title);
+        }
 
+        public MainViewHolder(View view, ViewHolderCallback viewHolderCallback) {
+            this(view);
             mViewHolderCallback = viewHolderCallback;
         }
 
-        static interface ViewHolderCallback {
-            public void onItemClick(int position);
+        interface ViewHolderCallback {
+            void onItemClick(int position);
         }
     }
 
     static class CardViewHolder extends MainViewHolder implements View.OnClickListener{
+        ImageView imageView;
         TextView textViewViewCount;
         TextView textViewTimeStamp;
-
 
         public CardViewHolder(View view, ViewHolderCallback viewHolderCallback) {
             super(view, viewHolderCallback);
             view.setOnClickListener(this);
 
+            imageView = (ImageView) view.findViewById(R.id.item_image);
             textViewViewCount = (TextView) view.findViewById(R.id.item_viewcount);
             textViewTimeStamp = (TextView) view.findViewById(R.id.item_datetime);
         }
@@ -239,10 +262,13 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     static class ListViewHolder extends MainViewHolder implements View.OnClickListener {
+        ImageView imageView;
 
         public ListViewHolder(View view, ViewHolderCallback viewHolderCallback) {
             super(view, viewHolderCallback);
             view.setOnClickListener(this);
+
+            imageView = (ImageView) view.findViewById(R.id.item_image);
         }
 
         @Override
@@ -252,15 +278,26 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     static class GridViewHolder extends MainViewHolder implements View.OnClickListener {
+        ImageView imageView;
 
         public GridViewHolder(View view, ViewHolderCallback viewHolderCallback) {
             super(view, viewHolderCallback);
             view.setOnClickListener(this);
+            imageView = (ImageView) view.findViewById(R.id.item_image);
         }
 
         @Override
         public void onClick(View v) {
             mViewHolderCallback.onItemClick(getPosition());
+        }
+    }
+
+    static class ScrollBoxViewHolder extends MainViewHolder {
+        RecyclerView horizontalRecyclerView;
+
+        public ScrollBoxViewHolder(View view, Context context) {
+            super(view);
+            horizontalRecyclerView = (RecyclerView) view.findViewById(R.id.horizontal_recyclerview);
         }
     }
 
@@ -293,7 +330,12 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     public void refreshData() {
-        String url = getCurrentPageDataUrl();
+        String url;
+        if (mLayoutMode == UIOptions.SCROLLBOX_LAYOUT) {
+            url = null;
+        } else {
+            url = getCurrentPageDataUrl();
+        }
         mDataLoader.load(url);
     }
 

@@ -70,6 +70,87 @@
     <string name="view_singular">Views</string>
     <string name="view_plural">Views</string>
 
+    <!-- Strings for topics in explore fragment -->
+    <string-array name="main_topics">
+        <item>Animals</item>
+        <item>Celebrities</item>
+        <item>Miscellaneous</item>
+    </string-array>
+
+    <string-array name="sub_topics">
+        <item>@array/animals_topics</item>
+        <item>@array/celebrities_topics</item>
+        <item>@array/miscellaneous_topics</item>
+    </string-array>
+
+    <string-array name="sub_topics_urls">
+        <item>@array/animals_topics_urls</item>
+        <item>@array/celebrities_topics_urls</item>
+        <item>@array/miscellaneous_topics_urls</item>
+    </string-array>
+
+    <string-array name="animals_topics">
+        <item>Cats</item>
+        <item>Dogs</item>
+        <item>Otters</item>
+        <item>Kittens</item>
+        <item>Pugs</item>
+        <item>Puppies</item>
+        <item>Huskies</item>
+    </string-array>
+
+    <string-array name="celebrities_topics">
+        <item>Emma Stone</item>
+        <item>Zooey Deschanel</item>
+        <item>Emma Watson</item>
+        <item>Leonardo DiCaprio</item>
+        <item>Bradley Cooper</item>
+        <item>Joseph Gordon-Levitt</item>
+    </string-array>
+
+    <string-array name="comic_topics">
+        <item>Simpsons</item>
+    </string-array>
+
+    <string-array name="miscellaneous_topics">
+        <item>Food</item>
+        <item>Cute</item>
+        <item>WOW</item>
+        <item>LOL</item>
+        <item>Gif</item>
+    </string-array>
+
+    <string-array name="animals_topics_urls">
+        <item>https://i.imgur.com/Cxagvm.jpg</item>
+        <item>https://i.imgur.com/rnKASWkm.jpg</item>
+        <item>https://i.imgur.com/bQ8C5q0m.jpg</item>
+        <item>https://i.imgur.com/zzCRZUHm.jpg</item>
+        <item>https://i.imgur.com/pbY83XYm.jpg</item>
+        <item>https://i.imgur.com/7eGFo3Im.jpg</item>
+        <item>https://i.imgur.com/pb00Qyom.jpg</item>
+    </string-array>
+
+    <string-array name="celebrities_topics_urls">
+        <item>https://i.imgur.com/crIQrm.jpg</item>
+        <item>https://i.imgur.com/gtzUbmZm.jpg</item>
+        <item>http://i.imgur.com/rDTA6CIm.jpg</item>
+        <item>http://i.imgur.com/zI4lCCJm.jpg</item>
+        <item>http://i.imgur.com/xJkPkFJm.jpg</item>
+        <item>https://i.imgur.com/X3tUX.jpg</item>
+    </string-array>
+
+    <string-array name="comic_topics_urls">
+        <item>http://i.imgur.com/crIQrm.jpg</item>
+    </string-array>
+
+    <string-array name="miscellaneous_topics_urls">
+        <item>http://i.imgur.com/crIQrm.jpg</item>
+        <item>http://i.imgur.com/crIQrm.jpg</item>
+        <item>http://i.imgur.com/crIQrm.jpg</item>
+        <item>http://i.imgur.com/crIQrm.jpg</item>
+        <item>http://i.imgur.com/crIQrm.jpg</item>
+    </string-array>
+
 
     <string name="category_view">View</string>
     <string name="preference_template_tab">Templates</string>

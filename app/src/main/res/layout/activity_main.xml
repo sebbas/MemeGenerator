@@ -24,6 +24,15 @@
         app:popupTheme="@style/Theme.AppCompat.Light.DarkActionBar"
         app:theme="@style/Toolbar" />
 
+    <!-- This view is used to create the elevation effect at the
+        top of the bottom sliding tabs bar -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:id="@+id/toolbar_shadow"
+        android:background="@drawable/toolbar_shadow"
+        android:layout_below="@+id/toolbar"/>
+
     <LinearLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"

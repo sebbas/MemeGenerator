@@ -1,12 +1,12 @@
 package org.sebbas.android.memegenerator;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +30,7 @@ public class DataLoader {
     private List<String> mViewCounts;
     private List<String> mImageUrls;
     private List<String> mImageIds;
-    private List<String> mImageTitles;
+    private List<String> mTitles;
     private List<String> mTimeStamps;
 
     private volatile boolean mParsingComplete = false;
@@ -50,13 +51,18 @@ public class DataLoader {
         mViewCounts = Data.getListString(mContext, fragmentType, "viewCounts");
         mImageUrls = Data.getListString(mContext, fragmentType, "imageUrls");
         mImageIds = Data.getListString(mContext, fragmentType, "imageIds");
-        mImageTitles = Data.getListString(mContext, fragmentType, "imageTitles");
+        mTitles = Data.getListString(mContext, fragmentType, "imageTitles");
         mTimeStamps = Data.getListString(mContext, fragmentType, "timeStamps");
     }
 
     public void load(String url) {
         AsyncLoader asyncLoader = new AsyncLoader();
         asyncLoader.execute(url);
+    }
+
+    private void loadTopics() {
+        String[] topics = mContext.getResources().getStringArray(R.array.main_topics);
+        mTitles = Arrays.asList(topics);
     }
 
     public String getViewCountAt(int position) {
@@ -83,10 +89,10 @@ public class DataLoader {
         return imageId;
     }
 
-    public String getImageTitleAt(int position) {
+    public String getTitleAt(int position) {
         String imageTitle = "";
-        if (mImageTitles != null && mImageTitles.size() > position) {
-            imageTitle = mImageTitles.get(position);
+        if (mTitles != null && mTitles.size() > position) {
+            imageTitle = mTitles.get(position);
         }
         return imageTitle;
     }
@@ -97,6 +103,36 @@ public class DataLoader {
             timeStamp = mTimeStamps.get(position);
         }
         return timeStamp;
+    }
+
+    public String[] getSubTopicTitles(int position) {
+        Resources resources = mContext.getResources();
+
+        // Get typed array that contains subtopics array ids
+        TypedArray subTopics = resources.obtainTypedArray(R.array.sub_topics);
+
+        // Get array id at position
+        int resId = subTopics.getResourceId(position, 0);
+        subTopics.recycle();
+
+        return resources.getStringArray(resId);
+    }
+
+    public String[] getSubTopicImageUrls(int position) {
+        Resources resources = mContext.getResources();
+
+        // Get typed array that contains subtopics array ids
+        TypedArray subTopicUrls = resources.obtainTypedArray(R.array.sub_topics_urls);
+
+        // Get array id at position
+        int resId = subTopicUrls.getResourceId(position, 0);
+        subTopicUrls.recycle();
+
+        return resources.getStringArray(resId);
+    }
+
+    public int getTopicsCount() {
+        return mContext.getResources().obtainTypedArray(R.array.sub_topics).length();
     }
 
     public List<LineItem> getLineItems(List<Integer> allowedLineItemPositions, int layoutMode) {
@@ -112,12 +148,12 @@ public class DataLoader {
             boolean isAllowedPosition = isAllowedPosition(i, allowedLineItemPositions);
 
             if (isAllowedPosition) {
-                String title = getImageTitleAt(i);
+                String title = getTitleAt(i);
                 String imageUrl = getImageUrlAt(i);
                 String imageId = getImageIdAt(i);
                 String viewCount = getViewCountAt(i);
                 String timeStamp = getTimeStampAt(i);
-                String header = Utils.getScrollHeaderTitleLetter(getImageTitleAt(i));
+                String header = Utils.getScrollHeaderTitleLetter(getTitleAt(i));
 
                 if (!TextUtils.equals(lastHeader, header) && layoutMode == UIOptions.LIST_LAYOUT) {
                     // Insert new header view and update section data.
@@ -139,8 +175,8 @@ public class DataLoader {
 
     public int getItemCount() {
         int count = 0;
-        if (mImageUrls != null) {
-            count = mImageUrls.size();
+        if (mTitles != null) {
+            count = mTitles.size();
         }
         return count;
     }
@@ -164,7 +200,14 @@ public class DataLoader {
 
                 String url = params[0];
 
-                fetchJSON(url);
+                if (url != null) {
+                    fetchJSON(url);
+                } else {
+                    loadTopics();
+                    mParsingComplete = true;
+                    mParsingSuccessful = true;
+                }
+
                 while (!mParsingComplete);
 
                 if (mParsingSuccessful) {
@@ -172,7 +215,7 @@ public class DataLoader {
                     Data.putListString(mContext, mFragmentType, mViewCounts, "viewCounts");
                     Data.putListString(mContext, mFragmentType, mImageUrls, "imageUrls");
                     Data.putListString(mContext, mFragmentType, mImageIds, "imageIds");
-                    Data.putListString(mContext, mFragmentType, mImageTitles, "imageTitles");
+                    Data.putListString(mContext, mFragmentType, mTitles, "imageTitles");
                     Data.putListString(mContext, mFragmentType, mTimeStamps, "timeStamps");
                 }
             } else {
@@ -251,7 +294,7 @@ public class DataLoader {
         mViewCounts.clear();
         mImageUrls.clear();
         mImageIds.clear();
-        mImageTitles.clear();
+        mTitles.clear();
         mTimeStamps.clear();
 
         for (int i = 0; i < data.length(); i++) {
@@ -268,28 +311,10 @@ public class DataLoader {
                 mViewCounts.add(views);
                 mImageUrls.add(imageUrl);
                 mImageIds.add(imageId);
-                mImageTitles.add(imageTitle);
+                mTitles.add(imageTitle);
                 mTimeStamps.add(timeStamp);
 
-                /*if (!mViewCounts.contains(views)) {
-                    mViewCounts.add(views);
-                }
 
-                if (!mImageUrls.contains(imageUrl)) {
-                    mImageUrls.add(imageUrl);
-                }
-
-                if (!mImageIds.contains(imageId)) {
-                    mImageIds.add(imageId);
-                }
-
-                if (!mImageTitles.contains(imageTitle)) {
-                    mImageTitles.add(imageTitle);
-                }
-
-                if (!mTimeStamps.contains(timeStamp)) {
-                    mTimeStamps.add(timeStamp);
-                }*/
             }
         }
     }
