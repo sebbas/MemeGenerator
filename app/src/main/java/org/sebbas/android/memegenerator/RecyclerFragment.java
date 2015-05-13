@@ -16,10 +16,12 @@
 
 package org.sebbas.android.memegenerator;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -38,6 +40,7 @@ import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.tonicartos.superslim.LayoutManager;
 
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 
 public class RecyclerFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener,
@@ -67,6 +70,7 @@ public class RecyclerFragment extends BaseFragment implements
     private String mQuery;
     private WeakReference<MainActivity> mWeakReference;
     private RecyclerView.AdapterDataObserver mAdapterObserver;
+    private FragmentManager mRetainedChildFragmentManager;
 
     public static RecyclerFragment newInstance(int fragmentType, int layoutMode, boolean refreshable) {
         RecyclerFragment fragment = new RecyclerFragment();
@@ -92,6 +96,7 @@ public class RecyclerFragment extends BaseFragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         // Only get the query if it is present
         try {
             mQuery = getArguments().getString("query");
@@ -115,6 +120,27 @@ public class RecyclerFragment extends BaseFragment implements
         mSwipeRefreshLayout.setEnabled(mIsRefreshable);
 
         return view;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        if (mRetainedChildFragmentManager != null) {
+            //restore the last retained child fragment manager to the new
+            //created fragment
+            try {
+                Field childFMField = Fragment.class.getDeclaredField("mChildFragmentManager");
+                childFMField.setAccessible(true);
+                childFMField.set(this, mRetainedChildFragmentManager);
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        } else {
+            mRetainedChildFragmentManager = getChildFragmentManager();
+        }
     }
 
     @Override

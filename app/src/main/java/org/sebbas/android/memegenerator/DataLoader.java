@@ -267,7 +267,7 @@ public class DataLoader {
             JSONObject image = data.getJSONObject(i);
 
             // Only look at json objects that represent images
-            if (!isAlbum(image) && !isAnimated(image)) {
+            if (!isAlbum(image) /*&& !isAnimated(image)*/) {
                 String views = Integer.toString(image.getInt("views"));
                 String imageUrl = image.getString("link");
                 String imageId = image.getString("id");

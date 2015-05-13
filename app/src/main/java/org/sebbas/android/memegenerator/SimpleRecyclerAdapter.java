@@ -17,6 +17,8 @@
 package org.sebbas.android.memegenerator;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.opengl.GLES10;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,6 +38,9 @@ import com.tonicartos.superslim.LinearSLM;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import pl.droidsonroids.gif.GifDrawable;
+import pl.droidsonroids.gif.GifImageView;
 
 
 public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAdapter.MainViewHolder> implements Filterable {
@@ -120,7 +125,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     @Override
-    public void onBindViewHolder(MainViewHolder viewHolder, int position) {
+    public void onBindViewHolder(final MainViewHolder viewHolder, int position) {
         final LineItem item = mLineItems.get(position);
         final View itemView = viewHolder.itemView;
         final GridSLM.LayoutParams lp = new GridSLM.LayoutParams(itemView.getLayoutParams());
@@ -129,7 +134,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         lp.setFirstPosition(item.getSectionFirstPosition());
         itemView.setLayoutParams(lp);
 
-        viewHolder.textViewTitle.setText(item.getTitle());
+        viewHolder.textViewTitle.setText(item.getImageUrl());
 
         if (mLayoutMode == UIOptions.LIST_LAYOUT && getItemViewType(position) == VIEW_TYPE_CONTENT) {
             ListViewHolder listViewHolder = (ListViewHolder) viewHolder;
@@ -150,15 +155,51 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         }
 
         if (mLayoutMode == UIOptions.CARD_LAYOUT) {
-            CardViewHolder cardViewHolder = (CardViewHolder) viewHolder;
+            final CardViewHolder cardViewHolder = (CardViewHolder) viewHolder;
+
+            Transformation transformation = new Transformation() {
+
+                @Override
+                public Bitmap transform(Bitmap source) {
+                    int targetWidth = cardViewHolder.imageView.getWidth();
+
+                    double aspectRatio = (double) source.getHeight() / (double) source.getWidth();
+                    int targetHeight = (int) (targetWidth * aspectRatio);
+
+                    /*int[] maxTextureSize = new int[1];
+                    gl.glGetIntegerv(GLES10.GL_MAX_TEXTURE_SIZE, maxTextureSize, 0);
+                    int maxTexture = maxTextureSize[0];*/
+
+                    if (targetHeight > Utils.DEFAULT_MAX_BITMAP_DIMENSION) {
+                        targetHeight = Utils.DEFAULT_MAX_BITMAP_DIMENSION;
+                        targetWidth = (int) (targetHeight / aspectRatio);
+                    }
+                    if (targetWidth > Utils.DEFAULT_MAX_BITMAP_DIMENSION) {
+                        targetWidth = Utils.DEFAULT_MAX_BITMAP_DIMENSION;
+                        targetHeight = (int) (targetWidth * aspectRatio);
+                    }
+
+                    Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
+                    if (result != source) {
+                        // Same bitmap is returned if sizes are the same
+                        source.recycle();
+                    }
+                    return result;
+                }
+
+                @Override
+                public String key() {
+                    return "transformation" + " desiredWidth";
+                }
+            };
 
             PicassoCache.getPicassoInstance(mContext)
-                    .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), UIOptions.THUMBNAIL_SIZE_CARD))
+                    .load(item.getImageUrl())//(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_LARGE))
                     .placeholder(android.R.color.holo_blue_bright)
                     .error(android.R.color.holo_red_dark)
                     .tag(mContext)
-                    .centerInside()
-                    .fit()
+                    .resize(0, Utils.DEFAULT_MAX_BITMAP_DIMENSION)
+                    .transform(transformation)
                     .into(cardViewHolder.imageView);
 
             cardViewHolder.textViewViewCount.setText(Utils.getViewCountString(mContext, item.getViewCount()));
@@ -240,7 +281,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     static class CardViewHolder extends MainViewHolder implements View.OnClickListener {
-        ImageView imageView;
+        GifImageView imageView;
         TextView textViewViewCount;
         TextView textViewTimeStamp;
 
@@ -248,13 +289,15 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             super(view, viewHolderCallback);
             view.setOnClickListener(this);
 
-            imageView = (ImageView) view.findViewById(R.id.item_image);
+            imageView = (GifImageView) view.findViewById(R.id.item_image);
             textViewViewCount = (TextView) view.findViewById(R.id.item_viewcount);
             textViewTimeStamp = (TextView) view.findViewById(R.id.item_datetime);
         }
 
         @Override
         public void onClick(View v) {
+            //GifDrawable gifDrawable = (GifDrawable) imageView.getDrawable();
+            //gifDrawable.start();
             mViewHolderCallback.onItemClick(getPosition());
         }
     }

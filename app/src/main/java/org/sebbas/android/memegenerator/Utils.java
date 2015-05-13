@@ -12,13 +12,18 @@ import java.util.List;
 
 public class Utils {
 
+    public static final int DEFAULT_MAX_BITMAP_DIMENSION = 4096;
+
     public static final String IMAGE_MEDIUM = "m";
     public static final String IMAGE_LARGE = "l";
 
 
     private static final String BASE_IMAGE = "https://i.imgur.com/";
-    private static final String BASE_ALL = "https://api.imgur.com/3/gallery/";
-    private static final String BASE_MEMES = "https://api.imgur.com/3/g/memes/";
+    private static final String BASE_VIRAL = "https://api.imgur.com/3/gallery/hot/viral/";
+    private static final String BASE_TOP = "https://api.imgur.com/3/gallery/top/";
+    private static final String BASE_TIME = "https://api.imgur.com/3/gallery/hot/time/";
+
+    private static final String BASE_MEMES = "https://api.imgur.com/3/g/memes/time/";
     private static final String BASE_DEFAULTS = "https://api.imgur.com/3/memegen/defaults";
     private static final String BASE_SEARCH = "https://api.imgur.com/3/gallery/search";
 
@@ -55,11 +60,11 @@ public class Utils {
     public static final String getUrlForData(int pageIndex, int fragmentType) {
         switch (fragmentType) {
             case RecyclerFragment.ALL:
-                return BASE_ALL + pageIndex;
+                return BASE_VIRAL + pageIndex;
             case RecyclerFragment.MEMES:
-                return BASE_MEMES + pageIndex;
+                return BASE_TOP + pageIndex;
             case RecyclerFragment.GIFS:
-                return BASE_MEMES + pageIndex;
+                return BASE_TIME + pageIndex;
             case RecyclerFragment.DEFAULTS:
                 return BASE_DEFAULTS;
             default:
@@ -160,4 +165,6 @@ public class Utils {
         String[] myStringList = stringList.toArray(new String[stringList.size()]);
         preferences.edit().putString(key, TextUtils.join("‚‗‚", myStringList)).apply();
     }
+
+
 }
