@@ -1,17 +1,21 @@
-package org.sebbas.android.memegenerator;
+package org.sebbas.android.memegenerator.dataloader;
 
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+
+import org.sebbas.android.memegenerator.LineItem;
+import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.Utils;
+import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LocalDataLoader {
+public class LocalDataLoader extends Dataloader{
 
     private static final String TAG = "LocalDataLoader";
     private Context mContext;

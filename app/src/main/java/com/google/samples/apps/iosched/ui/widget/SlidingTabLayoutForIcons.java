@@ -30,7 +30,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.sebbas.android.memegenerator.MainViewPagerAdapter;
+import org.sebbas.android.memegenerator.adapter.MainFragmentAdapter;
 
 /**
  * To be used with ViewPager to provide a tab indicator component which give constant feedback as to
@@ -184,7 +184,7 @@ public class SlidingTabLayoutForIcons extends HorizontalScrollView {
     }
 
     private void populateTabStrip() {
-        final MainViewPagerAdapter adapter = (MainViewPagerAdapter) mViewPager.getAdapter();
+        final MainFragmentAdapter adapter = (MainFragmentAdapter) mViewPager.getAdapter();
         final OnClickListener tabClickListener = new TabClickListener();
 
         for (int i = 0; i < adapter.getCount(); i++) {

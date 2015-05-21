@@ -106,7 +106,7 @@
              preferences.  If running in a large screen, they can be embedded
              inside of the overall preferences UI. -->
         <PreferenceScreen
-            android:fragment="org.sebbas.android.memegenerator.PreferencesFragment"
+            android:fragment="org.sebbas.android.memegenerator.fragments.PreferencesFragment"
             android:title="@string/app_name"
             android:summary="@string/app_name">
             <!-- Arbitrary key/value pairs can be included for fragment arguments -->

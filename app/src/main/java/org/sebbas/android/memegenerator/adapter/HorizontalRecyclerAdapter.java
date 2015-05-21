@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.sebbas.android.memegenerator;
+package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
@@ -27,6 +27,14 @@ import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.squareup.picasso.Transformation;
+
+import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
+import org.sebbas.android.memegenerator.LineItem;
+import org.sebbas.android.memegenerator.PicassoCache;
+import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.Utils;
+import org.sebbas.android.memegenerator.dataloader.LocalDataLoader;
+import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 
 import java.util.List;
 

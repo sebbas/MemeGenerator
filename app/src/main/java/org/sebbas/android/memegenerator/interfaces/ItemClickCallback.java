@@ -1,4 +1,6 @@
-package org.sebbas.android.memegenerator;
+package org.sebbas.android.memegenerator.interfaces;
+
+import org.sebbas.android.memegenerator.LineItem;
 
 import java.util.List;
 

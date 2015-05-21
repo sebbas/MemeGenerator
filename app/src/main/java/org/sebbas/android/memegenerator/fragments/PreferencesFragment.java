@@ -1,7 +1,9 @@
-package org.sebbas.android.memegenerator;
+package org.sebbas.android.memegenerator.fragments;
 
 import android.os.Bundle;
 import android.support.v4.preference.PreferenceFragment;
+
+import org.sebbas.android.memegenerator.R;
 
 public class PreferencesFragment extends PreferenceFragment {
 

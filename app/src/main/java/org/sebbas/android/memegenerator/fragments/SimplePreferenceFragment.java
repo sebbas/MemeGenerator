@@ -1,19 +1,16 @@
-package org.sebbas.android.memegenerator;
+package org.sebbas.android.memegenerator.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class SimplePreferenceFragment extends BaseFragment implements ToolbarCallback {
+import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.activities.BaseActivity;
+import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
+
+public class SimplePreferenceFragment extends SimpleFragment implements ToolbarCallback {
 
     private static final String TAG = "SimplePreferenceFragment";
 
@@ -34,23 +31,9 @@ public class SimplePreferenceFragment extends BaseFragment implements ToolbarCal
         fragmentTransaction.replace(R.id.preferences_container, fragment);
         fragmentTransaction.commit();
 
-        // Set padding for view so that top and bottom bars don't interfere
-        final int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
-        view.findViewById(R.id.preferences_container).setPadding(0, getActionBarSize(), 0, tabHeight);
-
         return view;
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        BaseActivity parentActivity = (BaseActivity) getActivity();
-        parentActivity.unregisterToolbarCallback();
-    }
-
-    /*
-     * Toolbar Callbacks
-     */
     @Override
     public boolean onQueryTextSubmit(String s) {
         return false;
@@ -63,5 +46,25 @@ public class SimplePreferenceFragment extends BaseFragment implements ToolbarCal
 
     @Override
     public void onRefreshClicked() {
+
+    }
+
+    @Override
+    public void onBackPressed() {
+
+    }
+
+    @Override
+    void setupFragmentToolbarAt(int position) {
+        int titleResource = R.string.preferences;
+        int menuResource = R.menu.menu_simple_fragment;
+
+        BaseActivity parentActivity = (BaseActivity) getActivity();
+        parentActivity.setupToolbar(parentActivity, titleResource, menuResource, true);
+    }
+
+    @Override
+    void registerFragmentToolbarCallbacks(int position) {
+        ((BaseActivity) getActivity()).registerToolbarCallback(this);
     }
 }

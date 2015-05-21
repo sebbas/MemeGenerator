@@ -1,4 +1,4 @@
-package org.sebbas.android.memegenerator;
+package org.sebbas.android.memegenerator.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,69 +19,47 @@ import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.ViewHelper;
 
-import java.lang.ref.WeakReference;
+import org.sebbas.android.memegenerator.activities.BaseActivity;
+import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.adapter.SlidingTabsFragmentAdapter;
 
 
-public class SlidingTabsFragment extends BaseFragment implements ObservableScrollViewCallbacks,
-        ToolbarCallback {
+public abstract class SlidingTabsFragment extends BaseFragment implements ObservableScrollViewCallbacks {
 
     private static final String TAG = "SlidingTabsFragment";
 
-    private View mToolbarView;
+    private SlidingTabsFragmentAdapter mSlidingTabsFragmentAdapter;
+    private int mOffScreenLimit;
+    private boolean mIsSwipeable;
+    private View mToolbar;
     private TouchInterceptionFrameLayout mInterceptionLayout;
     private ViewPager mViewPager;
-    private SlidingTabsFragmentAdapter mSlidingTabsFragmentAdapter;
     private int mSlop;
     private boolean mScrolled;
     private ScrollState mLastScrollState;
-    private int[] mTitleResources;
-    private WeakReference<MainActivity> mWeakReference;
 
-
-    public static SlidingTabsFragment newInstance(int position, int[] titles) {
-        SlidingTabsFragment slidingTabsFragment = new SlidingTabsFragment();
-        Bundle args = new Bundle();
-        args.putInt("parent_viewpager_position", position);
-        args.putIntArray("titles", titles);
-        slidingTabsFragment.setArguments(args);
-        return slidingTabsFragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mTitleResources = getArguments().getIntArray("titles");
-        mWeakReference = new WeakReference<>((MainActivity) getActivity());
+    public SlidingTabsFragment(SlidingTabsFragmentAdapter adapter, int offScreenLimit, boolean isSwipeable) {
+        mSlidingTabsFragmentAdapter = adapter;
+        mOffScreenLimit = offScreenLimit;
+        mIsSwipeable = isSwipeable;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_slidingtabs, container, false);
+        View view;
 
-        MainActivity parentActivity = (MainActivity) getActivity(); //mWeakReference.get();
+        if (mIsSwipeable) {
+            view = inflater.inflate(R.layout.fragment_slidingtabs_swipeable, container, false);
+        } else {
+            view = inflater.inflate(R.layout.fragment_slidingtabs_nonswipeable, container, false);
+        }
 
-        // Setup the toolbar
-        int titleResource = getArguments().getInt("fragment_title");
-        int menuResource = R.menu.menu_sliding_tabs_fragment;
-        //setupToolbar(this, titleResource, menuResource);
+        mToolbar = getActivity().findViewById(R.id.toolbar);
 
-        mToolbarView = getActivity().findViewById(R.id.toolbar);
-
-        // Choose adapter type depending on settings
-        mSlidingTabsFragmentAdapter = new SlidingTabsFragmentAdapter(this, getChildFragmentManager());
-
-        mViewPager = (ViewPager) view.findViewById(R.id.meme_pager);
+        mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
         mViewPager.setAdapter(mSlidingTabsFragmentAdapter);
-
-        // Always preload all pages in viewpager
-        //mViewPager.setOffscreenPageLimit(mSlidingTabsFragmentAdapter.getCount());
-        mViewPager.setOffscreenPageLimit(1);
-
-        // Padding for ViewPager must be set outside the ViewPager itself
-        // because with padding, EdgeEffect of ViewPager become strange.
-        final int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
-        view.findViewById(R.id.pager_wrapper).setPadding(0, getActionBarSize() + tabHeight, 0, tabHeight);
+        mViewPager.setOffscreenPageLimit(mOffScreenLimit);
 
         SlidingTabLayout slidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.main_tabs);
         slidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
@@ -89,10 +67,32 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
         slidingTabLayout.setDistributeEvenly(true);
         slidingTabLayout.setViewPager(mViewPager);
 
-        ViewConfiguration vc = ViewConfiguration.get(parentActivity);
+        slidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                setupFragmentToolbarAt(position);
+                registerFragmentToolbarCallbacks(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        ViewConfiguration vc = ViewConfiguration.get(getActivity());
         mSlop = vc.getScaledTouchSlop();
         mInterceptionLayout = (TouchInterceptionFrameLayout) view.findViewById(R.id.container);
         mInterceptionLayout.setScrollInterceptionListener(mInterceptionListener);
+
+        // Setup toolbar for initial configuration
+        setupFragmentToolbarAt(0);
+        registerFragmentToolbarCallbacks(0);
 
         return view;
     }
@@ -138,7 +138,7 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
 
             // If interceptionLayout can move, it should intercept.
             // And once it begins to move, horizontal scroll shouldn't work any longer.
-            int toolbarHeight = mToolbarView.getHeight();
+            int toolbarHeight = mToolbar.getHeight();
             int translationY = (int) ViewHelper.getTranslationY(mInterceptionLayout);
             boolean scrollingUp = 0 < diffY;
             boolean scrollingDown = diffY < 0;
@@ -165,7 +165,7 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
 
         @Override
         public void onMoveMotionEvent(MotionEvent ev, float diffX, float diffY) {
-            float translationY = ScrollUtils.getFloat(ViewHelper.getTranslationY(mInterceptionLayout) + diffY, -mToolbarView.getHeight(), 0);
+            float translationY = ScrollUtils.getFloat(ViewHelper.getTranslationY(mInterceptionLayout) + diffY, -mToolbar.getHeight(), 0);
             ViewHelper.setTranslationY(mInterceptionLayout, translationY);
             if (translationY < 0) {
                 FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mInterceptionLayout.getLayoutParams();
@@ -194,7 +194,7 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
     }
 
     private void adjustToolbar(ScrollState scrollState) {
-        int toolbarHeight = mToolbarView.getHeight();
+        int toolbarHeight = mToolbar.getHeight();
         final Scrollable scrollable = getCurrentScrollable();
         if (scrollable == null) {
             return;
@@ -225,7 +225,7 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
     }
 
     private boolean toolbarIsHidden() {
-        return ViewHelper.getTranslationY(mInterceptionLayout) == -mToolbarView.getHeight();
+        return ViewHelper.getTranslationY(mInterceptionLayout) == -mToolbar.getHeight();
     }
 
     private void showToolbar() {
@@ -233,7 +233,7 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
     }
 
     private void hideToolbar() {
-        animateToolbar(-mToolbarView.getHeight());
+        animateToolbar(-mToolbar.getHeight());
     }
 
     private void animateToolbar(final float toY) {
@@ -256,24 +256,27 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
         }
     }
 
-    public String[] getTitles() {
-        return Utils.resourceArrayToStringArray(getActivity(), mTitleResources);
+    abstract void setupFragmentToolbarAt(int position);
+
+    void registerFragmentToolbarCallbacks(int position) {
+        BaseFragment fragment = getFragmentAt(position);
+        ((BaseActivity) getActivity()).registerToolbarCallback(fragment);
     }
 
-    public int getParentViewPagerPosition() {
-        return getArguments().getInt("parent_viewpager_position");
+    private BaseFragment getFragmentAt(int position) {
+        return (BaseFragment) mSlidingTabsFragmentAdapter.instantiateItem(mViewPager, position);
     }
 
     /*
      * Toolbar Callbacks
      */
-    @Override
+    /*@Override
     public boolean onQueryTextSubmit(String s) {
-        /*int fragmentId = mViewPager.getCurrentItem();
-        Fragment visibleFragment = getChildFragmentManager().findFragmentById(fragmentId);
-        AdapterFilterListener adapterFilterListener = (AdapterFilterListener) visibleFragment;
-        adapterFilterListener.filterAdapterWith(s);*/
-        return true;
+        //int fragmentId = mViewPager.getCurrentItem();
+        //Fragment visibleFragment = getChildFragmentManager().findFragmentById(fragmentId);
+        //AdapterFilterListener adapterFilterListener = (AdapterFilterListener) visibleFragment;
+        //adapterFilterListener.filterAdapterWith(s);
+        //return true;
     }
 
     @Override
@@ -289,5 +292,5 @@ public class SlidingTabsFragment extends BaseFragment implements ObservableScrol
         RecyclerViewListener recyclerViewListener = (RecyclerViewListener) baseFragment;
         recyclerViewListener.refreshAdapter();
 
-    }
+    }*/
 }

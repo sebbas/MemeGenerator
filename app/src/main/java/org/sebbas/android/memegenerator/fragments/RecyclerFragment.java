@@ -1,20 +1,4 @@
-/*
- * Copyright 2014 Soichiro Kashima
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-package org.sebbas.android.memegenerator;
+package org.sebbas.android.memegenerator.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -22,12 +6,12 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,26 +23,36 @@ import com.github.mrengineer13.snackbar.SnackBar;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.tonicartos.superslim.LayoutManager;
 
+import org.sebbas.android.memegenerator.interfaces.DataLoaderCallback;
+import org.sebbas.android.memegenerator.activities.MainActivity;
+import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.interfaces.RecyclerViewListener;
+import org.sebbas.android.memegenerator.ScrollingLinearLayoutManager;
+import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
+import org.sebbas.android.memegenerator.adapter.SimpleRecyclerAdapter;
+import org.sebbas.android.memegenerator.UIOptions;
+import org.sebbas.android.memegenerator.Utils;
+
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 
 public class RecyclerFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener,
-        RecyclerViewListener {
+        RecyclerViewListener, ToolbarCallback {
 
     private static final String TAG = "RecyclerFragment";
 
-    static final int ALL = 0;
-    static final int MEMES = 1;
-    static final int GIFS = 2;
-    static final int QUERY = 3;
-    static final int DEFAULTS = 4;
-    static final int MY_MEMES = 5;
-    static final int RECENT = 6;
-    static final int FAVORITE_TEMPLATES = 7;
-    static final int FAVORITE_INSTANCES = 8;
-    static final int SEARCH = 9;
-    static final int EXPLORE = 10;
+    public static final int ALL = 0;
+    public static final int MEMES = 1;
+    public static final int GIFS = 2;
+    public static final int QUERY = 3;
+    public static final int DEFAULTS = 4;
+    public static final int MY_MEMES = 5;
+    public static final int RECENT = 6;
+    public static final int FAVORITE_TEMPLATES = 7;
+    public static final int FAVORITE_INSTANCES = 8;
+    public static final int SEARCH = 9;
+    public static final int EXPLORE = 10;
 
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
     private SimpleRecyclerAdapter mSimpleRecyclerAdapter;
@@ -68,7 +62,6 @@ public class RecyclerFragment extends BaseFragment implements
     private int mLayoutMode;
     private boolean mIsRefreshable;
     private String mQuery;
-    private WeakReference<MainActivity> mWeakReference;
     private RecyclerView.AdapterDataObserver mAdapterObserver;
     private FragmentManager mRetainedChildFragmentManager;
 
@@ -104,7 +97,6 @@ public class RecyclerFragment extends BaseFragment implements
             mFragmentType = getArguments().getInt("fragment_type");
             mLayoutMode = getArguments().getInt("layout_mode");
             mIsRefreshable = getArguments().getBoolean("refreshable");
-            mWeakReference = new WeakReference<>((MainActivity) getActivity());
         }
     }
 
@@ -112,7 +104,7 @@ public class RecyclerFragment extends BaseFragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
 
-        mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.recycler_container);
         mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
         mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
 
@@ -122,7 +114,7 @@ public class RecyclerFragment extends BaseFragment implements
         return view;
     }
 
-    @Override
+    /*@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
@@ -141,7 +133,7 @@ public class RecyclerFragment extends BaseFragment implements
         } else {
             mRetainedChildFragmentManager = getChildFragmentManager();
         }
-    }
+    }*/
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -176,7 +168,7 @@ public class RecyclerFragment extends BaseFragment implements
         mSimpleRecyclerAdapter.refreshUI();
     }
 
-    private Fragment getCurrentFragmentFromViewPager() {
+    /*private Fragment getCurrentFragmentFromViewPager() {
         ViewPager viewPager = (ViewPager) getActivity().findViewById(R.id.meme_pager);
         int position = viewPager.getCurrentItem();
         SlidingTabsFragmentAdapter adapter = (SlidingTabsFragmentAdapter) viewPager.getAdapter();
@@ -185,7 +177,7 @@ public class RecyclerFragment extends BaseFragment implements
                 adapter.getFragment(Integer.toString(position));
 
         return recyclerFragment;
-    }
+    }*/
 
     @Override
     public void onConnectionUnavailable() {
@@ -198,7 +190,7 @@ public class RecyclerFragment extends BaseFragment implements
             }
         // Checks when nested fragments are present
         } else {
-            if (getUserVisibleHint() && getCurrentFragmentFromViewPager() == this) {
+            if (getUserVisibleHint() /*&& getCurrentFragmentFromViewPager() == this*/) {
                 showConnectionUnavailableNotification();
             }
         }
@@ -215,7 +207,7 @@ public class RecyclerFragment extends BaseFragment implements
             }
         // Checks when nested fragments are present
         } else {
-            if (isVisible() && getCurrentFragmentFromViewPager() == this) {
+            if (isVisible() /*&& getCurrentFragmentFromViewPager() == this*/) {
                 showConnectionTimeoutNotification();
             }
         }
@@ -271,7 +263,7 @@ public class RecyclerFragment extends BaseFragment implements
         };
         mSimpleRecyclerAdapter.registerAdapterDataObserver(mAdapterObserver);
 
-        MainActivity parentActivity = (MainActivity) getActivity(); //mWeakReference.get();
+        MainActivity parentActivity = (MainActivity) getActivity();
 
         mRecyclerView.setAdapter(mSimpleRecyclerAdapter);
         mRecyclerView.setHasFixedSize(false);
@@ -298,8 +290,9 @@ public class RecyclerFragment extends BaseFragment implements
         }
 
         // TODO parentActivity does not implement ObservableScrollViewCallbacks
-        if (parentActivity instanceof ObservableScrollViewCallbacks) {
-            mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) parentActivity);
+        SlidingTabsFragment parentFragment = (SlidingTabsFragment) getParentFragment();
+        if (parentFragment instanceof ObservableScrollViewCallbacks) {
+            mRecyclerView.setScrollViewCallbacks(parentFragment);
         }
     }
 
@@ -349,5 +342,25 @@ public class RecyclerFragment extends BaseFragment implements
         mSwipeRefreshLayout.setRefreshing(true);
         onRefresh();
         recyclerViewMoveUp();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        return false;
+    }
+
+    @Override
+    public void onRefreshClicked() {
+
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 }

@@ -1,9 +1,7 @@
-package org.sebbas.android.memegenerator;
+package org.sebbas.android.memegenerator.dataloader;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
@@ -16,6 +14,12 @@ import com.squareup.okhttp.Response;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.sebbas.android.memegenerator.interfaces.DataLoaderCallback;
+import org.sebbas.android.memegenerator.LineItem;
+import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.adapter.SimpleRecyclerAdapter;
+import org.sebbas.android.memegenerator.UIOptions;
+import org.sebbas.android.memegenerator.Utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class DataLoader {
+public class JsonDataLoader extends Dataloader {
 
     private static final String TAG = "DataLoader";
 
@@ -42,7 +46,7 @@ public class DataLoader {
     private DataLoaderCallback mDataLoaderCallback;
     private int mFragmentType;
 
-    public DataLoader(Fragment fragment, int fragmentType) {
+    public JsonDataLoader(Fragment fragment, int fragmentType) {
         mContext = fragment.getActivity();
         mFragmentType = fragmentType;
         mDataLoaderCallback = (DataLoaderCallback) fragment;

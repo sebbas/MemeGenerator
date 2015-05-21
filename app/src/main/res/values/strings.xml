@@ -4,16 +4,14 @@
     <string name="app_name">Meme Generator</string>
 
     <!-- Main tabs titles -->
-    <string name="editor">Editor</string>
     <string name="templates">Templates</string>
-    <string name="instances">Instances</string>
+    <string name="imgur">Imgur</string>
     <string name="explore">Explore</string>
     <string name="gallery">Gallery</string>
     <string name="preferences">Settings</string>
 
-    <!-- Other Activities strings -->
-    <string name="search">Search:</string>
-
+    <!-- Other fragments -->
+    <string name="editor">Editor</string>
 
     <!-- Sliding tabs titles -->
     <string name="all_images">All</string>

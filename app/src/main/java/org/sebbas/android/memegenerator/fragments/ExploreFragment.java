@@ -1,4 +1,4 @@
-package org.sebbas.android.memegenerator;
+package org.sebbas.android.memegenerator.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
@@ -6,10 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.activities.BaseActivity;
+import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
+import org.sebbas.android.memegenerator.UIOptions;
 
+public class ExploreFragment extends SimpleFragment implements ToolbarCallback {
 
-public class ExploreFragment extends BaseFragment implements ToolbarCallback {
-
+    private static final String TAG = "ExploreFragment";
 
     public static ExploreFragment newInstance() {
         return new ExploreFragment();
@@ -18,7 +22,7 @@ public class ExploreFragment extends BaseFragment implements ToolbarCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_explore, container, false);
+        View view = inflater.inflate(R.layout.fragment_simple, container, false);
 
         // Get a recycler fragment
         int id = RecyclerFragment.EXPLORE;
@@ -27,12 +31,8 @@ public class ExploreFragment extends BaseFragment implements ToolbarCallback {
 
         // Attach the just obtained fragment to frame layout
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.recycler_container_topics, rootFragment);
+        fragmentTransaction.replace(R.id.content_container, rootFragment);
         fragmentTransaction.commit();
-
-        // Set padding for view so that top and bottom bars don't interfere
-        final int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
-        view.findViewById(R.id.recycler_container_topics).setPadding(0, getActionBarSize(), 0, tabHeight);
 
         return view;
     }
@@ -50,5 +50,24 @@ public class ExploreFragment extends BaseFragment implements ToolbarCallback {
     @Override
     public void onRefreshClicked() {
 
+    }
+
+    @Override
+    public void onBackPressed() {
+
+    }
+
+    @Override
+    void setupFragmentToolbarAt(int position) {
+        int titleResource = R.string.explore;
+        int menuResource = R.menu.menu_simple_fragment;
+
+        BaseActivity parentActivity = (BaseActivity) getActivity();
+        parentActivity.setupToolbar(parentActivity, titleResource, menuResource, false);
+    }
+
+    @Override
+    void registerFragmentToolbarCallbacks(int position) {
+        ((BaseActivity) getActivity()).registerToolbarCallback(this);
     }
 }

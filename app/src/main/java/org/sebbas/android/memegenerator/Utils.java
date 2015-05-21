@@ -6,6 +6,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 
+import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

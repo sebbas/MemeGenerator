@@ -1,4 +1,4 @@
-package org.sebbas.android.memegenerator;
+package org.sebbas.android.memegenerator.interfaces;
 
 public interface DataLoaderCallback {
 

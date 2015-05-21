@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package org.sebbas.android.memegenerator;
+package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.opengl.GLES10;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,10 +35,18 @@ import com.squareup.picasso.Transformation;
 import com.tonicartos.superslim.GridSLM;
 import com.tonicartos.superslim.LinearSLM;
 
+import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
+import org.sebbas.android.memegenerator.LineItem;
+import org.sebbas.android.memegenerator.PicassoCache;
+import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.UIOptions;
+import org.sebbas.android.memegenerator.Utils;
+import org.sebbas.android.memegenerator.dataloader.JsonDataLoader;
+import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import pl.droidsonroids.gif.GifDrawable;
 import pl.droidsonroids.gif.GifImageView;
 
 
@@ -53,7 +60,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     private Context mContext;
     private LayoutInflater mInflater;
-    private DataLoader mDataLoader;
+    private JsonDataLoader mJsonDataLoader;
     private int mLayoutMode;
     private RecyclerFragment mFragment;
     private List<LineItem> mLineItems = null;
@@ -64,7 +71,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         mContext = fragment.getActivity();
         mFragment = (RecyclerFragment) fragment;
         mLayoutMode = mFragment.getLayoutMode();
-        mDataLoader = new DataLoader(fragment, mFragment.getFragmentType());
+        mJsonDataLoader = new JsonDataLoader(fragment, mFragment.getFragmentType());
         mInflater = LayoutInflater.from(mContext);
         mLineItems = new ArrayList<>();
         mAllowedLineItemPositions = new ArrayList<>();
@@ -134,7 +141,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         lp.setFirstPosition(item.getSectionFirstPosition());
         itemView.setLayoutParams(lp);
 
-        viewHolder.textViewTitle.setText(item.getImageUrl());
+        viewHolder.textViewTitle.setText(item.getTitle());
 
         if (mLayoutMode == UIOptions.LIST_LAYOUT && getItemViewType(position) == VIEW_TYPE_CONTENT) {
             ListViewHolder listViewHolder = (ListViewHolder) viewHolder;
@@ -249,8 +256,8 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
                 ArrayList<Integer> filteredItems = new ArrayList<>();
 
-                for (int i = 0; i < mDataLoader.getItemCount(); i++) {
-                    String currentLineItemTitle = mDataLoader.getTitleAt(i);
+                for (int i = 0; i < mJsonDataLoader.getItemCount(); i++) {
+                    String currentLineItemTitle = mJsonDataLoader.getTitleAt(i);
 
                     if (!Utils.stringPatternMatch(currentLineItemTitle, (String) constraint)) {
                         filteredItems.add(i);
@@ -343,7 +350,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     private List<LineItem> getLineItems() {
-        return mDataLoader.getLineItems(mAllowedLineItemPositions, mLayoutMode);
+        return mJsonDataLoader.getLineItems(mAllowedLineItemPositions, mLayoutMode);
     }
 
     private String getCurrentPageDataUrl() {
@@ -377,7 +384,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
     public void refreshData() {
         String url = getCurrentPageDataUrl();
-        mDataLoader.load(url);
+        mJsonDataLoader.load(url);
     }
 
 }

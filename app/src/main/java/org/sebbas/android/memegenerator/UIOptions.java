@@ -1,15 +1,17 @@
 package org.sebbas.android.memegenerator;
 
+import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
+
 public class UIOptions {
 
-    static final String THUMBNAIL_SIZE_LIST = "m";
-    static final String THUMBNAIL_SIZE_CARD = "l";
+    public static final String THUMBNAIL_SIZE_LIST = "m";
+    public static final String THUMBNAIL_SIZE_CARD = "l";
 
     // Meme fragment recycler view layout
-    static final int GRID_LAYOUT = 0;
-    static final int LIST_LAYOUT = 1;
-    static final int CARD_LAYOUT = 2;
-    static final int SCROLLBOX_LAYOUT = 3;
+    public static final int GRID_LAYOUT = 0;
+    public static final int LIST_LAYOUT = 1;
+    public static final int CARD_LAYOUT = 2;
+    public static final int SCROLLBOX_LAYOUT = 3;
 
     private static final int GRID_COLUMN_COUNT = 2;
 

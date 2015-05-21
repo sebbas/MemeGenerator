@@ -14,26 +14,21 @@
  * limitations under the License.
  */
 
-package org.sebbas.android.memegenerator;
+package org.sebbas.android.memegenerator.activities;
 
 import android.app.ActivityManager;
-import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.ListView;
 
-import java.util.ArrayList;
+import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.fragments.BaseFragment;
+import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
 public abstract class BaseActivity extends ActionBarActivity {
 
@@ -59,7 +54,7 @@ public abstract class BaseActivity extends ActionBarActivity {
         }
     }
 
-    protected void setupToolbar(ActionBarActivity actionBarActivity, int titleResource, int menuResource) {
+    public void setupToolbar(ActionBarActivity actionBarActivity, int titleResource, int menuResource, boolean isUpEnabled) {
         Toolbar toolbar = (Toolbar) actionBarActivity.findViewById(R.id.toolbar);
 
         // Make sure that toolbar is clear
@@ -73,9 +68,15 @@ public abstract class BaseActivity extends ActionBarActivity {
         if (menuResource != 0) {
             toolbar.inflateMenu(menuResource);
         }
+
+        if (isUpEnabled) {
+            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        } else {
+            toolbar.setNavigationIcon(null);
+        }
     }
 
-    protected void registerToolbarCallback(BaseFragment baseFragment) {
+    public void registerToolbarCallback(BaseFragment baseFragment) {
         final ToolbarCallback toolbarCallback = (ToolbarCallback) baseFragment;
         Toolbar toolbar = (Toolbar) this.findViewById(R.id.toolbar);
 
@@ -94,9 +95,16 @@ public abstract class BaseActivity extends ActionBarActivity {
                 return true;
             }
         });
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toolbarCallback.onBackPressed();
+            }
+        });
     }
 
-    protected void unregisterToolbarCallback() {
+    public void unregisterToolbarCallback() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setOnMenuItemClickListener(null);
     }

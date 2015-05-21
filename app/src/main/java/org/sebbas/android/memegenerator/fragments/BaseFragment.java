@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.sebbas.android.memegenerator;
+package org.sebbas.android.memegenerator.fragments;
 
 import android.app.Activity;
 import android.content.res.TypedArray;
@@ -30,6 +30,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ListView;
+
+import org.sebbas.android.memegenerator.R;
 
 import java.util.ArrayList;
 
@@ -56,5 +58,4 @@ public abstract class BaseFragment extends Fragment {
         }
         return activity.findViewById(android.R.id.content).getHeight();
     }
-
 }
