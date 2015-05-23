@@ -13,7 +13,7 @@
         android:layout_gravity="top">
 
         <com.google.samples.apps.iosched.ui.widget.SlidingTabLayout
-            android:id="@+id/main_tabs"
+            android:id="@+id/sliding_tabs"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tab_height"
             android:background="@color/primary"
@@ -26,16 +26,17 @@
             android:layout_height="4dp"
             android:id="@+id/toolbar_shadow"
             android:background="@drawable/toolbar_shadow"
-            android:layout_below="@+id/main_tabs"/>
+            android:layout_below="@+id/sliding_tabs"/>
     </LinearLayout>
 
     <FrameLayout
         android:id="@+id/pager_wrapper"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/tab_height">
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/viewpager"
+        <org.sebbas.android.memegenerator.ToggleSwipeViewPager
+            android:id="@+id/toogle_swipe_viewpager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </FrameLayout>

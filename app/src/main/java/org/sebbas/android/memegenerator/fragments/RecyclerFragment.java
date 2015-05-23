@@ -61,9 +61,7 @@ public class RecyclerFragment extends BaseFragment implements
     private int mFragmentType;
     private int mLayoutMode;
     private boolean mIsRefreshable;
-    private String mQuery;
     private RecyclerView.AdapterDataObserver mAdapterObserver;
-    private FragmentManager mRetainedChildFragmentManager;
 
     public static RecyclerFragment newInstance(int fragmentType, int layoutMode, boolean refreshable) {
         RecyclerFragment fragment = new RecyclerFragment();
@@ -75,29 +73,13 @@ public class RecyclerFragment extends BaseFragment implements
         return fragment;
     }
 
-    public static RecyclerFragment newInstance(int fragmentType, int layoutMode, boolean refreshable, String query) {
-        RecyclerFragment fragment = new RecyclerFragment();
-        Bundle args = new Bundle();
-        args.putInt("fragment_type", fragmentType);
-        args.putInt("layout_mode", layoutMode);
-        args.putBoolean("refreshable", refreshable);
-        args.putString("query", query);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Only get the query if it is present
-        try {
-            mQuery = getArguments().getString("query");
-        } finally {
-            mFragmentType = getArguments().getInt("fragment_type");
-            mLayoutMode = getArguments().getInt("layout_mode");
-            mIsRefreshable = getArguments().getBoolean("refreshable");
-        }
+        mFragmentType = getArguments().getInt("fragment_type");
+        mLayoutMode = getArguments().getInt("layout_mode");
+        mIsRefreshable = getArguments().getBoolean("refreshable");
     }
 
     @Override
@@ -275,10 +257,10 @@ public class RecyclerFragment extends BaseFragment implements
                 mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(UIOptions.getGridColumnCount(), StaggeredGridLayoutManager.VERTICAL));
                 break;
             case UIOptions.LIST_LAYOUT:
+            case UIOptions.SCROLLBOX_LAYOUT:
                 mRecyclerView.setLayoutManager(new LayoutManager(parentActivity));
                 break;
             case UIOptions.CARD_LAYOUT:
-            case UIOptions.SCROLLBOX_LAYOUT:
                 mRecyclerView.setLayoutManager(new ScrollingLinearLayoutManager(
                         getActivity(),
                         LinearLayoutManager.VERTICAL,
@@ -323,10 +305,6 @@ public class RecyclerFragment extends BaseFragment implements
 
     public int getFragmentType() {
         return mFragmentType;
-    }
-
-    public String getQuery() {
-        return mQuery;
     }
 
     @Override

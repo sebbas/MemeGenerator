@@ -1,14 +1,15 @@
 package org.sebbas.android.memegenerator.fragments;
 
-import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 import org.sebbas.android.memegenerator.adapter.GalleryFragmentAdapter;
-import org.sebbas.android.memegenerator.activities.MainActivity;
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.adapter.SlidingTabsFragmentAdapter;
 
 public class GalleryFragment extends SlidingTabsFragment implements ToolbarCallback {
 
@@ -19,16 +20,27 @@ public class GalleryFragment extends SlidingTabsFragment implements ToolbarCallb
             R.string.favorites,
             R.string.recent};
 
-    public static GalleryFragment newInstance(Context context) {
-        FragmentManager fragmentManager = ((MainActivity) context).getSupportFragmentManager();
-        GalleryFragmentAdapter galleryFragmentAdapter = new GalleryFragmentAdapter(context,
-                fragmentManager, TAB_TITLES);
+    private GalleryFragmentAdapter mGalleryFragmentAdapter;
 
-        return new GalleryFragment(galleryFragmentAdapter, OFF_SCREEN_LIMIT, true);
+    public static GalleryFragment newInstance() {
+        return new GalleryFragment();
     }
 
-    private GalleryFragment(SlidingTabsFragmentAdapter adapter, int offScreenLimit, boolean isSwipeable) {
-        super(adapter, offScreenLimit, isSwipeable);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FragmentManager fragmentManager = getChildFragmentManager();
+        mGalleryFragmentAdapter = new GalleryFragmentAdapter(getActivity(), fragmentManager, TAB_TITLES);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        super.onCreateView(inflater, container, bundle);
+        View view = inflater.inflate(R.layout.fragment_slidingtabs_top, container, false);
+
+        super.createView(view, mGalleryFragmentAdapter, true, OFF_SCREEN_LIMIT);
+
+        return view;
     }
 
     @Override

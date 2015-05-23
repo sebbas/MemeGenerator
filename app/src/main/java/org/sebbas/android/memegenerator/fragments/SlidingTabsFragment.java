@@ -19,6 +19,7 @@ import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.ViewHelper;
 
+import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.adapter.SlidingTabsFragmentAdapter;
@@ -29,39 +30,30 @@ public abstract class SlidingTabsFragment extends BaseFragment implements Observ
     private static final String TAG = "SlidingTabsFragment";
 
     private SlidingTabsFragmentAdapter mSlidingTabsFragmentAdapter;
-    private int mOffScreenLimit;
-    private boolean mIsSwipeable;
+    private ToggleSwipeViewPager mViewPager;
     private View mToolbar;
     private TouchInterceptionFrameLayout mInterceptionLayout;
-    private ViewPager mViewPager;
     private int mSlop;
     private boolean mScrolled;
     private ScrollState mLastScrollState;
 
-    public SlidingTabsFragment(SlidingTabsFragmentAdapter adapter, int offScreenLimit, boolean isSwipeable) {
-        mSlidingTabsFragmentAdapter = adapter;
-        mOffScreenLimit = offScreenLimit;
-        mIsSwipeable = isSwipeable;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mToolbar = getActivity().findViewById(R.id.toolbar);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        View view;
+    public void createView(View view, SlidingTabsFragmentAdapter fragmentAdapter,
+                           boolean isSwipeable, int offScreenLimit) {
 
-        if (mIsSwipeable) {
-            view = inflater.inflate(R.layout.fragment_slidingtabs_swipeable, container, false);
-        } else {
-            view = inflater.inflate(R.layout.fragment_slidingtabs_nonswipeable, container, false);
-        }
+        mSlidingTabsFragmentAdapter = fragmentAdapter;
+        mViewPager = (ToggleSwipeViewPager) view.findViewById(R.id.toogle_swipe_viewpager);
 
-        mToolbar = getActivity().findViewById(R.id.toolbar);
+        mViewPager.setPagingEnabled(isSwipeable);
+        mViewPager.setAdapter(fragmentAdapter);
+        mViewPager.setOffscreenPageLimit(offScreenLimit);
 
-        mViewPager = (ViewPager) view.findViewById(R.id.viewpager);
-        mViewPager.setAdapter(mSlidingTabsFragmentAdapter);
-        mViewPager.setOffscreenPageLimit(mOffScreenLimit);
-
-        SlidingTabLayout slidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.main_tabs);
+        SlidingTabLayout slidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.sliding_tabs);
         slidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
         slidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
         slidingTabLayout.setDistributeEvenly(true);
@@ -85,16 +77,16 @@ public abstract class SlidingTabsFragment extends BaseFragment implements Observ
             }
         });
 
-        ViewConfiguration vc = ViewConfiguration.get(getActivity());
-        mSlop = vc.getScaledTouchSlop();
-        mInterceptionLayout = (TouchInterceptionFrameLayout) view.findViewById(R.id.container);
-        mInterceptionLayout.setScrollInterceptionListener(mInterceptionListener);
+        if (isSwipeable) {
+            ViewConfiguration vc = ViewConfiguration.get(getActivity());
+            mSlop = vc.getScaledTouchSlop();
+            mInterceptionLayout = (TouchInterceptionFrameLayout) view.findViewById(R.id.container);
+            mInterceptionLayout.setScrollInterceptionListener(mInterceptionListener);
+        }
 
         // Setup toolbar for initial configuration
         setupFragmentToolbarAt(0);
         registerFragmentToolbarCallbacks(0);
-
-        return view;
     }
 
     @Override

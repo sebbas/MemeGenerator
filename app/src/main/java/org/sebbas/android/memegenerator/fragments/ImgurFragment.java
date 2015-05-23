@@ -1,14 +1,17 @@
 package org.sebbas.android.memegenerator.fragments;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 import org.sebbas.android.memegenerator.adapter.ImgurFragmentAdapter;
 import org.sebbas.android.memegenerator.activities.MainActivity;
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.adapter.SlidingTabsFragmentAdapter;
 
 public class ImgurFragment extends SlidingTabsFragment implements ToolbarCallback {
 
@@ -19,16 +22,27 @@ public class ImgurFragment extends SlidingTabsFragment implements ToolbarCallbac
             R.string.memes,
             R.string.gifs};
 
-    public static ImgurFragment newInstance(Context context) {
-        FragmentManager fragmentManager = ((MainActivity) context).getSupportFragmentManager();
-        ImgurFragmentAdapter imgurFragmentAdapter = new ImgurFragmentAdapter(context,
-                fragmentManager, TAB_TITLES);
+    private ImgurFragmentAdapter mImgurFragmentAdapter;
 
-        return new ImgurFragment(imgurFragmentAdapter, OFF_SCREEN_LIMIT, true);
+    public static ImgurFragment newInstance() {
+        return new ImgurFragment();
     }
 
-    private ImgurFragment(SlidingTabsFragmentAdapter adapter, int offScreenLimit, boolean isSwipeable) {
-        super(adapter, offScreenLimit, isSwipeable);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FragmentManager fragmentManager = getChildFragmentManager();
+        mImgurFragmentAdapter = new ImgurFragmentAdapter(getActivity(), fragmentManager, TAB_TITLES);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        super.onCreateView(inflater, container, bundle);
+        View view = inflater.inflate(R.layout.fragment_slidingtabs_top, container, false);
+
+        super.createView(view, mImgurFragmentAdapter, true, OFF_SCREEN_LIMIT);
+
+        return view;
     }
 
     @Override

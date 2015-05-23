@@ -35,11 +35,11 @@ public class MainFragmentAdapter extends SlidingTabsFragmentAdapter {
             case 0:
                 return TemplatesFragment.newInstance();
             case 1:
-                return ImgurFragment.newInstance(mContext);
+                return ImgurFragment.newInstance();
             case 2:
                 return ExploreFragment.newInstance();
             case 3:
-                return GalleryFragment.newInstance(mContext);
+                return GalleryFragment.newInstance();
             case 4:
                 return SimplePreferenceFragment.newInstance();
             default:

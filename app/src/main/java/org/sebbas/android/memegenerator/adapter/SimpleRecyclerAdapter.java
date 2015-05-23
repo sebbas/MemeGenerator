@@ -358,7 +358,8 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
 
         switch (fragmentType) {
             case RecyclerFragment.QUERY:
-                String query = mFragment.getQuery();
+                // TODO
+                String query = ""; // mFragment.getQuery();
                 return Utils.getUrlForQuery(mPageIndex, query);
             case RecyclerFragment.EXPLORE:
                 return TOPICS_URL;

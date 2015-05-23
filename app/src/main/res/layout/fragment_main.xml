@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.sebbas.android.memegenerator.NonSwipeableViewPager
+<org.sebbas.android.memegenerator.ToggleSwipeViewPager
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/nonswipeable_viewpager"
     android:layout_width="match_parent"

@@ -22,7 +22,7 @@ public class ExploreFragment extends SimpleFragment implements ToolbarCallback {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_simple, container, false);
+        View view = inflater.inflate(R.layout.fragment_explore, container, false);
 
         // Get a recycler fragment
         int id = RecyclerFragment.EXPLORE;
@@ -31,7 +31,7 @@ public class ExploreFragment extends SimpleFragment implements ToolbarCallback {
 
         // Attach the just obtained fragment to frame layout
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.content_container, rootFragment);
+        fragmentTransaction.replace(R.id.explore_container, rootFragment);
         fragmentTransaction.commit();
 
         return view;

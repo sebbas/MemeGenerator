@@ -1,15 +1,20 @@
 package org.sebbas.android.memegenerator.fragments;
 
-import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
+
+import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
-import org.sebbas.android.memegenerator.activities.MainActivity;
 import org.sebbas.android.memegenerator.adapter.MainFragmentAdapter;
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.adapter.SlidingTabsFragmentAdapter;
 
-public class MainFragment extends SlidingTabsFragment {
+public class MainFragment extends SlidingTabsFragment implements ObservableScrollViewCallbacks {
 
     private static final int OFF_SCREEN_LIMIT = 5;
 
@@ -20,16 +25,41 @@ public class MainFragment extends SlidingTabsFragment {
             R.string.gallery,
             R.string.preferences};
 
-    public static MainFragment newInstance(Context context) {
-        FragmentManager fragmentManager = ((MainActivity) context).getSupportFragmentManager();
-        MainFragmentAdapter mainFragmentAdapter = new MainFragmentAdapter(context,
-                fragmentManager, TAB_TITLES);
+    private static int[] TAB_TITLES_2 = {
+            R.string.a,
+            R.string.b,
+            R.string.c,
+            R.string.d,
+            R.string.e};
 
-        return new MainFragment(mainFragmentAdapter, OFF_SCREEN_LIMIT, false);
+    private static final int[] TAB_ICONS = {
+            R.drawable.selector_template_icon,
+            R.drawable.selector_instances_icon,
+            R.drawable.selector_explore_icon,
+            R.drawable.selector_gallery_icon,
+            R.drawable.selector_preferences_icon};
+
+    private MainFragmentAdapter mMainFragmentAdapter;
+
+    public static MainFragment newInstance() {
+        return new MainFragment();
     }
 
-    private MainFragment(SlidingTabsFragmentAdapter adapter, int offScreenLimit, boolean isSwipeable) {
-        super(adapter, offScreenLimit, isSwipeable);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        mMainFragmentAdapter = new MainFragmentAdapter(getActivity(), fragmentManager, TAB_TITLES_2);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
+        super.onCreateView(inflater, container, bundle);
+        View view = inflater.inflate(R.layout.fragment_slidingtabs_bottom, container, false);
+
+        super.createView(view, mMainFragmentAdapter, false, OFF_SCREEN_LIMIT);
+
+        return view;
     }
 
     @Override
@@ -63,5 +93,17 @@ public class MainFragment extends SlidingTabsFragment {
         }
         BaseActivity parentActivity = (BaseActivity) getActivity();
         parentActivity.setupToolbar(parentActivity, titleResource, menuResource, false);
+    }
+
+    @Override
+    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+    }
+
+    @Override
+    public void onDownMotionEvent() {
+    }
+
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
     }
 }

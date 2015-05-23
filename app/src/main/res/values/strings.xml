@@ -179,4 +179,11 @@
     <string name="preference_developer_summary">Visit developer website</string>
     <string name="preference_version">Version</string>
 
+    <!-- Strings for testing purposes -->
+    <string name="a">A</string>
+    <string name="b">B</string>
+    <string name="c">C</string>
+    <string name="d">D</string>
+    <string name="e">E</string>
+
 </resources>

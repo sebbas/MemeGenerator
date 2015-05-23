@@ -28,6 +28,7 @@ import android.widget.TextView;
 import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.squareup.picasso.Transformation;
 
+import org.sebbas.android.memegenerator.SquaredImageView;
 import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.PicassoCache;
@@ -83,23 +84,23 @@ public class HorizontalRecyclerAdapter extends RecyclerView.Adapter<HorizontalRe
 
         viewHolder.textViewTitle.setText(item.getTitle());
 
-        Transformation roundedTransformation = new RoundedTransformationBuilder()
+        /*Transformation roundedTransformation = new RoundedTransformationBuilder()
                 .oval(true)
-                .build();
+                .build();*/
 
         PicassoCache.getPicassoInstance(mContext)
                 .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
                 .placeholder(android.R.color.holo_blue_bright)
                 .error(android.R.color.holo_red_dark)
                 .fit()
-                .transform(roundedTransformation)
+                //.transform(roundedTransformation)
                 .centerCrop()
                 .tag(mContext)
                 .into(viewHolder.imageView);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        ImageView imageView;
+        SquaredImageView imageView;
         TextView textViewTitle;
         ViewHolderCallback mViewHolderCallback;
 
@@ -107,7 +108,7 @@ public class HorizontalRecyclerAdapter extends RecyclerView.Adapter<HorizontalRe
             super(view);
             view.setOnClickListener(this);
 
-            imageView = (ImageView) view.findViewById(R.id.item_image);
+            imageView = (SquaredImageView) view.findViewById(R.id.item_image);
             textViewTitle = (TextView) view.findViewById(R.id.item_title);
 
             mViewHolderCallback = viewHolderCallback;
