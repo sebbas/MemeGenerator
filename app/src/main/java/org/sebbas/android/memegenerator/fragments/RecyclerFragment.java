@@ -1,17 +1,14 @@
 package org.sebbas.android.memegenerator.fragments;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +16,15 @@ import android.view.ViewGroup;
 import com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
+import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
+import com.nineoldandroids.view.ViewHelper;
+import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.tonicartos.superslim.LayoutManager;
 
+import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.interfaces.DataLoaderCallback;
 import org.sebbas.android.memegenerator.activities.MainActivity;
 import org.sebbas.android.memegenerator.R;
@@ -33,26 +35,23 @@ import org.sebbas.android.memegenerator.adapter.SimpleRecyclerAdapter;
 import org.sebbas.android.memegenerator.UIOptions;
 import org.sebbas.android.memegenerator.Utils;
 
-import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
 
-public class RecyclerFragment extends BaseFragment implements
+public abstract class RecyclerFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener,
-        RecyclerViewListener, ToolbarCallback {
+        RecyclerViewListener, ToolbarCallback, ObservableScrollViewCallbacks {
 
     private static final String TAG = "RecyclerFragment";
 
-    public static final int ALL = 0;
-    public static final int MEMES = 1;
-    public static final int GIFS = 2;
-    public static final int QUERY = 3;
-    public static final int DEFAULTS = 4;
+    public static final int TEMPLATES = 0;
+    public static final int ALL = 1;
+    public static final int MEMES = 2;
+    public static final int GIFS = 3;
+    public static final int EXPLORE = 4;
     public static final int MY_MEMES = 5;
     public static final int RECENT = 6;
     public static final int FAVORITE_TEMPLATES = 7;
     public static final int FAVORITE_INSTANCES = 8;
-    public static final int SEARCH = 9;
-    public static final int EXPLORE = 10;
+    public static final int QUERY = 9;
 
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
     private SimpleRecyclerAdapter mSimpleRecyclerAdapter;
@@ -62,16 +61,8 @@ public class RecyclerFragment extends BaseFragment implements
     private int mLayoutMode;
     private boolean mIsRefreshable;
     private RecyclerView.AdapterDataObserver mAdapterObserver;
-
-    public static RecyclerFragment newInstance(int fragmentType, int layoutMode, boolean refreshable) {
-        RecyclerFragment fragment = new RecyclerFragment();
-        Bundle args = new Bundle();
-        args.putInt("fragment_type", fragmentType);
-        args.putInt("layout_mode", layoutMode);
-        args.putBoolean("refreshable", refreshable);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private Toolbar mToolbarView;
+    private int mBaseTranslationY;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -86,9 +77,12 @@ public class RecyclerFragment extends BaseFragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
 
+        mToolbarView = (Toolbar) getActivity().findViewById(R.id.toolbar);
+
         mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.recycler_container);
         mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
         mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
+        mSimpleRecyclerAdapter = new SimpleRecyclerAdapter(this);
 
         // Depending on arguments, enable or disable swipe refresh
         mSwipeRefreshLayout.setEnabled(mIsRefreshable);
@@ -96,26 +90,12 @@ public class RecyclerFragment extends BaseFragment implements
         return view;
     }
 
-    /*@Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        if (mRetainedChildFragmentManager != null) {
-            //restore the last retained child fragment manager to the new
-            //created fragment
-            try {
-                Field childFMField = Fragment.class.getDeclaredField("mChildFragmentManager");
-                childFMField.setAccessible(true);
-                childFMField.set(this, mRetainedChildFragmentManager);
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        } else {
-            mRetainedChildFragmentManager = getChildFragmentManager();
-        }
-    }*/
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        BaseActivity parentActivity = (BaseActivity) getActivity();
+        parentActivity.unregisterToolbarCallback();
+    }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -126,13 +106,13 @@ public class RecyclerFragment extends BaseFragment implements
         setupSwipeRefreshLayout();
     }
 
-    @Override
+    /*@Override
     public void onDestroyView() {
         super.onDestroyView();
 
         resetRecyclerView();
         resetSwipeRefreshLayout();
-    }
+    }*/
 
     @Override
     public void onRefresh() {
@@ -232,8 +212,7 @@ public class RecyclerFragment extends BaseFragment implements
         return (mSimpleRecyclerAdapter.getItemCount() == 0);
     }
 
-    protected void setupRecyclerView() {
-        mSimpleRecyclerAdapter = new SimpleRecyclerAdapter(this);
+    private void setupRecyclerView() {
 
         // Register observer
         mAdapterObserver = new RecyclerView.AdapterDataObserver() {
@@ -249,7 +228,7 @@ public class RecyclerFragment extends BaseFragment implements
 
         mRecyclerView.setAdapter(mSimpleRecyclerAdapter);
         mRecyclerView.setHasFixedSize(false);
-        mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.container));
+        mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.main_container));
 
         int scrollDuration = getResources().getInteger(R.integer.scroll_duration);
         switch (mLayoutMode) {
@@ -271,10 +250,11 @@ public class RecyclerFragment extends BaseFragment implements
                 mRecyclerView.setLayoutManager(new GridLayoutManager(parentActivity, UIOptions.getGridColumnCount()));
         }
 
-        // TODO parentActivity does not implement ObservableScrollViewCallbacks
         SlidingTabsFragment parentFragment = (SlidingTabsFragment) getParentFragment();
         if (parentFragment instanceof ObservableScrollViewCallbacks) {
             mRecyclerView.setScrollViewCallbacks(parentFragment);
+        } else {
+            mRecyclerView.setScrollViewCallbacks(this);
         }
     }
 
@@ -305,6 +285,10 @@ public class RecyclerFragment extends BaseFragment implements
 
     public int getFragmentType() {
         return mFragmentType;
+    }
+
+    public ObservableRecyclerView getRecyclerView() {
+        return mRecyclerView;
     }
 
     @Override
@@ -340,5 +324,75 @@ public class RecyclerFragment extends BaseFragment implements
     @Override
     public void onBackPressed() {
 
+    }
+
+    @Override
+    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+
+        if (dragging) {
+            int toolbarHeight = mToolbarView.getHeight();
+            if (firstScroll) {
+                float currentHeaderTranslationY = ViewHelper.getTranslationY(mToolbarView);
+                if (-toolbarHeight < currentHeaderTranslationY) {
+                    mBaseTranslationY = scrollY;
+                }
+            }
+            float headerTranslationY = ScrollUtils.getFloat(-(scrollY - mBaseTranslationY), -toolbarHeight, 0);
+            ViewPropertyAnimator.animate(mToolbarView).cancel();
+            ViewHelper.setTranslationY(mToolbarView, headerTranslationY);
+        }
+    }
+
+    @Override
+    public void onDownMotionEvent() {
+    }
+
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+        mBaseTranslationY = 0;
+
+        if (scrollState == ScrollState.DOWN) {
+            showToolbar();
+        } else if (scrollState == ScrollState.UP) {
+            int toolbarHeight = mToolbarView.getHeight();
+            int scrollY = mRecyclerView.getCurrentScrollY();
+            if (toolbarHeight <= scrollY) {
+                hideToolbar();
+            } else {
+                showToolbar();
+            }
+        } else {
+            // Even if onScrollChanged occurs without scrollY changing, toolbar should be adjusted
+            if (!toolbarIsShown() && !toolbarIsHidden()) {
+                // Toolbar is moving but doesn't know which to move:
+                // you can change this to hideToolbar()
+                showToolbar();
+            }
+        }
+    }
+
+    private boolean toolbarIsShown() {
+        return ViewHelper.getTranslationY(mToolbarView) == 0;
+    }
+
+    private boolean toolbarIsHidden() {
+        return ViewHelper.getTranslationY(mToolbarView) == -mToolbarView.getHeight();
+    }
+
+    private void showToolbar() {
+        float headerTranslationY = ViewHelper.getTranslationY(mToolbarView);
+        if (headerTranslationY != 0) {
+            ViewPropertyAnimator.animate(mToolbarView).cancel();
+            ViewPropertyAnimator.animate(mToolbarView).translationY(0).setDuration(200).start();
+        }
+    }
+
+    private void hideToolbar() {
+        float headerTranslationY = ViewHelper.getTranslationY(mToolbarView);
+        int toolbarHeight = mToolbarView.getHeight();
+        if (headerTranslationY != -toolbarHeight) {
+            ViewPropertyAnimator.animate(mToolbarView).cancel();
+            ViewPropertyAnimator.animate(mToolbarView).translationY(-toolbarHeight).setDuration(200).start();
+        }
     }
 }

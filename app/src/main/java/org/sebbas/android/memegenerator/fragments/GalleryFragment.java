@@ -29,7 +29,7 @@ public class GalleryFragment extends SlidingTabsFragment implements ToolbarCallb
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FragmentManager fragmentManager = getChildFragmentManager();
+        FragmentManager fragmentManager = super.getRetainedChildFragmentManager();
         mGalleryFragmentAdapter = new GalleryFragmentAdapter(getActivity(), fragmentManager, TAB_TITLES);
     }
 
@@ -49,7 +49,7 @@ public class GalleryFragment extends SlidingTabsFragment implements ToolbarCallb
         int menuResource = R.menu.menu_simple_fragment;
 
         BaseActivity parentActivity = (BaseActivity) getActivity();
-        parentActivity.setupToolbar(parentActivity, titleResource, menuResource, false);
+        parentActivity.setupToolbar(titleResource, menuResource, false);
     }
 
     @Override

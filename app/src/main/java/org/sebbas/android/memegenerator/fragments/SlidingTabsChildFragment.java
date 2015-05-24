@@ -1,30 +1,21 @@
 package org.sebbas.android.memegenerator.fragments;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
-import org.sebbas.android.memegenerator.UIOptions;
 
-public class TemplatesFragment extends RecyclerFragment implements ToolbarCallback {
+public class SlidingTabsChildFragment extends RecyclerFragment implements ToolbarCallback {
 
-    private static final String TAG = "TemplatesFragment";
+    private static final String TAG = "SlidingTabsChildFragment";
 
-    private static final int FRAGMENT_TYPE = RecyclerFragment.TEMPLATES;
-    private static final int LAYOUT_MODE = UIOptions.LIST_LAYOUT;
-    private static final boolean IS_REFRESHABLE = false;
-
-    public static TemplatesFragment newInstance() {
-        TemplatesFragment fragment = new TemplatesFragment();
+    public static SlidingTabsChildFragment newInstance(int fragmentType, int layoutMode, boolean isRefreshable) {
+        SlidingTabsChildFragment fragment = new SlidingTabsChildFragment();
         Bundle args = new Bundle();
-        args.putInt("fragment_type", FRAGMENT_TYPE);
-        args.putInt("layout_mode", LAYOUT_MODE);
-        args.putBoolean("refreshable", IS_REFRESHABLE);
+        args.putInt("fragment_type", fragmentType);
+        args.putInt("layout_mode", layoutMode);
+        args.putBoolean("refreshable", isRefreshable);
         fragment.setArguments(args);
         return fragment;
     }

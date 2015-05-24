@@ -23,7 +23,7 @@ public class UIOptions {
                 return CARD_LAYOUT;
             case RecyclerFragment.GIFS:
                 return CARD_LAYOUT;
-            case RecyclerFragment.DEFAULTS:
+            case RecyclerFragment.TEMPLATES:
                 return LIST_LAYOUT;
             case RecyclerFragment.MY_MEMES:
                 return LIST_LAYOUT;

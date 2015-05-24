@@ -67,7 +67,7 @@ public class Utils {
                 return BASE_TOP + pageIndex;
             case RecyclerFragment.GIFS:
                 return BASE_TIME + pageIndex;
-            case RecyclerFragment.DEFAULTS:
+            case RecyclerFragment.TEMPLATES:
                 return BASE_DEFAULTS;
             default:
                 return BASE_MEMES + pageIndex;

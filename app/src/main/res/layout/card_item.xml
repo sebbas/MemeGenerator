@@ -39,7 +39,7 @@
                 android:paddingBottom="@dimen/margin_extra_short"
                 android:textColor="?android:attr/textColorPrimary"/>
 
-            <pl.droidsonroids.gif.GifImageView
+            <ImageView
                 android:id="@+id/item_image"
                 android:src="@android:color/holo_blue_bright"
                 android:layout_width="match_parent"

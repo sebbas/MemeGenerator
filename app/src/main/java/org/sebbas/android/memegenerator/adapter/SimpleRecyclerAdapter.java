@@ -30,6 +30,8 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.bitmap.Transform;
 import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.squareup.picasso.Transformation;
 import com.tonicartos.superslim.GridSLM;
@@ -164,7 +166,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
         if (mLayoutMode == UIOptions.CARD_LAYOUT) {
             final CardViewHolder cardViewHolder = (CardViewHolder) viewHolder;
 
-            Transformation transformation = new Transformation() {
+            Transform transformation = new Transform() {
 
                 @Override
                 public Bitmap transform(Bitmap source) {
@@ -200,14 +202,23 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
                 }
             };
 
-            PicassoCache.getPicassoInstance(mContext)
-                    .load(item.getImageUrl())//(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_LARGE))
+            Ion.with(cardViewHolder.imageView)
+                    .placeholder(android.R.color.holo_blue_bright)
+                    .error(android.R.color.holo_red_dark)
+                    //.animateLoad(spinAnimation)
+                    //.animateIn(fadeInAnimation)
+                    .resize(0, Utils.DEFAULT_MAX_BITMAP_DIMENSION)
+                    .transform(transformation)
+                    .load(item.getImageUrl());//(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_LARGE));
+
+            /*PicassoCache.getPicassoInstance(mContext)
+                    .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_LARGE))
                     .placeholder(android.R.color.holo_blue_bright)
                     .error(android.R.color.holo_red_dark)
                     .tag(mContext)
                     .resize(0, Utils.DEFAULT_MAX_BITMAP_DIMENSION)
                     .transform(transformation)
-                    .into(cardViewHolder.imageView);
+                    .into(cardViewHolder.imageView);*/
 
             cardViewHolder.textViewViewCount.setText(Utils.getViewCountString(mContext, item.getViewCount()));
             cardViewHolder.textViewTimeStamp.setText(Utils.getTimeAgoString(mContext, Integer.valueOf(item.getTimeStamp())));
@@ -288,7 +299,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
     }
 
     static class CardViewHolder extends MainViewHolder implements View.OnClickListener {
-        GifImageView imageView;
+        ImageView imageView;
         TextView textViewViewCount;
         TextView textViewTimeStamp;
 
@@ -296,7 +307,7 @@ public class SimpleRecyclerAdapter extends RecyclerView.Adapter<SimpleRecyclerAd
             super(view, viewHolderCallback);
             view.setOnClickListener(this);
 
-            imageView = (GifImageView) view.findViewById(R.id.item_image);
+            imageView = (ImageView) view.findViewById(R.id.item_image);
             textViewViewCount = (TextView) view.findViewById(R.id.item_viewcount);
             textViewTimeStamp = (TextView) view.findViewById(R.id.item_datetime);
         }

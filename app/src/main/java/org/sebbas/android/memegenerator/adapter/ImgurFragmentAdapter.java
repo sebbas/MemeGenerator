@@ -8,6 +8,7 @@ import android.util.Log;
 
 import org.sebbas.android.memegenerator.UIOptions;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
+import org.sebbas.android.memegenerator.fragments.SlidingTabsChildFragment;
 
 public class ImgurFragmentAdapter extends SlidingTabsFragmentAdapter {
 
@@ -27,22 +28,22 @@ public class ImgurFragmentAdapter extends SlidingTabsFragmentAdapter {
             case 0:
                 id = RecyclerFragment.ALL;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = RecyclerFragment.newInstance(id, layout, true);
+                fragment = SlidingTabsChildFragment.newInstance(id, layout, true);
                 break;
             case 1:
                 id = RecyclerFragment.MEMES;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = RecyclerFragment.newInstance(id, layout, true);
+                fragment = SlidingTabsChildFragment.newInstance(id, layout, true);
                 break;
             case 2:
                 id = RecyclerFragment.GIFS;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = RecyclerFragment.newInstance(id, layout, true);
+                fragment = SlidingTabsChildFragment.newInstance(id, layout, true);
                 break;
             default:
                 id = RecyclerFragment.ALL;
                 layout = UIOptions.getLayoutMode(id);
-                fragment = RecyclerFragment.newInstance(id, layout, true);
+                fragment = SlidingTabsChildFragment.newInstance(id, layout, true);
                 break;
         }
         return fragment;

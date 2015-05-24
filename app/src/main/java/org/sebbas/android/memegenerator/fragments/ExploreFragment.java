@@ -11,30 +11,22 @@ import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 import org.sebbas.android.memegenerator.UIOptions;
 
-public class ExploreFragment extends SimpleFragment implements ToolbarCallback {
+public class ExploreFragment extends RecyclerFragment implements ToolbarCallback {
 
     private static final String TAG = "ExploreFragment";
 
+    private static final int FRAGMENT_TYPE = RecyclerFragment.EXPLORE;
+    private static final int LAYOUT_MODE = UIOptions.SCROLLBOX_LAYOUT;
+    private static final boolean IS_REFRESHABLE = false;
+
     public static ExploreFragment newInstance() {
-        return new ExploreFragment();
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_explore, container, false);
-
-        // Get a recycler fragment
-        int id = RecyclerFragment.EXPLORE;
-        int layout = UIOptions.getLayoutMode(id);
-        RecyclerFragment rootFragment = RecyclerFragment.newInstance(id, layout, false);
-
-        // Attach the just obtained fragment to frame layout
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.explore_container, rootFragment);
-        fragmentTransaction.commit();
-
-        return view;
+        ExploreFragment fragment = new ExploreFragment();
+        Bundle args = new Bundle();
+        args.putInt("fragment_type", FRAGMENT_TYPE);
+        args.putInt("layout_mode", LAYOUT_MODE);
+        args.putBoolean("refreshable", IS_REFRESHABLE);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -49,12 +41,10 @@ public class ExploreFragment extends SimpleFragment implements ToolbarCallback {
 
     @Override
     public void onRefreshClicked() {
-
     }
 
     @Override
     public void onBackPressed() {
-
     }
 
     @Override
@@ -63,7 +53,7 @@ public class ExploreFragment extends SimpleFragment implements ToolbarCallback {
         int menuResource = R.menu.menu_simple_fragment;
 
         BaseActivity parentActivity = (BaseActivity) getActivity();
-        parentActivity.setupToolbar(parentActivity, titleResource, menuResource, false);
+        parentActivity.setupToolbar(titleResource, menuResource, false);
     }
 
     @Override

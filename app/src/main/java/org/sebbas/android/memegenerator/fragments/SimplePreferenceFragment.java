@@ -60,7 +60,7 @@ public class SimplePreferenceFragment extends SimpleFragment implements ToolbarC
         int menuResource = R.menu.menu_simple_fragment;
 
         BaseActivity parentActivity = (BaseActivity) getActivity();
-        parentActivity.setupToolbar(parentActivity, titleResource, menuResource, true);
+        parentActivity.setupToolbar(titleResource, menuResource, true);
     }
 
     @Override

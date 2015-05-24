@@ -58,4 +58,10 @@ public abstract class BaseFragment extends Fragment {
         }
         return activity.findViewById(android.R.id.content).getHeight();
     }
+
+    abstract void setupFragmentToolbarAt(int position);
+
+    abstract void registerFragmentToolbarCallbacks(int position);
+
+
 }

@@ -19,6 +19,7 @@ package org.sebbas.android.memegenerator.activities;
 import android.app.ActivityManager;
 import android.content.res.TypedArray;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -26,8 +27,16 @@ import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
+import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollState;
+import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
+import com.nineoldandroids.view.ViewHelper;
+import com.nineoldandroids.view.ViewPropertyAnimator;
+
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
+import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
 public abstract class BaseActivity extends ActionBarActivity {
@@ -54,14 +63,14 @@ public abstract class BaseActivity extends ActionBarActivity {
         }
     }
 
-    public void setupToolbar(ActionBarActivity actionBarActivity, int titleResource, int menuResource, boolean isUpEnabled) {
-        Toolbar toolbar = (Toolbar) actionBarActivity.findViewById(R.id.toolbar);
+    public void setupToolbar(int titleResource, int menuResource, boolean isUpEnabled) {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         // Make sure that toolbar is clear
         toolbar.getMenu().clear();
 
         // Setup toolbar title
-        String title = actionBarActivity.getResources().getString(titleResource);
+        String title = getResources().getString(titleResource);
         toolbar.setTitle(title);
 
         // Setup toolbar menu

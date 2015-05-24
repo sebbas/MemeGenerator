@@ -43,4 +43,8 @@
     <dimen name="google_cards_padding">6dp</dimen>
     <dimen name="google_cards_padding_short">3dp</dimen>
     <dimen name="google_cards_corner_radius">2dp</dimen>
+
+    <dimen name="scroll_box_height">200dp</dimen>
+    <dimen name="scroll_box_item_image_width">140dp</dimen>
+
 </resources>

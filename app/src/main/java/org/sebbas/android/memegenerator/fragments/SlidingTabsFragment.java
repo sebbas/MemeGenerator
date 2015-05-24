@@ -1,28 +1,25 @@
 package org.sebbas.android.memegenerator.fragments;
 
-import android.os.Bundle;
+import android.app.Activity;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewConfiguration;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
+import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
-import com.github.ksoichiro.android.observablescrollview.Scrollable;
-import com.github.ksoichiro.android.observablescrollview.TouchInterceptionFrameLayout;
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
-import com.nineoldandroids.animation.ValueAnimator;
 import com.nineoldandroids.view.ViewHelper;
+import com.nineoldandroids.view.ViewPropertyAnimator;
 
 import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.adapter.SlidingTabsFragmentAdapter;
+
+import java.lang.reflect.Field;
 
 
 public abstract class SlidingTabsFragment extends BaseFragment implements ObservableScrollViewCallbacks {
@@ -31,20 +28,17 @@ public abstract class SlidingTabsFragment extends BaseFragment implements Observ
 
     private SlidingTabsFragmentAdapter mSlidingTabsFragmentAdapter;
     private ToggleSwipeViewPager mViewPager;
-    private View mToolbar;
-    private TouchInterceptionFrameLayout mInterceptionLayout;
-    private int mSlop;
-    private boolean mScrolled;
-    private ScrollState mLastScrollState;
+    private View mToolbarView;
+    private FragmentManager mRetainedChildFragmentManager;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mToolbar = getActivity().findViewById(R.id.toolbar);
-    }
+    private int mBaseTranslationY;
+    private SlidingTabLayout mSlidingTabLayout;
+
 
     public void createView(View view, SlidingTabsFragmentAdapter fragmentAdapter,
                            boolean isSwipeable, int offScreenLimit) {
+
+        mToolbarView = getActivity().findViewById(R.id.toolbar);
 
         mSlidingTabsFragmentAdapter = fragmentAdapter;
         mViewPager = (ToggleSwipeViewPager) view.findViewById(R.id.toogle_swipe_viewpager);
@@ -53,13 +47,13 @@ public abstract class SlidingTabsFragment extends BaseFragment implements Observ
         mViewPager.setAdapter(fragmentAdapter);
         mViewPager.setOffscreenPageLimit(offScreenLimit);
 
-        SlidingTabLayout slidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.sliding_tabs);
-        slidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
-        slidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
-        slidingTabLayout.setDistributeEvenly(true);
-        slidingTabLayout.setViewPager(mViewPager);
+        mSlidingTabLayout = (SlidingTabLayout) view.findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
+        mSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
+        mSlidingTabLayout.setDistributeEvenly(true);
+        mSlidingTabLayout.setViewPager(mViewPager);
 
-        slidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mSlidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -77,16 +71,35 @@ public abstract class SlidingTabsFragment extends BaseFragment implements Observ
             }
         });
 
-        if (isSwipeable) {
-            ViewConfiguration vc = ViewConfiguration.get(getActivity());
-            mSlop = vc.getScaledTouchSlop();
-            mInterceptionLayout = (TouchInterceptionFrameLayout) view.findViewById(R.id.container);
-            mInterceptionLayout.setScrollInterceptionListener(mInterceptionListener);
-        }
-
         // Setup toolbar for initial configuration
         setupFragmentToolbarAt(0);
         registerFragmentToolbarCallbacks(0);
+    }
+
+    public FragmentManager getRetainedChildFragmentManager() {
+        if(mRetainedChildFragmentManager == null) {
+            mRetainedChildFragmentManager = getChildFragmentManager();
+        }
+        return mRetainedChildFragmentManager;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        if (mRetainedChildFragmentManager != null) {
+            //restore the last retained child fragment manager to the new
+            //created fragment
+            try {
+                Field childFMField = Fragment.class.getDeclaredField("mChildFragmentManager");
+                childFMField.setAccessible(true);
+                childFMField.set(this, mRetainedChildFragmentManager);
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -96,8 +109,36 @@ public abstract class SlidingTabsFragment extends BaseFragment implements Observ
         parentActivity.unregisterToolbarCallback();
     }
 
+
+
+    @Override
+    void registerFragmentToolbarCallbacks(int position) {
+        BaseFragment fragment = getFragmentAt(position);
+        ((BaseActivity) getActivity()).registerToolbarCallback(fragment);
+    }
+
+    private BaseFragment getFragmentAt(int position) {
+        return (BaseFragment) mSlidingTabsFragmentAdapter.instantiateItem(mViewPager, position);
+    }
+
     @Override
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+
+        if (dragging) {
+            int toolbarHeight = mToolbarView.getHeight();
+            if (firstScroll) {
+                float currentHeaderTranslationY = ViewHelper.getTranslationY(mToolbarView);
+                if (-toolbarHeight < currentHeaderTranslationY) {
+                    mBaseTranslationY = scrollY;
+                }
+            }
+            float headerTranslationY = ScrollUtils.getFloat(-(scrollY - mBaseTranslationY), -toolbarHeight, 0);
+            ViewPropertyAnimator.animate(mSlidingTabLayout).cancel();
+            ViewHelper.setTranslationY(mSlidingTabLayout, headerTranslationY);
+
+            ViewPropertyAnimator.animate(mToolbarView).cancel();
+            ViewHelper.setTranslationY(mToolbarView, headerTranslationY);
+        }
     }
 
     @Override
@@ -106,157 +147,60 @@ public abstract class SlidingTabsFragment extends BaseFragment implements Observ
 
     @Override
     public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-        if (!mScrolled) {
-            // This event can be used only when TouchInterceptionFrameLayout
-            // doesn't handle the consecutive events.
-            adjustToolbar(scrollState);
-        }
-    }
+        mBaseTranslationY = 0;
 
-    private TouchInterceptionFrameLayout.TouchInterceptionListener mInterceptionListener =
-            new TouchInterceptionFrameLayout.TouchInterceptionListener() {
-        @Override
-        public boolean shouldInterceptTouchEvent(MotionEvent ev, boolean moving, float diffX, float diffY) {
-            if (!mScrolled && mSlop < Math.abs(diffX) && Math.abs(diffY) < Math.abs(diffX)) {
-                // Horizontal scroll is maybe handled by ViewPager
-                return false;
-            }
+        RecyclerFragment currentFragmentInPager = (RecyclerFragment) getFragmentAt(mViewPager.getCurrentItem());
+        ObservableRecyclerView recyclerView = currentFragmentInPager.getRecyclerView();
 
-            Scrollable scrollable = getCurrentScrollable();
-            if (scrollable == null) {
-                mScrolled = false;
-                return false;
-            }
-
-            // If interceptionLayout can move, it should intercept.
-            // And once it begins to move, horizontal scroll shouldn't work any longer.
-            int toolbarHeight = mToolbar.getHeight();
-            int translationY = (int) ViewHelper.getTranslationY(mInterceptionLayout);
-            boolean scrollingUp = 0 < diffY;
-            boolean scrollingDown = diffY < 0;
-            if (scrollingUp) {
-                if (translationY < 0) {
-                    mScrolled = true;
-                    mLastScrollState = ScrollState.UP;
-                    return true;
-                }
-            } else if (scrollingDown) {
-                if (-toolbarHeight < translationY) {
-                    mScrolled = true;
-                    mLastScrollState = ScrollState.DOWN;
-                    return true;
-                }
-            }
-            mScrolled = false;
-            return false;
-        }
-
-        @Override
-        public void onDownMotionEvent(MotionEvent ev) {
-        }
-
-        @Override
-        public void onMoveMotionEvent(MotionEvent ev, float diffX, float diffY) {
-            float translationY = ScrollUtils.getFloat(ViewHelper.getTranslationY(mInterceptionLayout) + diffY, -mToolbar.getHeight(), 0);
-            ViewHelper.setTranslationY(mInterceptionLayout, translationY);
-            if (translationY < 0) {
-                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mInterceptionLayout.getLayoutParams();
-                lp.height = (int) (-translationY + getScreenHeight());
-                mInterceptionLayout.requestLayout();
-            }
-        }
-
-        @Override
-        public void onUpOrCancelMotionEvent(MotionEvent ev) {
-            mScrolled = false;
-            adjustToolbar(mLastScrollState);
-        }
-    };
-
-    private Scrollable getCurrentScrollable() {
-        Fragment fragment = getCurrentFragment();
-        if (fragment == null) {
-            return null;
-        }
-        View view = fragment.getView();
-        if (view == null) {
-            return null;
-        }
-        return (Scrollable) view.findViewById(R.id.scroll);
-    }
-
-    private void adjustToolbar(ScrollState scrollState) {
-        int toolbarHeight = mToolbar.getHeight();
-        final Scrollable scrollable = getCurrentScrollable();
-        if (scrollable == null) {
-            return;
-        }
-        int scrollY = scrollable.getCurrentScrollY();
         if (scrollState == ScrollState.DOWN) {
             showToolbar();
         } else if (scrollState == ScrollState.UP) {
+            int toolbarHeight = mToolbarView.getHeight();
+            int scrollY = recyclerView.getCurrentScrollY();
             if (toolbarHeight <= scrollY) {
                 hideToolbar();
             } else {
                 showToolbar();
             }
-        } else if (!toolbarIsShown() && !toolbarIsHidden()) {
-            // Toolbar is moving but doesn't know which to move:
-            // you can change this to hideToolbar()
-            //showToolbar();
-            hideToolbar();
+        } else {
+            // Even if onScrollChanged occurs without scrollY changing, toolbar should be adjusted
+            if (!toolbarIsShown() && !toolbarIsHidden()) {
+                // Toolbar is moving but doesn't know which to move:
+                // you can change this to hideToolbar()
+                showToolbar();
+            }
         }
-    }
-
-    private Fragment getCurrentFragment() {
-        return mSlidingTabsFragmentAdapter.getItemAt(mViewPager.getCurrentItem());
     }
 
     private boolean toolbarIsShown() {
-        return ViewHelper.getTranslationY(mInterceptionLayout) == 0;
+        return ViewHelper.getTranslationY(mToolbarView) == 0;
     }
 
     private boolean toolbarIsHidden() {
-        return ViewHelper.getTranslationY(mInterceptionLayout) == -mToolbar.getHeight();
+        return ViewHelper.getTranslationY(mToolbarView) == -mToolbarView.getHeight();
     }
 
     private void showToolbar() {
-        animateToolbar(0);
-    }
+        float headerTranslationY = ViewHelper.getTranslationY(mToolbarView);
+        if (headerTranslationY != 0) {
+            ViewPropertyAnimator.animate(mSlidingTabLayout).cancel();
+            ViewPropertyAnimator.animate(mSlidingTabLayout).translationY(0).setDuration(200).start();
 
-    private void hideToolbar() {
-        animateToolbar(-mToolbar.getHeight());
-    }
-
-    private void animateToolbar(final float toY) {
-        float layoutTranslationY = ViewHelper.getTranslationY(mInterceptionLayout);
-        if (layoutTranslationY != toY) {
-            ValueAnimator animator = ValueAnimator.ofFloat(ViewHelper.getTranslationY(mInterceptionLayout), toY).setDuration(200);
-            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                @Override
-                public void onAnimationUpdate(ValueAnimator animation) {
-                    float translationY = (float) animation.getAnimatedValue();
-                    ViewHelper.setTranslationY(mInterceptionLayout, translationY);
-                    if (translationY < 0) {
-                        FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mInterceptionLayout.getLayoutParams();
-                        lp.height = (int) (-translationY + getScreenHeight());
-                        mInterceptionLayout.requestLayout();
-                    }
-                }
-            });
-            animator.start();
+            ViewPropertyAnimator.animate(mToolbarView).cancel();
+            ViewPropertyAnimator.animate(mToolbarView).translationY(0).setDuration(200).start();
         }
     }
 
-    abstract void setupFragmentToolbarAt(int position);
+    private void hideToolbar() {
+        float headerTranslationY = ViewHelper.getTranslationY(mToolbarView);
+        int toolbarHeight = mToolbarView.getHeight();
+        if (headerTranslationY != -toolbarHeight) {
+            ViewPropertyAnimator.animate(mSlidingTabLayout).cancel();
+            ViewPropertyAnimator.animate(mSlidingTabLayout).translationY(-toolbarHeight).setDuration(200).start();
 
-    void registerFragmentToolbarCallbacks(int position) {
-        BaseFragment fragment = getFragmentAt(position);
-        ((BaseActivity) getActivity()).registerToolbarCallback(fragment);
-    }
-
-    private BaseFragment getFragmentAt(int position) {
-        return (BaseFragment) mSlidingTabsFragmentAdapter.instantiateItem(mViewPager, position);
+            ViewPropertyAnimator.animate(mToolbarView).cancel();
+            ViewPropertyAnimator.animate(mToolbarView).translationY(-toolbarHeight).setDuration(200).start();
+        }
     }
 
     /*

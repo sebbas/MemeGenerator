@@ -24,6 +24,6 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/horizontal_recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="160dp"
+        android:layout_height="@dimen/scroll_box_height"
         android:scrollbars="vertical"/>
 </LinearLayout>

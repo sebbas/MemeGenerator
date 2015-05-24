@@ -1,6 +1,5 @@
 package org.sebbas.android.memegenerator.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
@@ -10,7 +9,6 @@ import android.view.ViewGroup;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 import org.sebbas.android.memegenerator.adapter.ImgurFragmentAdapter;
-import org.sebbas.android.memegenerator.activities.MainActivity;
 import org.sebbas.android.memegenerator.R;
 
 public class ImgurFragment extends SlidingTabsFragment implements ToolbarCallback {
@@ -31,7 +29,8 @@ public class ImgurFragment extends SlidingTabsFragment implements ToolbarCallbac
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FragmentManager fragmentManager = getChildFragmentManager();
+
+        FragmentManager fragmentManager = super.getRetainedChildFragmentManager();
         mImgurFragmentAdapter = new ImgurFragmentAdapter(getActivity(), fragmentManager, TAB_TITLES);
     }
 
@@ -51,7 +50,7 @@ public class ImgurFragment extends SlidingTabsFragment implements ToolbarCallbac
         int menuResource = R.menu.menu_simple_fragment;
 
         BaseActivity parentActivity = (BaseActivity) getActivity();
-        parentActivity.setupToolbar(parentActivity, titleResource, menuResource, false);
+        parentActivity.setupToolbar(titleResource, menuResource, false);
     }
 
     @Override

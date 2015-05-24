@@ -92,7 +92,7 @@ public class MainFragment extends SlidingTabsFragment implements ObservableScrol
                 break;
         }
         BaseActivity parentActivity = (BaseActivity) getActivity();
-        parentActivity.setupToolbar(parentActivity, titleResource, menuResource, false);
+        parentActivity.setupToolbar(titleResource, menuResource, false);
     }
 
     @Override

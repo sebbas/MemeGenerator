@@ -41,4 +41,5 @@ dependencies {
     compile 'com.tonicartos:superslim:0.4.9'
     compile 'com.melnykov:floatingactionbutton:1.0.7'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.+'
+    compile 'com.koushikdutta.ion:ion:2.+'
 }
