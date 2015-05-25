@@ -12,10 +12,12 @@ import android.widget.ImageView;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.bitmap.Transform;
 import com.makeramen.roundedimageview.RoundedDrawable;
+import com.squareup.picasso.Transformation;
 import com.tonicartos.superslim.GridSLM;
 import com.tonicartos.superslim.LinearSLM;
 
 import org.sebbas.android.memegenerator.LineItem;
+import org.sebbas.android.memegenerator.PicassoCache;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.UIOptions;
 import org.sebbas.android.memegenerator.Utils;
@@ -31,7 +33,7 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
     private static final int VIEW_TYPE_FILLER = 0;
     private static final int VIEW_TYPE_HEADER = 1;
     private static final int VIEW_TYPE_CONTENT = 2;
-    private static final int CORNER_RADIUS = 400;
+    private static final int CORNER_RADIUS = 250;
 
     private Context mContext;
     private List<Integer> mAllowedLineItemPositions;
@@ -149,6 +151,15 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
                         .transform(trans)
                         .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(),
                                 UIOptions.THUMBNAIL_SIZE_LIST));
+                /*PicassoCache.getPicassoInstance(mContext)
+                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), UIOptions.THUMBNAIL_SIZE_LIST))
+                        .placeholder(R.color.invisible)
+                        .error(android.R.color.holo_red_dark)
+                        .fit()
+                        .transform(trans)
+                        .centerCrop()
+                        .tag(mContext)
+                        .into(listViewHolder.imageView);*/
             }
         }
 

@@ -67,7 +67,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         mViewPager.setOffscreenPageLimit(OFF_SCREEN_LIMIT);
 
         SlidingTabLayout slidingTabLayoutMain = (SlidingTabLayout) findViewById(R.id.sliding_tabs_main_navigation);
-        slidingTabLayoutMain.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
+        slidingTabLayoutMain.setCustomTabView(R.layout.tab_main, 0);
         slidingTabLayoutMain.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
         slidingTabLayoutMain.setDistributeEvenly(true);
         slidingTabLayoutMain.setViewPager(mViewPager);
@@ -231,16 +231,13 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
 
         if (scrollState == ScrollState.DOWN) {
             showToolbar();
-            //adjustRecyclerViewsDown();
         } else if (scrollState == ScrollState.UP) {
             int toolbarHeight = mToolbarView.getHeight();
             int scrollY = recyclerView.getCurrentScrollY();
             if (toolbarHeight <= scrollY) {
                 hideToolbar();
-                //adjustRecyclerViewsUp();
             } else {
                 showToolbar();
-                //adjustRecyclerViewsDown();
             }
         } else {
             // Even if onScrollChanged occurs without scrollY changing, toolbar should be adjusted
@@ -248,7 +245,6 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
                 // Toolbar is moving but doesn't know which to move:
                 // you can change this to hideToolbar()
                 showToolbar();
-                //adjustRecyclerViewsDown();
             }
         }
     }
@@ -273,25 +269,6 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         int toolbarHeight = mToolbarView.getHeight();
         if (headerTranslationY != -toolbarHeight) {
             animateView(mHeaderView, -toolbarHeight, 200);
-        }
-    }
-
-    private void adjustRecyclerViewsDown() {
-        float headerTranslationY = ViewHelper.getTranslationY(mHeaderView);
-        if (headerTranslationY != 0) {
-            for (RecyclerView recyclerView : getNonVisibleRecyclerViewsInFragment()) {
-                animateView(recyclerView, 0, 200);
-            }
-        }
-    }
-
-    private void adjustRecyclerViewsUp() {
-        float headerTranslationY = ViewHelper.getTranslationY(mHeaderView);
-        int toolbarHeight = mToolbarView.getHeight();
-        if (headerTranslationY != -toolbarHeight) {
-            for (RecyclerView recyclerView : getNonVisibleRecyclerViewsInFragment()) {
-                animateView(recyclerView, -toolbarHeight, 200);
-            }
         }
     }
 
