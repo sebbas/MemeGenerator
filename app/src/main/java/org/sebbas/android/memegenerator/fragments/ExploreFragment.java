@@ -17,9 +17,11 @@ public class ExploreFragment extends RecyclerFragment {
     private static final String TAG = "ExploreFragment";
 
     private ScrollBoxRecyclerAdapter mScrollBoxRecyclerAdapter;
+
     public static ExploreFragment newInstance(int layoutMode, boolean isRefreshable) {
         ExploreFragment fragment = new ExploreFragment();
         Bundle args = new Bundle();
+        args.putString("fragment_type", TAG);
         args.putInt("layout_mode", layoutMode);
         args.putBoolean("refreshable", isRefreshable);
         fragment.setArguments(args);

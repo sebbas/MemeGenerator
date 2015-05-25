@@ -46,8 +46,10 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
     private ToggleSwipeViewPager mViewPager;
     private MainActivityAdapter mMainActivityAdapter;
     private View mHeaderView;
+    private View mFooterView;
     private View mToolbarView;
     private int mBaseTranslationY;
+    private SlidingTabLayout mSlidingTabLayoutMain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         setCustomLollipopActionBar();
 
         mHeaderView = findViewById(R.id.header);
+        mFooterView = findViewById(R.id.footer);
         mToolbarView = findViewById(R.id.toolbar);
         mMainActivityAdapter = new MainActivityAdapter(this, getSupportFragmentManager(), TAB_TITLES);
 
@@ -66,13 +69,14 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         mViewPager.setAdapter(mMainActivityAdapter);
         mViewPager.setOffscreenPageLimit(OFF_SCREEN_LIMIT);
 
-        SlidingTabLayout slidingTabLayoutMain = (SlidingTabLayout) findViewById(R.id.sliding_tabs_main_navigation);
-        slidingTabLayoutMain.setCustomTabView(R.layout.tab_main, 0);
-        slidingTabLayoutMain.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
-        slidingTabLayoutMain.setDistributeEvenly(true);
-        slidingTabLayoutMain.setViewPager(mViewPager);
 
-        slidingTabLayoutMain.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mSlidingTabLayoutMain = (SlidingTabLayout) findViewById(R.id.sliding_tabs_main_navigation);
+        mSlidingTabLayoutMain.setCustomTabView(R.layout.tab_main, 0);
+        mSlidingTabLayoutMain.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
+        mSlidingTabLayoutMain.setDistributeEvenly(true);
+        mSlidingTabLayoutMain.setViewPager(mViewPager);
+
+        mSlidingTabLayoutMain.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -231,13 +235,16 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
 
         if (scrollState == ScrollState.DOWN) {
             showToolbar();
+            showMainTabs();
         } else if (scrollState == ScrollState.UP) {
             int toolbarHeight = mToolbarView.getHeight();
             int scrollY = recyclerView.getCurrentScrollY();
             if (toolbarHeight <= scrollY) {
                 hideToolbar();
+                hideMainTabs();
             } else {
                 showToolbar();
+                showMainTabs();
             }
         } else {
             // Even if onScrollChanged occurs without scrollY changing, toolbar should be adjusted
@@ -245,6 +252,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
                 // Toolbar is moving but doesn't know which to move:
                 // you can change this to hideToolbar()
                 showToolbar();
+                showMainTabs();
             }
         }
     }
@@ -269,6 +277,21 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         int toolbarHeight = mToolbarView.getHeight();
         if (headerTranslationY != -toolbarHeight) {
             animateView(mHeaderView, -toolbarHeight, 200);
+        }
+    }
+
+    private void showMainTabs() {
+        float headerTranslationY = ViewHelper.getTranslationY(mFooterView);
+        if (headerTranslationY != 0) {
+            animateView(mFooterView, 0, 200);
+        }
+    }
+
+    private void hideMainTabs() {
+        float headerTranslationY = ViewHelper.getTranslationY(mFooterView);
+        int slidingTabLayoutHeight = mFooterView.getHeight();
+        if (headerTranslationY != -slidingTabLayoutHeight) {
+            animateView(mFooterView, slidingTabLayoutHeight, 200);
         }
     }
 

@@ -61,8 +61,4 @@ public class MainActivityAdapter extends SlidingTabsAdapter {
         sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return sb;
     }
-
-    public int getDrawableId(int position) {
-        return TAB_ICONS[position];
-    }
 }

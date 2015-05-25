@@ -45,8 +45,7 @@
     <FrameLayout
         android:id="@+id/main_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/tab_height">
+        android:layout_height="match_parent">
 
         <org.sebbas.android.memegenerator.ToggleSwipeViewPager
             android:id="@+id/toogle_swipe_viewpager"

@@ -42,7 +42,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
     private RecyclerFragmentAdapter mRecyclerFragmentAdapter;
     private CircularProgressView mCircularProgressView;
     private ObservableRecyclerView mRecyclerView;
-    private int mFragmentType;
+    private String mFragmentType;
     private int mLayoutMode;
     private boolean mIsRefreshable;
     private RecyclerView.AdapterDataObserver mAdapterObserver;
@@ -52,7 +52,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mFragmentType = getArguments().getInt("fragment_type");
+        mFragmentType = getArguments().getString("fragment_type");
         mLayoutMode = getArguments().getInt("layout_mode");
         mIsRefreshable = getArguments().getBoolean("refreshable");
     }
@@ -66,6 +66,8 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
         // Depending on arguments, enable or disable swipe refresh
         mSwipeRefreshLayout.setEnabled(mIsRefreshable);
+
+        // Set custom progress icon position because of toolbar and sliding tabs layout
         int tabHeight = getResources().getDimensionPixelOffset(R.dimen.tab_height);
         int offset = getActionBarSize() + tabHeight;
         mSwipeRefreshLayout.setProgressViewOffset(true, offset,offset + tabHeight);
@@ -252,7 +254,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
         mSwipeRefreshLayout.setOnRefreshListener(null);
     }
 
-    public int getFragmentType() {
+    public String getFragmentType() {
         return mFragmentType;
     }
 
@@ -287,11 +289,9 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     @Override
     public void onRefreshClicked() {
-
     }
 
     @Override
     public void onBackPressed() {
-
     }
 }

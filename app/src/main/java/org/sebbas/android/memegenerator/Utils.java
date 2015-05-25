@@ -17,7 +17,7 @@ import java.util.List;
 
 public class Utils {
 
-    public static final int DEFAULT_MAX_BITMAP_DIMENSION = 4096;
+    public static final int DEFAULT_MAX_BITMAP_DIMENSION = 2048;
 
     public static final String IMAGE_MEDIUM = "m";
     public static final String IMAGE_LARGE = "l";
@@ -156,13 +156,13 @@ public class Utils {
         }
     }
 
-    public static ArrayList<String> getListString(Context context, int fragmentType, String key) {
-        SharedPreferences preferences = context.getSharedPreferences(Integer.toString(fragmentType), Context.MODE_PRIVATE);
+    public static ArrayList<String> getListString(Context context, String fragmentType, String key) {
+        SharedPreferences preferences = context.getSharedPreferences(fragmentType, Context.MODE_PRIVATE);
         return new ArrayList<>(Arrays.asList(TextUtils.split(preferences.getString(key, ""), "‚‗‚")));
     }
 
-    public static void putListString(Context context, int fragmentType, List<String> stringList, String key) {
-        SharedPreferences preferences = context.getSharedPreferences(Integer.toString(fragmentType), Context.MODE_PRIVATE);
+    public static void putListString(Context context, String fragmentType, List<String> stringList, String key) {
+        SharedPreferences preferences = context.getSharedPreferences(fragmentType, Context.MODE_PRIVATE);
         String[] myStringList = stringList.toArray(new String[stringList.size()]);
         preferences.edit().putString(key, TextUtils.join("‚‗‚", myStringList)).apply();
     }

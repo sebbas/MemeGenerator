@@ -19,12 +19,12 @@ public class TemplatesFragment extends RecyclerFragment {
 
     private static final String TAG = "TemplatesFragment";
 
-
     private SuperSlimRecyclerAdapter mSuperSlimRecyclerAdapter;
 
     public static TemplatesFragment newInstance(int layoutMode, boolean isRefreshable) {
         TemplatesFragment fragment = new TemplatesFragment();
         Bundle args = new Bundle();
+        args.putString("fragment_type", TAG);
         args.putInt("layout_mode", layoutMode);
         args.putBoolean("refreshable", isRefreshable);
         fragment.setArguments(args);

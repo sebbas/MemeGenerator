@@ -17,6 +17,7 @@ public class ImgurChildFragment extends RecyclerFragment {
     public static ImgurChildFragment newInstance(int layoutMode, boolean isRefreshable) {
         ImgurChildFragment fragment = new ImgurChildFragment();
         Bundle args = new Bundle();
+        args.putString("fragment_type", TAG);
         args.putInt("layout_mode", layoutMode);
         args.putBoolean("refreshable", isRefreshable);
         fragment.setArguments(args);

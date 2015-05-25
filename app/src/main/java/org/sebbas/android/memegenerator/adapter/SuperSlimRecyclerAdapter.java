@@ -50,7 +50,7 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
         mLineItems = new ArrayList<>();
         mFillerView = fillerView;
 
-        int fragmentType = fragment.getFragmentType();
+        String fragmentType = fragment.getFragmentType();
 
         mJsonDataLoader = new JsonDataLoader(fragment, fragmentType);
         refreshData();
@@ -110,7 +110,8 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
         final View itemView = viewHolder.itemView;
         final GridSLM.LayoutParams lp = new GridSLM.LayoutParams(itemView.getLayoutParams());
 
-        lp.setSlm(LinearSLM.ID);
+        lp.setSlm(GridSLM.ID);
+        lp.setColumnWidth(mContext.getResources().getDimensionPixelSize(R.dimen.grid_column_width));
         lp.setFirstPosition(item.getSectionFirstPosition());
         itemView.setLayoutParams(lp);
 
@@ -144,7 +145,7 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
                 };
 
                 Ion.with(listViewHolder.imageView)
-                        .placeholder(android.R.color.holo_blue_bright)
+                        .placeholder(R.color.invisible)
                         .error(android.R.color.holo_red_dark)
                         .resize(CORNER_RADIUS, CORNER_RADIUS)
                         .centerCrop()

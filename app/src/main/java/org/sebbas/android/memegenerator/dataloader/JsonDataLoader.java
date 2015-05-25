@@ -44,9 +44,9 @@ public class JsonDataLoader extends Dataloader {
     private Context mContext;
 
     private DataLoaderCallback mDataLoaderCallback;
-    private int mFragmentType;
+    private String mFragmentType;
 
-    public JsonDataLoader(Fragment fragment, int fragmentType) {
+    public JsonDataLoader(Fragment fragment, String fragmentType) {
         mContext = fragment.getActivity();
         mFragmentType = fragmentType;
         mDataLoaderCallback = (DataLoaderCallback) fragment;

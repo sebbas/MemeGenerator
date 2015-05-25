@@ -2,6 +2,8 @@ package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapRegionDecoder;
+import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +26,10 @@ import org.sebbas.android.memegenerator.dataloader.JsonDataLoader;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +44,7 @@ public class CardsRecyclerAdapter extends RecyclerFragmentAdapter {
     private int mPageIndex = 0;
     private RecyclerFragment mFragment;
     private View mFillerView;
+    private BitmapRegionDecoder mDecoder;
 
     public CardsRecyclerAdapter(RecyclerFragment fragment, View fillerView) {
         mContext = fragment.getActivity();
@@ -45,7 +52,7 @@ public class CardsRecyclerAdapter extends RecyclerFragmentAdapter {
         mLineItems = new ArrayList<>();
         mFillerView = fillerView;
 
-        int fragmentType = fragment.getFragmentType();
+        String fragmentType = fragment.getFragmentType();
 
         mJsonDataLoader = new JsonDataLoader(fragment, fragmentType);
         refreshData();
@@ -197,4 +204,29 @@ public class CardsRecyclerAdapter extends RecyclerFragmentAdapter {
         String url = Utils.getUrlForData(mPageIndex, mFragment);
         mJsonDataLoader.load(url);
     }
+
+    /**
+     * Creates BitmapRegionDecoder from an image in assets.
+     */
+    private BitmapRegionDecoder createDecoder(String imageUrl){
+        InputStream is = null;
+        try {
+            is = new URL(imageUrl).openStream();
+            return BitmapRegionDecoder.newInstance(new BufferedInputStream(is), true);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not create BitmapRegionDecoder", e);
+        }
+    }
+
+    /*private Bitmap getPreview(String imageUrl) {
+        Bitmap bitmap = null;
+        BitmapRegionDecoder bitmapRegionDecoder = createDecoder(imageUrl);
+        bitmap = bitmapRegionDecoder.decodeRegion(getRectForIndex(i, mDecoder.getWidth()), null);
+        return bitmap;
+    }
+
+    private Rect getRectForIndex() {
+        // the resulting rectangle
+        return new Rect(left, top, right, bottom);
+    }*/
 }
