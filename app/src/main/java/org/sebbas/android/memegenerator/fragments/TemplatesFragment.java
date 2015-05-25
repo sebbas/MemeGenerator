@@ -6,58 +6,47 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
+
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
+import org.sebbas.android.memegenerator.adapter.RecyclerFragmentAdapter;
+import org.sebbas.android.memegenerator.adapter.SuperSlimRecyclerAdapter;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 import org.sebbas.android.memegenerator.UIOptions;
 
-public class TemplatesFragment extends RecyclerFragment implements ToolbarCallback {
+public class TemplatesFragment extends RecyclerFragment {
 
     private static final String TAG = "TemplatesFragment";
 
-    private static final int FRAGMENT_TYPE = RecyclerFragment.TEMPLATES;
-    private static final int LAYOUT_MODE = UIOptions.LIST_LAYOUT;
-    private static final boolean IS_REFRESHABLE = false;
 
-    public static TemplatesFragment newInstance() {
+    private SuperSlimRecyclerAdapter mSuperSlimRecyclerAdapter;
+
+    public static TemplatesFragment newInstance(int layoutMode, boolean isRefreshable) {
         TemplatesFragment fragment = new TemplatesFragment();
         Bundle args = new Bundle();
-        args.putInt("fragment_type", FRAGMENT_TYPE);
-        args.putInt("layout_mode", LAYOUT_MODE);
-        args.putBoolean("refreshable", IS_REFRESHABLE);
+        args.putInt("layout_mode", layoutMode);
+        args.putBoolean("refreshable", isRefreshable);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public boolean onQueryTextSubmit(String s) {
-        return false;
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        View fillerView = LayoutInflater.from(getActivity()).inflate(R.layout.recycler_header_small, null);
+        mSuperSlimRecyclerAdapter = new SuperSlimRecyclerAdapter(this, fillerView);
     }
 
     @Override
-    public boolean onQueryTextChange(String s) {
-        return false;
-    }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
 
-    @Override
-    public void onRefreshClicked() {
-    }
+        super.init(view);
+        super.with(mSuperSlimRecyclerAdapter);
 
-    @Override
-    public void onBackPressed() {
-    }
-
-    @Override
-    void setupFragmentToolbarAt(int position) {
-        int titleResource = R.string.templates;
-        int menuResource = R.menu.menu_simple_fragment;
-
-        BaseActivity parentActivity = (BaseActivity) getActivity();
-        parentActivity.setupToolbar(titleResource, menuResource, true);
-    }
-
-    @Override
-    void registerFragmentToolbarCallbacks(int position) {
-        ((BaseActivity) getActivity()).registerToolbarCallback(this);
+        return view;
     }
 }

@@ -1,24 +1,21 @@
 package org.sebbas.android.memegenerator.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.activities.BaseActivity;
-import org.sebbas.android.memegenerator.adapter.ScrollBoxRecyclerAdapter;
-import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
-import org.sebbas.android.memegenerator.UIOptions;
+import org.sebbas.android.memegenerator.adapter.CardsRecyclerAdapter;
 
-public class ExploreFragment extends RecyclerFragment {
+public class ImgurChildFragment extends RecyclerFragment {
 
-    private static final String TAG = "ExploreFragment";
+    private static final String TAG = "SlidingTabsChildFragment";
 
-    private ScrollBoxRecyclerAdapter mScrollBoxRecyclerAdapter;
-    public static ExploreFragment newInstance(int layoutMode, boolean isRefreshable) {
-        ExploreFragment fragment = new ExploreFragment();
+    private CardsRecyclerAdapter mCardsRecyclerAdapter;
+
+    public static ImgurChildFragment newInstance(int layoutMode, boolean isRefreshable) {
+        ImgurChildFragment fragment = new ImgurChildFragment();
         Bundle args = new Bundle();
         args.putInt("layout_mode", layoutMode);
         args.putBoolean("refreshable", isRefreshable);
@@ -30,7 +27,8 @@ public class ExploreFragment extends RecyclerFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mScrollBoxRecyclerAdapter = new ScrollBoxRecyclerAdapter(this);
+        View fillerView = LayoutInflater.from(getActivity()).inflate(R.layout.recycler_header_big, null);
+        mCardsRecyclerAdapter = new CardsRecyclerAdapter(this, fillerView);
     }
 
     @Override
@@ -39,7 +37,7 @@ public class ExploreFragment extends RecyclerFragment {
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
 
         super.init(view);
-        super.with(mScrollBoxRecyclerAdapter);
+        super.with(mCardsRecyclerAdapter);
 
         return view;
     }

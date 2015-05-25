@@ -2,21 +2,22 @@ package org.sebbas.android.memegenerator.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
+import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 
 import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
-import org.sebbas.android.memegenerator.adapter.MainFragmentAdapter;
+import org.sebbas.android.memegenerator.adapter.MainActivityAdapter;
 import org.sebbas.android.memegenerator.R;
 
-public class MainFragment extends SlidingTabsFragment implements ObservableScrollViewCallbacks {
+public class MainFragment extends BaseFragment {
 
     private static final int OFF_SCREEN_LIMIT = 5;
+    private static final boolean IS_SWIPEABLE = false;
 
     private static int[] TAB_TITLES = {
             R.string.templates,
@@ -39,7 +40,8 @@ public class MainFragment extends SlidingTabsFragment implements ObservableScrol
             R.drawable.selector_gallery_icon,
             R.drawable.selector_preferences_icon};
 
-    private MainFragmentAdapter mMainFragmentAdapter;
+    private MainActivityAdapter mMainActivityAdapter;
+    private ToggleSwipeViewPager mViewPager;
 
     public static MainFragment newInstance() {
         return new MainFragment();
@@ -49,20 +51,53 @@ public class MainFragment extends SlidingTabsFragment implements ObservableScrol
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        mMainFragmentAdapter = new MainFragmentAdapter(getActivity(), fragmentManager, TAB_TITLES_2);
+        mMainActivityAdapter = new MainActivityAdapter(getActivity(), fragmentManager, TAB_TITLES_2);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         super.onCreateView(inflater, container, bundle);
-        View view = inflater.inflate(R.layout.fragment_slidingtabs_bottom, container, false);
+        View view = inflater.inflate(R.layout.fragment_slidingtabs, container, false);
 
-        super.createView(view, mMainFragmentAdapter, false, OFF_SCREEN_LIMIT);
+        mViewPager = (ToggleSwipeViewPager) view.findViewById(R.id.toogle_swipe_viewpager);
+
+        mViewPager.setPagingEnabled(IS_SWIPEABLE);
+        mViewPager.setAdapter(mMainActivityAdapter);
+        mViewPager.setOffscreenPageLimit(OFF_SCREEN_LIMIT);
+
+        SlidingTabLayout slidingTabLayout = (SlidingTabLayout) getActivity().findViewById(R.id.sliding_tabs_main_navigation);
+        slidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
+        slidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
+        slidingTabLayout.setDistributeEvenly(true);
+        slidingTabLayout.setViewPager(mViewPager);
+
+        slidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                setupFragmentToolbarAt(position);
+                setupSlidingTabsAt(position);
+                registerFragmentToolbarCallbacks(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+        // Setup toolbar and sliding tabs for initial fragment in viewpager
+        setupFragmentToolbarAt(0);
+        setupSlidingTabsAt(0);
+        registerFragmentToolbarCallbacks(0);
 
         return view;
     }
 
-    @Override
     void setupFragmentToolbarAt(int position) {
         int titleResource = 0;
         int menuResource = 0;
@@ -95,15 +130,37 @@ public class MainFragment extends SlidingTabsFragment implements ObservableScrol
         parentActivity.setupToolbar(titleResource, menuResource, false);
     }
 
-    @Override
-    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+    void setupSlidingTabsAt(int position) {
+        SlidingTabLayout slidingTabLayout = (SlidingTabLayout) getActivity().findViewById(R.id.sliding_tabs);
+        switch(position) {
+            case 0:
+                slidingTabLayout.setVisibility(View.GONE);
+                break;
+            case 1:
+                slidingTabLayout.setVisibility(View.VISIBLE);
+                ImgurFragment imgurFragment =  (ImgurFragment) getFragmentAt(position);
+                break;
+            case 2:
+                slidingTabLayout.setVisibility(View.GONE);
+                break;
+            case 3:
+                slidingTabLayout.setVisibility(View.VISIBLE);
+                break;
+            case 4:
+                slidingTabLayout.setVisibility(View.GONE);
+                break;
+            default:
+                slidingTabLayout.setVisibility(View.GONE);
+                break;
+        }
     }
 
-    @Override
-    public void onDownMotionEvent() {
+    void registerFragmentToolbarCallbacks(int position) {
+        BaseFragment fragment = getFragmentAt(position);
+        ((BaseActivity) getActivity()).registerToolbarCallback(fragment);
     }
 
-    @Override
-    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+    private BaseFragment getFragmentAt(int position) {
+        return (BaseFragment) mMainActivityAdapter.instantiateItem(mViewPager, position);
     }
 }

@@ -17,7 +17,7 @@ import org.json.JSONObject;
 import org.sebbas.android.memegenerator.interfaces.DataLoaderCallback;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.adapter.SimpleRecyclerAdapter;
+import org.sebbas.android.memegenerator.adapter.RecyclerFragmentAdapter;
 import org.sebbas.android.memegenerator.UIOptions;
 import org.sebbas.android.memegenerator.Utils;
 
@@ -104,7 +104,7 @@ public class JsonDataLoader extends Dataloader {
         return timeStamp;
     }
 
-    public List<LineItem> getLineItems(List<Integer> allowedLineItemPositions, int layoutMode) {
+    public List<LineItem> getLineItems(List<Integer> allowedLineItemPositions, boolean superSlim) {
         String lastHeader = "";
         int sectionManager = -1;
         int headerCount = 0;
@@ -112,32 +112,41 @@ public class JsonDataLoader extends Dataloader {
         ArrayList<LineItem> resultItems = new ArrayList<>();
 
         int tmp = 0;
-        for (int i = 0; i < getItemCount(); i++) {
+        for (int i = 0; i < getItemCount() + 1; i++) {
+            if (i == 0) {
+                // Insert new header view and update section data.
+                sectionManager = (sectionManager + 1) % 2;
+                sectionFirstPosition = tmp + headerCount;
+                headerCount += 1;
+                resultItems.add(LineItem.newHeaderInstance(
+                        "", true, sectionManager, sectionFirstPosition));
+            } else {
+                boolean isAllowedPosition = isAllowedPosition(i, allowedLineItemPositions);
+                if (isAllowedPosition) {
+                    String title = getTitleAt(i - 1);
+                    String imageUrl = getImageUrlAt(i - 1);
+                    String imageId = getImageIdAt(i - 1);
+                    String viewCount = getViewCountAt(i - 1);
+                    String timeStamp = getTimeStampAt(i - 1);
+                    String header = Utils.getScrollHeaderTitleLetter(getTitleAt(i - 1));
 
-            boolean isAllowedPosition = isAllowedPosition(i, allowedLineItemPositions);
-
-            if (isAllowedPosition) {
-                String title = getTitleAt(i);
-                String imageUrl = getImageUrlAt(i);
-                String imageId = getImageIdAt(i);
-                String viewCount = getViewCountAt(i);
-                String timeStamp = getTimeStampAt(i);
-                String header = Utils.getScrollHeaderTitleLetter(getTitleAt(i));
-
-                if (!TextUtils.equals(lastHeader, header) && layoutMode == UIOptions.LIST_LAYOUT) {
-                    // Insert new header view and update section data.
-                    sectionManager = (sectionManager + 1) % 2;
-                    sectionFirstPosition = tmp + headerCount;
-                    lastHeader = header;
-                    headerCount += 1;
-                    resultItems.add(LineItem.newHeaderInstance(
-                            header, true, sectionManager, sectionFirstPosition));
+                    if ((!TextUtils.equals(lastHeader, header) && superSlim)) {
+                        // Insert new header view and update section data.
+                        sectionManager = (sectionManager + 1) % 2;
+                        sectionFirstPosition = tmp + headerCount;
+                        lastHeader = header;
+                        headerCount += 1;
+                        resultItems.add(LineItem.newHeaderInstance(
+                                header, true, sectionManager, sectionFirstPosition));
+                    }
+                    resultItems.add(LineItem.newInstance(
+                            title, imageUrl, imageId, viewCount, timeStamp, false,
+                            sectionManager, sectionFirstPosition));
+                    tmp++;
                 }
-                resultItems.add(LineItem.newInstance(
-                        title, imageUrl, imageId, viewCount, timeStamp, false,
-                        sectionManager, sectionFirstPosition));
-                tmp++;
             }
+
+
         }
         return resultItems;
     }
@@ -169,7 +178,7 @@ public class JsonDataLoader extends Dataloader {
                 String url = (String) params[0];
 
                 // Load data depending on url
-                if (url.equals(SimpleRecyclerAdapter.TOPICS_URL)) {
+                if (url.equals(RecyclerFragmentAdapter.TOPICS_URL)) {
                     loadTopics();
                     mParsingComplete = true;
                     mParsingSuccessful = true;

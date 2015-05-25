@@ -6,11 +6,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import org.sebbas.android.memegenerator.UIOptions;
-import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
-import org.sebbas.android.memegenerator.fragments.SlidingTabsChildFragment;
+import org.sebbas.android.memegenerator.fragments.ImgurChildFragment;
 
-public class GalleryFragmentAdapter extends SlidingTabsFragmentAdapter {
+public class GalleryFragmentAdapter extends SlidingTabsAdapter {
 
     public GalleryFragmentAdapter(Context context, FragmentManager fragmentManager, int[] titleResources) {
         super(context, fragmentManager, titleResources);
@@ -18,35 +17,23 @@ public class GalleryFragmentAdapter extends SlidingTabsFragmentAdapter {
 
     @Override
     protected Fragment createItem(int position) {
-        int id;
-        int layout;
         Fragment fragment;
 
         switch (position) {
             case 0:
-                id = RecyclerFragment.MY_MEMES;
-                layout = UIOptions.getLayoutMode(id);
-                fragment = SlidingTabsChildFragment.newInstance(id, layout, true);
+                fragment = ImgurChildFragment.newInstance(UIOptions.LIST_LAYOUT, true);
                 break;
             case 1:
-                id = RecyclerFragment.RECENT;
-                layout = UIOptions.getLayoutMode(id);
-                fragment = SlidingTabsChildFragment.newInstance(id, layout, true);
+                fragment = ImgurChildFragment.newInstance(UIOptions.LIST_LAYOUT, true);
                 break;
             case 2:
-                id = RecyclerFragment.FAVORITE_TEMPLATES;
-                layout = UIOptions.getLayoutMode(id);
-                fragment = SlidingTabsChildFragment.newInstance(id, layout, true);
+                fragment = ImgurChildFragment.newInstance(UIOptions.LIST_LAYOUT, true);
                 break;
             case 3:
-                id = RecyclerFragment.FAVORITE_INSTANCES;
-                layout = UIOptions.getLayoutMode(id);
-                fragment = SlidingTabsChildFragment.newInstance(id, layout, true);
+                fragment = ImgurChildFragment.newInstance(UIOptions.LIST_LAYOUT, true);
                 break;
             default:
-                id = RecyclerFragment.ALL;
-                layout = UIOptions.getLayoutMode(id);
-                fragment = SlidingTabsChildFragment.newInstance(id, layout, true);
+                fragment = ImgurChildFragment.newInstance(UIOptions.LIST_LAYOUT, true);
                 break;
         }
         return fragment;

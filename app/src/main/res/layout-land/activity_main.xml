@@ -16,25 +16,22 @@
         android:orientation="vertical"
         android:layout_gravity="top">
 
-        <!-- This linear layout is needed for background color -->
-        <LinearLayout
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:background="@color/primary">
-
-            <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:popupTheme="@style/Theme.AppCompat.Light.DarkActionBar"
-                app:theme="@style/Toolbar" />
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/Theme.AppCompat.Light.DarkActionBar"
+            app:theme="@style/Toolbar">
 
             <com.google.samples.apps.iosched.ui.widget.SlidingTabLayout
                 android:id="@+id/sliding_tabs"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/tab_height"/>
-        </LinearLayout>
+                android:layout_height="@dimen/tab_height"
+                android:background="@color/primary"
+                android:visibility="visible"
+                android:fillViewport="false" />
+        </android.support.v7.widget.Toolbar>
 
         <!-- This view is used to create the elevation effect at the
         top of the bottom sliding tabs bar -->
@@ -47,17 +44,15 @@
 
     <FrameLayout
         android:id="@+id/main_container"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/tab_height">
 
         <org.sebbas.android.memegenerator.ToggleSwipeViewPager
             android:id="@+id/toogle_swipe_viewpager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent" />
     </FrameLayout>
-
-
 
     <LinearLayout
         android:id="@+id/footer"

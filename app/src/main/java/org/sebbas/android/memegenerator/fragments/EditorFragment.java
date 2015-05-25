@@ -14,7 +14,7 @@ import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
-public class EditorFragment extends SimpleFragment implements ToolbarCallback{
+public class EditorFragment extends SimpleFragment implements ToolbarCallback {
 
     private Picasso mPicasso;
     private ImageView mImageView;

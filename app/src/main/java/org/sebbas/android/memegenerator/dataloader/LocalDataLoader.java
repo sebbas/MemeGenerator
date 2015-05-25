@@ -9,26 +9,27 @@ import android.support.v4.app.Fragment;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
+import org.sebbas.android.memegenerator.fragments.ExploreFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class LocalDataLoader extends Dataloader{
+public class LocalDataLoader extends Dataloader {
 
     private static final String TAG = "LocalDataLoader";
     private Context mContext;
-    private int mFragmentType;
+    private RecyclerFragment mFragment;
     private int mPosition;
 
     private List<String> mTitles;
     private List<String> mImageIds;
     private List<String> mImageUrls;
 
-    public LocalDataLoader(Fragment fragment, int fragmentType, int position) {
+    public LocalDataLoader(RecyclerFragment fragment, int position) {
         mContext = fragment.getActivity();
-        mFragmentType = fragmentType;
+        mFragment = fragment;
         mPosition = position;
     }
 
@@ -93,11 +94,10 @@ public class LocalDataLoader extends Dataloader{
     public List<LineItem> getLineItems() {
         List<LineItem> lineItems = new ArrayList<>();
 
-        switch (mFragmentType) {
-            case RecyclerFragment.EXPLORE:
-                loadSubTopics(mPosition);
-            // Implement other possible local data load cases here
+        if (mFragment instanceof ExploreFragment) {
+            loadSubTopics(mPosition);
         }
+        // TODO Implement other possible local data load cases here
 
         for (int i = 0; i < getItemCount(); i++) {
 

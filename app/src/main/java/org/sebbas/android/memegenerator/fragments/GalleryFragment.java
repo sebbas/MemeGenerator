@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 import org.sebbas.android.memegenerator.adapter.GalleryFragmentAdapter;
 import org.sebbas.android.memegenerator.R;
@@ -36,20 +35,11 @@ public class GalleryFragment extends SlidingTabsFragment implements ToolbarCallb
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         super.onCreateView(inflater, container, bundle);
-        View view = inflater.inflate(R.layout.fragment_slidingtabs_top, container, false);
+        View view = inflater.inflate(R.layout.fragment_slidingtabs, container, false);
 
-        super.createView(view, mGalleryFragmentAdapter, true, OFF_SCREEN_LIMIT);
+        super.init(view, mGalleryFragmentAdapter, true, OFF_SCREEN_LIMIT);
 
         return view;
-    }
-
-    @Override
-    void setupFragmentToolbarAt(int position) {
-        int titleResource = R.string.gallery;
-        int menuResource = R.menu.menu_simple_fragment;
-
-        BaseActivity parentActivity = (BaseActivity) getActivity();
-        parentActivity.setupToolbar(titleResource, menuResource, false);
     }
 
     @Override

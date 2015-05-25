@@ -5,13 +5,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.UIOptions;
 import org.sebbas.android.memegenerator.fragments.ExploreFragment;
 import org.sebbas.android.memegenerator.fragments.GalleryFragment;
 import org.sebbas.android.memegenerator.fragments.ImgurFragment;
 import org.sebbas.android.memegenerator.fragments.SimplePreferenceFragment;
 import org.sebbas.android.memegenerator.fragments.TemplatesFragment;
 
-public class MainFragmentAdapter extends SlidingTabsFragmentAdapter {
+public class MainActivityAdapter extends SlidingTabsAdapter {
 
     private static final String TAG = "MainViewPagerAdapter";
 
@@ -24,7 +25,7 @@ public class MainFragmentAdapter extends SlidingTabsFragmentAdapter {
 
     private Context mContext;
 
-    public MainFragmentAdapter(Context context, FragmentManager fragmentManager, int[] titleResources) {
+    public MainActivityAdapter(Context context, FragmentManager fragmentManager, int[] titleResources) {
         super(context, fragmentManager, titleResources);
         mContext = context;
     }
@@ -33,17 +34,17 @@ public class MainFragmentAdapter extends SlidingTabsFragmentAdapter {
     protected Fragment createItem(int position) {
         switch (position) {
             case 0:
-                return TemplatesFragment.newInstance();
+                return TemplatesFragment.newInstance(UIOptions.SUPER_SLIM_LAYOUT, false);
             case 1:
                 return ImgurFragment.newInstance();
             case 2:
-                return ExploreFragment.newInstance();
+                return ExploreFragment.newInstance(UIOptions.LIST_LAYOUT, false);
             case 3:
                 return GalleryFragment.newInstance();
             case 4:
                 return SimplePreferenceFragment.newInstance();
             default:
-                return TemplatesFragment.newInstance();
+                return TemplatesFragment.newInstance(UIOptions.LIST_LAYOUT, false);
         }
     }
 

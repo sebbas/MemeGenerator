@@ -6,7 +6,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 
+import org.sebbas.android.memegenerator.fragments.ExploreFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
+import org.sebbas.android.memegenerator.fragments.ImgurChildFragment;
+import org.sebbas.android.memegenerator.fragments.TemplatesFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +29,7 @@ public class Utils {
     private static final String BASE_TIME = "https://api.imgur.com/3/gallery/hot/time/";
 
     private static final String BASE_MEMES = "https://api.imgur.com/3/g/memes/time/";
-    private static final String BASE_DEFAULTS = "https://api.imgur.com/3/memegen/defaults";
+    private static final String BASE_TEMPLATES = "https://api.imgur.com/3/memegen/defaults";
     private static final String BASE_SEARCH = "https://api.imgur.com/3/gallery/search";
 
     private static final String JPG = ".jpg";
@@ -59,19 +62,15 @@ public class Utils {
         return BASE_SEARCH + "?q=" + query.replace(" ", "+");
     }
 
-    public static final String getUrlForData(int pageIndex, int fragmentType) {
-        switch (fragmentType) {
-            case RecyclerFragment.ALL:
-                return BASE_VIRAL + pageIndex;
-            case RecyclerFragment.MEMES:
-                return BASE_TOP + pageIndex;
-            case RecyclerFragment.GIFS:
-                return BASE_TIME + pageIndex;
-            case RecyclerFragment.TEMPLATES:
-                return BASE_DEFAULTS;
-            default:
-                return BASE_MEMES + pageIndex;
+    public static final String getUrlForData(int pageIndex, RecyclerFragment fragment) {
+        String url = "";
+        if (fragment instanceof TemplatesFragment) {
+            url = BASE_TEMPLATES;
         }
+        if (fragment instanceof ImgurChildFragment) {
+            url = BASE_TIME + pageIndex;
+        }
+        return url;
     }
 
     /*

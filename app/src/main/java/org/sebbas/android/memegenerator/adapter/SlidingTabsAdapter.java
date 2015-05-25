@@ -10,15 +10,15 @@ import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.fragments.SlidingTabsFragment;
 
 
-public abstract class SlidingTabsFragmentAdapter extends CacheFragmentStatePagerAdapter {
+public abstract class SlidingTabsAdapter extends CacheFragmentStatePagerAdapter {
 
     private static final String TAG = "SlidingTabsFragmentAdapter";
 
     private Context mContext;
     private int[] mTitleResources;
 
-    public SlidingTabsFragmentAdapter(Context context, FragmentManager fragmentManager,
-                                      int[] titleResources) {
+    public SlidingTabsAdapter(Context context, FragmentManager fragmentManager,
+                              int[] titleResources) {
         super(fragmentManager);
 
         mContext = context;

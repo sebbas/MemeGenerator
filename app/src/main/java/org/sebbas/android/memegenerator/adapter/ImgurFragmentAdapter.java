@@ -4,13 +4,11 @@ package org.sebbas.android.memegenerator.adapter;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 
 import org.sebbas.android.memegenerator.UIOptions;
-import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
-import org.sebbas.android.memegenerator.fragments.SlidingTabsChildFragment;
+import org.sebbas.android.memegenerator.fragments.ImgurChildFragment;
 
-public class ImgurFragmentAdapter extends SlidingTabsFragmentAdapter {
+public class ImgurFragmentAdapter extends SlidingTabsAdapter {
 
     private static final String TAG = "ImgurFragmentAdapter";
 
@@ -20,30 +18,20 @@ public class ImgurFragmentAdapter extends SlidingTabsFragmentAdapter {
 
     @Override
     protected Fragment createItem(int position) {
-        int id;
-        int layout;
         Fragment fragment;
 
         switch (position) {
             case 0:
-                id = RecyclerFragment.ALL;
-                layout = UIOptions.getLayoutMode(id);
-                fragment = SlidingTabsChildFragment.newInstance(id, layout, true);
+                fragment = ImgurChildFragment.newInstance(UIOptions.LIST_LAYOUT, true);
                 break;
             case 1:
-                id = RecyclerFragment.MEMES;
-                layout = UIOptions.getLayoutMode(id);
-                fragment = SlidingTabsChildFragment.newInstance(id, layout, true);
+                fragment = ImgurChildFragment.newInstance(UIOptions.LIST_LAYOUT, true);
                 break;
             case 2:
-                id = RecyclerFragment.GIFS;
-                layout = UIOptions.getLayoutMode(id);
-                fragment = SlidingTabsChildFragment.newInstance(id, layout, true);
+                fragment = ImgurChildFragment.newInstance(UIOptions.LIST_LAYOUT, true);
                 break;
             default:
-                id = RecyclerFragment.ALL;
-                layout = UIOptions.getLayoutMode(id);
-                fragment = SlidingTabsChildFragment.newInstance(id, layout, true);
+                fragment = ImgurChildFragment.newInstance(UIOptions.LIST_LAYOUT, true);
                 break;
         }
         return fragment;

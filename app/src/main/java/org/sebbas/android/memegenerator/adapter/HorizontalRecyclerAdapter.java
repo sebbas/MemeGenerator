@@ -45,17 +45,12 @@ public class HorizontalRecyclerAdapter extends RecyclerView.Adapter<HorizontalRe
     private static final String TAG = "HorizontalRecyclerAdapter";
 
     private Context mContext;
-    private LayoutInflater mInflater;
     private List<LineItem> mLineItems = null;
 
-    public HorizontalRecyclerAdapter(Fragment fragment, int position) {
+    public HorizontalRecyclerAdapter(RecyclerFragment fragment, int position) {
         mContext = fragment.getActivity();
-        mInflater = LayoutInflater.from(mContext);
 
-        RecyclerFragment recyclerFragment = (RecyclerFragment) fragment;
-        int fragmentType = recyclerFragment.getFragmentType();
-
-        LocalDataLoader localDataLoader = new LocalDataLoader(fragment, fragmentType, position);
+        LocalDataLoader localDataLoader = new LocalDataLoader(fragment, position);
         mLineItems = localDataLoader.getLineItems();
     }
 
@@ -74,7 +69,8 @@ public class HorizontalRecyclerAdapter extends RecyclerView.Adapter<HorizontalRe
             }
         };
 
-        View view = mInflater.inflate(R.layout.list_item_horizontal, parent, false);
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View view = inflater.inflate(R.layout.list_item_horizontal, parent, false);
         return new ViewHolder(view, viewHolderCallback);
     }
 
@@ -83,10 +79,6 @@ public class HorizontalRecyclerAdapter extends RecyclerView.Adapter<HorizontalRe
         final LineItem item = mLineItems.get(position);
 
         viewHolder.textViewTitle.setText(item.getTitle());
-
-        /*Transformation roundedTransformation = new RoundedTransformationBuilder()
-                .oval(true)
-                .build();*/
 
         PicassoCache.getPicassoInstance(mContext)
                 .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
