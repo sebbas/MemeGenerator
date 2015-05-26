@@ -4,16 +4,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-
-import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.activities.BaseActivity;
-import org.sebbas.android.memegenerator.adapter.RecyclerFragmentAdapter;
 import org.sebbas.android.memegenerator.adapter.SuperSlimRecyclerAdapter;
-import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
-import org.sebbas.android.memegenerator.UIOptions;
 
 public class TemplatesFragment extends RecyclerFragment {
 
@@ -35,8 +28,7 @@ public class TemplatesFragment extends RecyclerFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        View fillerView = LayoutInflater.from(getActivity()).inflate(R.layout.recycler_header_small, null);
-        mSuperSlimRecyclerAdapter = new SuperSlimRecyclerAdapter(this, fillerView);
+        mSuperSlimRecyclerAdapter = new SuperSlimRecyclerAdapter(this);
     }
 
     @Override

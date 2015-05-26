@@ -63,8 +63,8 @@ public class EditorFragment extends SimpleFragment implements ToolbarCallback {
 
         mImageView = (ImageView) view.findViewById(R.id.item_image);
 
-        setupFragmentToolbarAt(0);
-        registerFragmentToolbarCallbacks(0);
+        //setupFragmentToolbarAt(0);
+        //registerFragmentToolbarCallbacks(0);
         return view;
     }
 
@@ -107,7 +107,7 @@ public class EditorFragment extends SimpleFragment implements ToolbarCallback {
         getActivity().onBackPressed();
     }
 
-    @Override
+    /*@Override
     void setupFragmentToolbarAt(int position) {
         int titleResource = R.string.editor;
         int menuResource = R.menu.menu_simple_fragment;
@@ -119,5 +119,5 @@ public class EditorFragment extends SimpleFragment implements ToolbarCallback {
     @Override
     void registerFragmentToolbarCallbacks(int position) {
         ((BaseActivity) getActivity()).registerToolbarCallback(this);
-    }
+    }*/
 }

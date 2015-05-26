@@ -9,8 +9,9 @@ import android.view.ViewGroup;
 
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
-public abstract class SimpleFragment extends BaseFragment {
+public abstract class SimpleFragment extends BaseFragment implements ToolbarCallback {
 
     private static final String TAG = "SimpleFragment";
 
@@ -20,10 +21,6 @@ public abstract class SimpleFragment extends BaseFragment {
         BaseActivity parentActivity = (BaseActivity) getActivity();
         parentActivity.unregisterToolbarCallback();
     }
-
-    abstract void setupFragmentToolbarAt(int position);
-
-    abstract void registerFragmentToolbarCallbacks(int position);
 
     /*
      * Toolbar Callbacks
@@ -44,4 +41,22 @@ public abstract class SimpleFragment extends BaseFragment {
     public void onRefreshClicked() {
 
     }*/
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        return false;
+    }
+
+    @Override
+    public void onRefreshClicked() {
+    }
+
+    @Override
+    public void onBackPressed() {
+    }
 }

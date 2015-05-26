@@ -46,7 +46,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
     private View mHeaderView;
     private View mFooterView;
     private View mToolbarView;
-    private int mBaseTranslationY;
+    private volatile int mBaseTranslationY;
     private SlidingTabLayout mSlidingTabLayoutMain;
 
     @Override
@@ -66,7 +66,6 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         mViewPager.setPagingEnabled(IS_SWIPEABLE);
         mViewPager.setAdapter(mMainActivityAdapter);
         mViewPager.setOffscreenPageLimit(OFF_SCREEN_LIMIT);
-
 
         mSlidingTabLayoutMain = (SlidingTabLayout) findViewById(R.id.sliding_tabs_main_navigation);
         mSlidingTabLayoutMain.setCustomTabView(R.layout.tab_main, 0);

@@ -28,8 +28,7 @@ public class ImgurChildFragment extends RecyclerFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        View fillerView = LayoutInflater.from(getActivity()).inflate(R.layout.recycler_header_big, null);
-        mCardsRecyclerAdapter = new CardsRecyclerAdapter(this, fillerView);
+        mCardsRecyclerAdapter = new CardsRecyclerAdapter(this);
     }
 
     @Override

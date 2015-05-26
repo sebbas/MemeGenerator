@@ -42,14 +42,12 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
     private JsonDataLoader mJsonDataLoader;
     private int mPageIndex = 0;
     private RecyclerFragment mFragment;
-    private View mFillerView;
 
-    public SuperSlimRecyclerAdapter(RecyclerFragment fragment, View fillerView) {
+    public SuperSlimRecyclerAdapter(RecyclerFragment fragment) {
         mContext = fragment.getActivity();
         mFragment = fragment;
         mAllowedLineItemPositions = new ArrayList<>();
         mLineItems = new ArrayList<>();
-        mFillerView = fillerView;
 
         String fragmentType = fragment.getFragmentType();
 
@@ -59,7 +57,7 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0 && mFillerView != null) {
+        if (position == 0) {
             return VIEW_TYPE_FILLER;
         } else {
             if (mLineItems.get(position).isHeaderItem()) {

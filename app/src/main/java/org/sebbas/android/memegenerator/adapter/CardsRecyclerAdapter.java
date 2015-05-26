@@ -43,14 +43,12 @@ public class CardsRecyclerAdapter extends RecyclerFragmentAdapter {
     private JsonDataLoader mJsonDataLoader;
     private int mPageIndex = 0;
     private RecyclerFragment mFragment;
-    private View mFillerView;
     private BitmapRegionDecoder mDecoder;
 
-    public CardsRecyclerAdapter(RecyclerFragment fragment, View fillerView) {
+    public CardsRecyclerAdapter(RecyclerFragment fragment) {
         mContext = fragment.getActivity();
         mFragment = fragment;
         mLineItems = new ArrayList<>();
-        mFillerView = fillerView;
 
         String fragmentType = fragment.getFragmentType();
 
@@ -61,11 +59,6 @@ public class CardsRecyclerAdapter extends RecyclerFragmentAdapter {
     @Override
     public int getItemCount() {
         return mLineItems.size();
-    }
-
-    @Override
-    public Filter getFilter() {
-        return null;
     }
 
     @Override
@@ -89,13 +82,12 @@ public class CardsRecyclerAdapter extends RecyclerFragmentAdapter {
         View view;
         LayoutInflater inflater = LayoutInflater.from(mContext);
 
-        switch (viewType) {
-            case VIEW_TYPE_FILLER:
-                view = inflater.inflate(R.layout.recycler_header_big, parent, false);
-                break;
-            default:
-                view = inflater.inflate(R.layout.card_item, parent, false);
+        if (viewType == VIEW_TYPE_FILLER) {
+            view = inflater.inflate(R.layout.recycler_header_big, parent, false);
+        } else {
+            view = inflater.inflate(R.layout.card_item, parent, false);
         }
+
         return new CardViewHolder(view, viewHolderCallback);
     }
 
@@ -203,6 +195,11 @@ public class CardsRecyclerAdapter extends RecyclerFragmentAdapter {
     public void refreshData() {
         String url = Utils.getUrlForData(mPageIndex, mFragment);
         mJsonDataLoader.load(url);
+    }
+
+    @Override
+    public Filter getFilter() {
+        return null;
     }
 
     /**
