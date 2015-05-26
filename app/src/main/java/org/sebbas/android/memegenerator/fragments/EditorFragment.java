@@ -1,16 +1,21 @@
 package org.sebbas.android.memegenerator.fragments;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
 import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.UIOptions;
+import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
@@ -19,11 +24,17 @@ public class EditorFragment extends SimpleFragment implements ToolbarCallback {
     private Picasso mPicasso;
     private ImageView mImageView;
     private String mImageUrl;
+    private String mImageId;
+    private int mImageWidth;
+    private int mImageHeight;
 
-    public static EditorFragment newInstance(String imageUrl) {
+    public static EditorFragment newInstance(String imageUrl, String imageId, int imageWidth, int imageHeight) {
         EditorFragment editorFragment = new EditorFragment();
         Bundle args = new Bundle();
         args.putString("imageUrl", imageUrl);
+        args.putString("imageId", imageId);
+        args.putInt("imageWidth", imageWidth);
+        args.putInt("imageHeight", imageHeight);
         editorFragment.setArguments(args);
         return editorFragment;
     }
@@ -40,6 +51,9 @@ public class EditorFragment extends SimpleFragment implements ToolbarCallback {
 
         // Get image url
         mImageUrl = getArguments().getString("imageUrl");
+        mImageId = getArguments().getString("imageId");
+        mImageWidth = getArguments().getInt("imageWidth");
+        mImageHeight = getArguments().getInt("imageHeight");
     }
 
     @Override
@@ -58,14 +72,19 @@ public class EditorFragment extends SimpleFragment implements ToolbarCallback {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mPicasso.with(this.getActivity())
-                .load(mImageUrl)
-                .placeholder(android.R.color.white)
-                .error(android.R.color.white)
-                .tag(this.getActivity())
-                .fit()
-                .centerInside()
-                .into(mImageView);
+        Ion.with(mImageView)
+                .error(android.R.color.holo_red_dark)
+                .resize(mImageWidth, mImageHeight)
+                .load(Utils.imageUrlToThumbnailUrl(mImageUrl, mImageId, UIOptions.THUMBNAIL_SIZE_EDITOR))
+                .setCallback(new FutureCallback<ImageView>() {
+                    @Override
+                    public void onCompleted(Exception e, ImageView result) {
+                        Ion.with(mImageView)
+                                .error(mImageView.getDrawable())
+                                .crossfade(true)
+                                .load(mImageUrl);
+                    }
+                });
     }
 
     @Override

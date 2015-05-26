@@ -3,6 +3,7 @@ package org.sebbas.android.memegenerator;
 public class UIOptions {
 
     public static final String THUMBNAIL_SIZE_LIST = "b";
+    public static final String THUMBNAIL_SIZE_EDITOR = "s";
     public static final String THUMBNAIL_SIZE_CARD = "l";
 
     public static final int GRID_LAYOUT = 0;

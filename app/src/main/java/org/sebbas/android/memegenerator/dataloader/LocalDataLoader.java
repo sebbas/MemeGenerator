@@ -106,7 +106,7 @@ public class LocalDataLoader extends Dataloader {
             String imageId = getImageIdAt(i);
 
             LineItem newItem = LineItem.newInstance(
-                    title, imageUrl, imageId, null, null, false, 0, 0);
+                    title, imageUrl, imageId, null, null, 0, 0, false, 0, 0);
             lineItems.add(newItem);
         }
         return lineItems;

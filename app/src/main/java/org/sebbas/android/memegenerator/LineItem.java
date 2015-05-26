@@ -10,13 +10,16 @@ public class LineItem {
     private String mImageId;
     private String mViewCount;
     private String mTimeStamp;
+    private int mImageWidth;
+    private int mImageHeight;
 
     public static LineItem newInstance(String title, String imageUrl, String imageId,
-                                       String viewCount, String timeStamp, boolean isHeader,
+                                       String viewCount, String timeStamp, int imageWidth,
+                                       int imageHeight, boolean isHeader,
                                        int sectionManager, int sectionFirstPosition) {
 
-        return new LineItem(title, imageUrl, imageId, viewCount, timeStamp, isHeader,
-                sectionManager, sectionFirstPosition);
+        return new LineItem(title, imageUrl, imageId, viewCount, timeStamp, imageWidth, imageHeight,
+                isHeader, sectionManager, sectionFirstPosition);
     }
 
     public static LineItem newHeaderInstance(String title, boolean isHeader, int sectionManager,
@@ -36,13 +39,15 @@ public class LineItem {
 
     // Regular item constructor
     private LineItem(String title, String imageUrl, String imageId, String viewCount,
-                    String timeStamp, boolean isHeader, int sectionManager,
+                    String timeStamp, int imageWidth, int imageHeight, boolean isHeader, int sectionManager,
                     int sectionFirstPosition) {
         this(title, isHeader, sectionManager, sectionFirstPosition);
         mImageUrl = imageUrl;
         mImageId = imageId;
         mViewCount = viewCount;
         mTimeStamp = timeStamp;
+        mImageWidth = imageWidth;
+        mImageHeight = imageHeight;
     }
 
     public boolean isHeaderItem() {
@@ -71,6 +76,14 @@ public class LineItem {
 
     public String getTimeStamp() {
         return mTimeStamp;
+    }
+
+    public int getImageWidth() {
+        return mImageWidth;
+    }
+
+    public int getImageHeight() {
+        return mImageHeight;
     }
 
 }

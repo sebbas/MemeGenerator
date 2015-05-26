@@ -3,9 +3,7 @@ package org.sebbas.android.memegenerator.activities;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
@@ -110,10 +108,12 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
     @Override
     public void onItemClick(int position, List<LineItem> lineItems) {
         LineItem lineItem = lineItems.get(position);
-        String imageUrl = lineItem.
-                getImageUrl();
+        String imageUrl = lineItem.getImageUrl();
+        String imageId = lineItem.getImageId();
+        int imageWidth = lineItem.getImageWidth();
+        int imageHeight = lineItem.getImageHeight();
 
-        EditorFragment editorFragment = EditorFragment.newInstance(imageUrl);
+        EditorFragment editorFragment = EditorFragment.newInstance(imageUrl, imageId, imageWidth, imageHeight);
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);

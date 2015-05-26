@@ -167,5 +167,24 @@ public class Utils {
         preferences.edit().putString(key, TextUtils.join("‚‗‚", myStringList)).apply();
     }
 
+    public static ArrayList<Integer> getListInteger(Context context, String fragmentType, String key) {
+        SharedPreferences preferences = context.getSharedPreferences(fragmentType, Context.MODE_PRIVATE);
+        String[] strings = TextUtils.split(preferences.getString(key, ""), "‚‗‚");
+        Integer[] ints = stringArrayToIntArray(strings);
+        return new ArrayList<>(Arrays.asList(ints));
+    }
 
+    public static void putListInteger(Context context, String fragmentType, List<Integer> integerList, String key) {
+        SharedPreferences preferences = context.getSharedPreferences(fragmentType, Context.MODE_PRIVATE);
+        Integer[] myIntegerList = integerList.toArray(new Integer[integerList.size()]);
+        preferences.edit().putString(key, TextUtils.join("‚‗‚", myIntegerList)).apply();
+    }
+
+    private static Integer[] stringArrayToIntArray(String[] stringArray) {
+        final Integer[] intArray = new Integer[stringArray.length];
+        for (int i=0; i < stringArray.length; i++) {
+            intArray[i] = Integer.parseInt(stringArray[i]);
+        }
+        return intArray;
+    }
 }

@@ -74,12 +74,6 @@ public abstract class RecyclerFragmentAdapter extends RecyclerView.Adapter<Recyc
         }
     }
 
-    static class FillerViewHolder extends RecyclerView.ViewHolder {
-        public FillerViewHolder(View view) {
-            super(view);
-        }
-    }
-
     abstract protected List<LineItem> getLineItems();
     abstract public void refreshUI();
     abstract public void refreshData();

@@ -37,6 +37,8 @@ public class JsonDataLoader extends Dataloader {
     private List<String> mImageIds;
     private List<String> mTitles;
     private List<String> mTimeStamps;
+    private List<Integer> mImageWidths;
+    private List<Integer> mImageHeights;
 
     private volatile boolean mParsingComplete = false;
     private volatile boolean mParsingSuccessful = false;
@@ -57,6 +59,8 @@ public class JsonDataLoader extends Dataloader {
         mImageIds = Utils.getListString(mContext, fragmentType, "imageIds");
         mTitles = Utils.getListString(mContext, fragmentType, "imageTitles");
         mTimeStamps = Utils.getListString(mContext, fragmentType, "timeStamps");
+        mImageWidths = Utils.getListInteger(mContext, fragmentType, "imageWidths");
+        mImageHeights = Utils.getListInteger(mContext, fragmentType, "imageHeights");
     }
 
     public void load(String url) {
@@ -104,6 +108,22 @@ public class JsonDataLoader extends Dataloader {
         return timeStamp;
     }
 
+    private int getImageWidthAt(int position) {
+        int imageWidth = 0;
+        if (mImageWidths != null && mImageWidths.size() > position) {
+            imageWidth = mImageWidths.get(position);
+        }
+        return imageWidth;
+    }
+
+    private int getImageHeightAt(int position) {
+        int imageHeight = 0;
+        if (mImageHeights != null && mImageHeights.size() > position) {
+            imageHeight = mImageHeights.get(position);
+        }
+        return imageHeight;
+    }
+
     public List<LineItem> getLineItems(List<Integer> allowedLineItemPositions, boolean superSlim) {
         String lastHeader = "";
         int sectionManager = -1;
@@ -128,6 +148,8 @@ public class JsonDataLoader extends Dataloader {
                     String imageId = getImageIdAt(i - 1);
                     String viewCount = getViewCountAt(i - 1);
                     String timeStamp = getTimeStampAt(i - 1);
+                    int imageWidth = getImageWidthAt(i - 1);
+                    int imageHeight = getImageHeightAt(i - 1);
                     String header = Utils.getScrollHeaderTitleLetter(getTitleAt(i - 1));
 
                     if ((!TextUtils.equals(lastHeader, header) && superSlim)) {
@@ -140,8 +162,8 @@ public class JsonDataLoader extends Dataloader {
                                 header, true, sectionManager, sectionFirstPosition));
                     }
                     resultItems.add(LineItem.newInstance(
-                            title, imageUrl, imageId, viewCount, timeStamp, false,
-                            sectionManager, sectionFirstPosition));
+                            title, imageUrl, imageId, viewCount, timeStamp, imageWidth, imageHeight,
+                            false, sectionManager, sectionFirstPosition));
                     tmp++;
                 }
             }
@@ -195,6 +217,8 @@ public class JsonDataLoader extends Dataloader {
                     Utils.putListString(mContext, mFragmentType, mImageIds, "imageIds");
                     Utils.putListString(mContext, mFragmentType, mTitles, "imageTitles");
                     Utils.putListString(mContext, mFragmentType, mTimeStamps, "timeStamps");
+                    Utils.putListInteger(mContext, mFragmentType, mImageWidths, "imageWidths");
+                    Utils.putListInteger(mContext, mFragmentType, mImageHeights, "imageHeights");
                 }
             } else {
                 mConnectionUnavailable = true;
@@ -275,6 +299,8 @@ public class JsonDataLoader extends Dataloader {
         mImageIds.clear();
         mTitles.clear();
         mTimeStamps.clear();
+        mImageWidths.clear();
+        mImageHeights.clear();
 
         for (int i = 0; i < data.length(); i++) {
             JSONObject image = data.getJSONObject(i);
@@ -286,12 +312,16 @@ public class JsonDataLoader extends Dataloader {
                 String imageId = image.getString("id");
                 String imageTitle = image.getString("title");
                 String timeStamp = Integer.toString(image.getInt("datetime"));
+                int imageWidth = image.getInt("width");
+                int imageHeight = image.getInt("height");
 
                 mViewCounts.add(views);
                 mImageUrls.add(imageUrl);
                 mImageIds.add(imageId);
                 mTitles.add(imageTitle);
                 mTimeStamps.add(timeStamp);
+                mImageWidths.add(imageWidth);
+                mImageHeights.add(imageHeight);
             }
         }
     }

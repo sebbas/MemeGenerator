@@ -1,5 +1,7 @@
 package org.sebbas.android.memegenerator.interfaces;
 
+import android.graphics.Bitmap;
+
 import org.sebbas.android.memegenerator.LineItem;
 
 import java.util.List;
