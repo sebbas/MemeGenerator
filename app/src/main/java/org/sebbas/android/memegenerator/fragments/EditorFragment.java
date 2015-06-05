@@ -28,15 +28,8 @@ public class EditorFragment extends SimpleFragment implements ToolbarCallback {
     private int mImageWidth;
     private int mImageHeight;
 
-    public static EditorFragment newInstance(String imageUrl, String imageId, int imageWidth, int imageHeight) {
-        EditorFragment editorFragment = new EditorFragment();
-        Bundle args = new Bundle();
-        args.putString("imageUrl", imageUrl);
-        args.putString("imageId", imageId);
-        args.putInt("imageWidth", imageWidth);
-        args.putInt("imageHeight", imageHeight);
-        editorFragment.setArguments(args);
-        return editorFragment;
+    public static EditorFragment newInstance() {
+        return new EditorFragment();
     }
 
     @Override
@@ -48,12 +41,6 @@ public class EditorFragment extends SimpleFragment implements ToolbarCallback {
         mPicasso = new Picasso.Builder(this.getActivity())
                 .downloader(new OkHttpDownloader(okHttpClient))
                 .build();
-
-        // Get image url
-        mImageUrl = getArguments().getString("imageUrl");
-        mImageId = getArguments().getString("imageId");
-        mImageWidth = getArguments().getInt("imageWidth");
-        mImageHeight = getArguments().getInt("imageHeight");
     }
 
     @Override
@@ -72,7 +59,7 @@ public class EditorFragment extends SimpleFragment implements ToolbarCallback {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Ion.with(mImageView)
+        /*Ion.with(mImageView)
                 .error(android.R.color.holo_red_dark)
                 .resize(mImageWidth, mImageHeight)
                 .load(Utils.imageUrlToThumbnailUrl(mImageUrl, mImageId, UIOptions.THUMBNAIL_SIZE_EDITOR))
@@ -84,7 +71,7 @@ public class EditorFragment extends SimpleFragment implements ToolbarCallback {
                                 .crossfade(true)
                                 .load(mImageUrl);
                     }
-                });
+                });*/
     }
 
     @Override

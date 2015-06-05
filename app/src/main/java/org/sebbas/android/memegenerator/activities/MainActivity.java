@@ -1,18 +1,23 @@
 package org.sebbas.android.memegenerator.activities;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
+import com.github.ksoichiro.android.observablescrollview.Scrollable;
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
+import com.tonicartos.superslim.LayoutManager;
 
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
@@ -20,12 +25,11 @@ import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.adapter.MainActivityAdapter;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.fragments.EditorFragment;
-import org.sebbas.android.memegenerator.fragments.ImgurFragment;
-import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
+import org.sebbas.android.memegenerator.fragments.GifFragment;
+import org.sebbas.android.memegenerator.fragments.MemeFragment;
 import org.sebbas.android.memegenerator.fragments.SlidingTabsFragment;
 import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity implements ItemClickCallback, ObservableScrollViewCallbacks {
@@ -36,8 +40,8 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
 
     private static int[] TAB_TITLES = {
             R.string.templates,
-            R.string.imgur,
-            R.string.explore,
+            R.string.gifs,
+            R.string.Editor,
             R.string.gallery,
             R.string.preferences};
 
@@ -46,8 +50,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
     private View mHeaderView;
     private View mFooterView;
     private View mToolbarView;
-    private volatile int mBaseTranslationY;
-    private SlidingTabLayout mSlidingTabLayoutMain;
+    private int mBaseTranslationY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,13 +70,13 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         mViewPager.setAdapter(mMainActivityAdapter);
         mViewPager.setOffscreenPageLimit(OFF_SCREEN_LIMIT);
 
-        mSlidingTabLayoutMain = (SlidingTabLayout) findViewById(R.id.sliding_tabs_main_navigation);
-        mSlidingTabLayoutMain.setCustomTabView(R.layout.tab_main, 0);
-        mSlidingTabLayoutMain.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
-        mSlidingTabLayoutMain.setDistributeEvenly(true);
-        mSlidingTabLayoutMain.setViewPager(mViewPager);
+        SlidingTabLayout slidingTabLayoutMain = (SlidingTabLayout) findViewById(R.id.sliding_tabs_main_navigation);
+        slidingTabLayoutMain.setCustomTabView(R.layout.tab_main, 0);
+        slidingTabLayoutMain.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
+        slidingTabLayoutMain.setDistributeEvenly(true);
+        slidingTabLayoutMain.setViewPager(mViewPager);
 
-        mSlidingTabLayoutMain.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        slidingTabLayoutMain.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -112,7 +115,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         int imageWidth = lineItem.getImageWidth();
         int imageHeight = lineItem.getImageHeight();
 
-        EditorFragment editorFragment = EditorFragment.newInstance(imageUrl, imageId, imageWidth, imageHeight);
+        EditorFragment editorFragment = EditorFragment.newInstance();
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -141,11 +144,11 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
                 menuResource = R.menu.menu_simple_fragment;
                 break;
             case 1:
-                titleResource = R.string.imgur;
+                titleResource = R.string.gifs;
                 menuResource = R.menu.menu_sliding_tabs_fragment;
                 break;
             case 2:
-                titleResource = R.string.explore;
+                titleResource = R.string.Editor;
                 break;
             case 3:
                 titleResource = R.string.gallery;
@@ -164,19 +167,25 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
 
     void setupSlidingTabsAt(int position) {
         SlidingTabLayout slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+        ViewPager pager;
         switch(position) {
             case 0:
-                slidingTabLayout.setVisibility(View.GONE);
+                slidingTabLayout.setVisibility(View.VISIBLE);
+                pager = ((SlidingTabsFragment) mMainActivityAdapter.instantiateItem(mViewPager, position)).getViewPager();
+                slidingTabLayout.setViewPager(pager);
                 break;
             case 1:
                 slidingTabLayout.setVisibility(View.VISIBLE);
-                ImgurFragment imgurFragment =  (ImgurFragment) getFragmentAt(position);
+                pager = ((SlidingTabsFragment) mMainActivityAdapter.instantiateItem(mViewPager, position)).getViewPager();
+                slidingTabLayout.setViewPager(pager);
                 break;
             case 2:
                 slidingTabLayout.setVisibility(View.GONE);
                 break;
             case 3:
                 slidingTabLayout.setVisibility(View.VISIBLE);
+                pager = ((SlidingTabsFragment) mMainActivityAdapter.instantiateItem(mViewPager, position)).getViewPager();
+                slidingTabLayout.setViewPager(pager);
                 break;
             case 4:
                 slidingTabLayout.setVisibility(View.GONE);
@@ -200,6 +209,169 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
     public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
         if (dragging) {
             int toolbarHeight = mToolbarView.getHeight();
+            float currentHeaderTranslationY = ViewHelper.getTranslationY(mHeaderView);
+            if (firstScroll) {
+                if (-toolbarHeight < currentHeaderTranslationY) {
+                    mBaseTranslationY = scrollY;
+                }
+            }
+            float headerTranslationY = ScrollUtils.getFloat(-(scrollY - mBaseTranslationY), -toolbarHeight, 0);
+            ViewPropertyAnimator.animate(mHeaderView).cancel();
+            ViewHelper.setTranslationY(mHeaderView, headerTranslationY);
+        }
+    }
+
+    @Override
+    public void onDownMotionEvent() {
+    }
+
+    @Override
+    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
+        mBaseTranslationY = 0;
+
+        Fragment fragment = getCurrentFragment();
+        if (fragment == null) {
+            return;
+        }
+
+        if (fragment instanceof SlidingTabsFragment) {
+            Log.d(TAG, "yuhu is instance");
+            SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) fragment;
+
+            // Skip destroyed or not created item
+            Fragment childFragment = slidingTabsFragment.getCurrentFragment();
+            if (childFragment == null) {
+                return;
+            }
+
+            View view = childFragment.getView();
+            if (view == null) {
+                return;
+            }
+
+            // ObservableXxxViews have same API
+            // but currently they don't have any common interfaces.
+            adjustToolbar(scrollState, view);
+        }
+    }
+
+    private void adjustToolbar(ScrollState scrollState, View view) {
+        int toolbarHeight = mToolbarView.getHeight();
+        final Scrollable scrollView = (Scrollable) view.findViewById(R.id.scroll);
+        if (scrollView == null) {
+            return;
+        }
+        int scrollY = scrollView.getCurrentScrollY();
+        if (scrollState == ScrollState.DOWN) {
+            showToolbar();
+        } else if (scrollState == ScrollState.UP) {
+            if (toolbarHeight <= scrollY) {
+                hideToolbar();
+            } else {
+                showToolbar();
+            }
+        } else {
+            // Even if onScrollChanged occurs without scrollY changing, toolbar should be adjusted
+            if (toolbarIsShown() || toolbarIsHidden()) {
+                // Toolbar is completely moved, so just keep its state
+                // and propagate it to other pages
+                propagateToolbarState(toolbarIsShown());
+            } else {
+                // Toolbar is moving but doesn't know which to move:
+                // you can change this to hideToolbar()
+                showToolbar();
+            }
+        }
+    }
+
+    private Fragment getCurrentFragment() {
+        return mMainActivityAdapter.getItemAt(mViewPager.getCurrentItem());
+    }
+
+    private void propagateToolbarState(boolean isShown) {
+        int toolbarHeight = mToolbarView.getHeight();
+
+        Fragment fragment = getCurrentFragment();
+
+        if (fragment instanceof SlidingTabsFragment) {
+            SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) fragment;
+
+            // Set scrollY for the fragments that are not created yet
+            slidingTabsFragment.getSlidingTabsAdapter().setScrollY(isShown ? 0 : 1);
+
+            // Set scrollY for the active fragments
+            for (int i = 0; i < slidingTabsFragment.getChildFragmentCount(); i++) {
+                // Skip current item
+                if (i == slidingTabsFragment.getCurrentPosition()) {
+                    continue;
+                }
+
+                // Skip destroyed or not created item
+                Fragment childFragment = slidingTabsFragment.getFragmentAt(i);
+                if (childFragment == null) {
+                    continue;
+                }
+
+                View view = childFragment.getView();
+                if (view == null) {
+                    continue;
+                }
+                //propagateToolbarState(isShown, childFragment, toolbarHeight);
+                propagateToolbarState(isShown, view, toolbarHeight);
+            }
+        }
+    }
+
+    private void propagateToolbarState(boolean isShown, View view, int toolbarHeight) {
+        ObservableRecyclerView recyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
+        if (recyclerView == null) {
+            return;
+        }
+        LayoutManager layoutManager = (LayoutManager) recyclerView.getLayoutManager();
+        if (isShown) {
+            // Scroll up
+            if (layoutManager.findFirstVisibleItemPosition() == 1) {
+                layoutManager.scrollToPosition(0);
+            }
+        } else {
+            // Scroll down (to hide padding)
+            if (layoutManager.findFirstVisibleItemPosition() == 0) {
+                layoutManager.scrollToPosition(1);
+            }
+        }
+    }
+
+    private boolean toolbarIsShown() {
+        return ViewHelper.getTranslationY(mHeaderView) == 0;
+    }
+
+    private boolean toolbarIsHidden() {
+        return ViewHelper.getTranslationY(mHeaderView) == -mToolbarView.getHeight();
+    }
+
+    private void showToolbar() {
+        float headerTranslationY = ViewHelper.getTranslationY(mHeaderView);
+        if (headerTranslationY != 0) {
+            ViewPropertyAnimator.animate(mHeaderView).cancel();
+            ViewPropertyAnimator.animate(mHeaderView).translationY(0).setDuration(200).start();
+        }
+        propagateToolbarState(true);
+    }
+
+    private void hideToolbar() {
+        float headerTranslationY = ViewHelper.getTranslationY(mHeaderView);
+        int toolbarHeight = mToolbarView.getHeight();
+        if (headerTranslationY != -toolbarHeight) {
+            ViewPropertyAnimator.animate(mHeaderView).cancel();
+            ViewPropertyAnimator.animate(mHeaderView).translationY(-toolbarHeight).setDuration(200).start();
+        }
+        propagateToolbarState(false);
+    }
+
+    /*@Override
+    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
+        if (dragging) {
+            int toolbarHeight = mToolbarView.getHeight();
             if (firstScroll) {
                 float currentHeaderTranslationY = ViewHelper.getTranslationY(mHeaderView);
                 if (-toolbarHeight < currentHeaderTranslationY) {
@@ -210,15 +382,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
             ViewPropertyAnimator.animate(mHeaderView).cancel();
             ViewHelper.setTranslationY(mHeaderView, headerTranslationY);
 
-            for (RecyclerView recyclerView : getNonVisibleRecyclerViewsInFragment()) {
 
-                /*RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-                if (layoutManager instanceof LinearLayoutManager) {
-                    LinearLayoutManager linearLayoutManager = (LinearLayoutManager) layoutManager;
-                    int offset = getResources().getDimensionPixelOffset(R.dimen.tab_height) + getActionBarSize();
-                    linearLayoutManager.scrollToPositionWithOffset(1, -offset);
-                }*/
-            }
         }
     }
 
@@ -327,5 +491,5 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
             recyclerView = ((RecyclerFragment) baseFragment).getRecyclerView();
         }
         return recyclerView;
-    }
+    }*/
 }

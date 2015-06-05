@@ -16,44 +16,16 @@
 
 package org.sebbas.android.memegenerator.adapter;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.bitmap.Transform;
-import com.makeramen.roundedimageview.RoundedTransformationBuilder;
-import com.squareup.picasso.Transformation;
-import com.tonicartos.superslim.GridSLM;
-import com.tonicartos.superslim.LinearSLM;
-
-import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
-import org.sebbas.android.memegenerator.LineItem;
-import org.sebbas.android.memegenerator.PicassoCache;
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.UIOptions;
-import org.sebbas.android.memegenerator.Utils;
-import org.sebbas.android.memegenerator.dataloader.JsonDataLoader;
-import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
-public abstract class RecyclerFragmentAdapter extends RecyclerView.Adapter<RecyclerFragmentAdapter.MainViewHolder> implements Filterable {
+public abstract class RecyclerFragmentAdapter extends RecyclerView.Adapter<RecyclerFragmentAdapter.MainViewHolder> {
 
-    private static final String TAG = "SimpleRecyclerAdapter";
-    public static final String TOPICS_URL = "Topics";
+    private static final String TAG = "RecyclerFragmentAdapter";
 
     abstract static class MainViewHolder extends RecyclerView.ViewHolder {
         TextView textViewTitle;
@@ -74,7 +46,7 @@ public abstract class RecyclerFragmentAdapter extends RecyclerView.Adapter<Recyc
         }
     }
 
-    abstract protected List<LineItem> getLineItems();
-    abstract public void refreshUI();
-    abstract public void refreshData();
+    public void refreshUI() {
+        this.notifyDataSetChanged();
+    }
 }

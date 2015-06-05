@@ -21,8 +21,8 @@ public class MainFragment extends BaseFragment {
 
     private static int[] TAB_TITLES = {
             R.string.templates,
-            R.string.imgur,
-            R.string.explore,
+            R.string.gifs,
+            R.string.Editor,
             R.string.gallery,
             R.string.preferences};
 
@@ -34,9 +34,9 @@ public class MainFragment extends BaseFragment {
             R.string.e};
 
     private static final int[] TAB_ICONS = {
-            R.drawable.selector_template_icon,
-            R.drawable.selector_instances_icon,
-            R.drawable.selector_explore_icon,
+            R.drawable.selector_meme_icon,
+            R.drawable.selector_gif_icon,
+            R.drawable.selector_editor_icon,
             R.drawable.selector_gallery_icon,
             R.drawable.selector_preferences_icon};
 
@@ -108,11 +108,11 @@ public class MainFragment extends BaseFragment {
                 menuResource = R.menu.menu_simple_fragment;
                 break;
             case 1:
-                titleResource = R.string.imgur;
+                titleResource = R.string.gifs;
                 menuResource = R.menu.menu_sliding_tabs_fragment;
                 break;
             case 2:
-                titleResource = R.string.explore;
+                titleResource = R.string.Editor;
                 break;
             case 3:
                 titleResource = R.string.gallery;
@@ -138,7 +138,7 @@ public class MainFragment extends BaseFragment {
                 break;
             case 1:
                 slidingTabLayout.setVisibility(View.VISIBLE);
-                ImgurFragment imgurFragment =  (ImgurFragment) getFragmentAt(position);
+                GifFragment gifFragment =  (GifFragment) getFragmentAt(position);
                 break;
             case 2:
                 slidingTabLayout.setVisibility(View.GONE);

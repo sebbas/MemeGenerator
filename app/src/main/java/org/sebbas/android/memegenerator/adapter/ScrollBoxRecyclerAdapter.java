@@ -1,28 +1,16 @@
 package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
-import android.widget.ImageView;
-
-import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.bitmap.Transform;
-import com.makeramen.roundedimageview.RoundedDrawable;
-import com.tonicartos.superslim.GridSLM;
-import com.tonicartos.superslim.LinearSLM;
 
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.UIOptions;
-import org.sebbas.android.memegenerator.Utils;
-import org.sebbas.android.memegenerator.dataloader.JsonDataLoader;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
-import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,11 +68,6 @@ public class ScrollBoxRecyclerAdapter extends RecyclerFragmentAdapter {
                 new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
     }
 
-    @Override
-    public Filter getFilter() {
-        return null;
-    }
-
     static class ScrollBoxViewHolder extends MainViewHolder {
         RecyclerView horizontalRecyclerView;
 
@@ -92,18 +75,5 @@ public class ScrollBoxRecyclerAdapter extends RecyclerFragmentAdapter {
             super(view);
             horizontalRecyclerView = (RecyclerView) view.findViewById(R.id.horizontal_recyclerview);
         }
-    }
-
-    @Override
-    protected List<LineItem> getLineItems() {
-        return null;
-    }
-
-    @Override
-    public void refreshUI() {
-    }
-
-    @Override
-    public void refreshData() {
     }
 }

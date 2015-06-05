@@ -2,31 +2,23 @@ package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
 import android.widget.ImageView;
 
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.bitmap.Transform;
 import com.makeramen.roundedimageview.RoundedDrawable;
-import com.squareup.picasso.Transformation;
 import com.tonicartos.superslim.GridSLM;
-import com.tonicartos.superslim.LinearSLM;
 
 import org.sebbas.android.memegenerator.LineItem;
-import org.sebbas.android.memegenerator.PicassoCache;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.UIOptions;
 import org.sebbas.android.memegenerator.Utils;
-import org.sebbas.android.memegenerator.dataloader.JsonDataLoader;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
@@ -37,22 +29,13 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
     private static final int CORNER_RADIUS = 250;
 
     private Context mContext;
-    private List<Integer> mAllowedLineItemPositions;
-    private List<LineItem> mLineItems = null;
-    private JsonDataLoader mJsonDataLoader;
-    private int mPageIndex = 0;
+    private List<LineItem> mLineItems;
     private RecyclerFragment mFragment;
 
-    public SuperSlimRecyclerAdapter(RecyclerFragment fragment) {
+    public SuperSlimRecyclerAdapter(RecyclerFragment fragment, List<LineItem> lineItems) {
         mContext = fragment.getActivity();
         mFragment = fragment;
-        mAllowedLineItemPositions = new ArrayList<>();
-        mLineItems = new ArrayList<>();
-
-        String fragmentType = fragment.getFragmentType();
-
-        mJsonDataLoader = new JsonDataLoader(fragment, fragmentType);
-        refreshData();
+        mLineItems = lineItems;
     }
 
     @Override
@@ -91,7 +74,7 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
 
         switch (viewType) {
             case VIEW_TYPE_FILLER:
-                view = inflater.inflate(R.layout.recycler_header_small, parent, false);
+                view = inflater.inflate(R.layout.recycler_padding, parent, false);
                 break;
             case VIEW_TYPE_CONTENT:
                 view = inflater.inflate(R.layout.list_item, parent, false);
@@ -162,51 +145,6 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
                         .into(listViewHolder.imageView);*/
             }
         }
-
-    }
-
-    @Override
-    public Filter getFilter() {
-        return new Filter() {
-
-            private List<Integer> filteredResult;
-
-            @Override
-            protected FilterResults performFiltering(CharSequence charSequence) {
-                filteredResult = getFilteredResults(charSequence);
-
-                FilterResults results = new FilterResults();
-                results.values = filteredResult;
-                results.count = filteredResult.size();
-
-                return results;
-            }
-
-            @Override
-            protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mAllowedLineItemPositions = (ArrayList<Integer>) filterResults.values;
-                refreshUI();
-            }
-
-
-            private List<Integer> getFilteredResults(CharSequence constraint){
-                if (constraint.length() == 0) {
-                    mAllowedLineItemPositions.clear();
-                    return mAllowedLineItemPositions;
-                }
-
-                ArrayList<Integer> filteredItems = new ArrayList<>();
-
-                for (int i = 0; i < mJsonDataLoader.getItemCount(); i++) {
-                    String currentLineItemTitle = mJsonDataLoader.getTitleAt(i);
-
-                    if (!Utils.stringPatternMatch(currentLineItemTitle, (String) constraint)) {
-                        filteredItems.add(i);
-                    }
-                }
-                return filteredItems;
-            }
-        };
     }
 
     static class ListViewHolder extends MainViewHolder implements View.OnClickListener {
@@ -223,22 +161,5 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
         public void onClick(View v) {
             mViewHolderCallback.onItemClick(getPosition());
         }
-    }
-
-    @Override
-    protected List<LineItem> getLineItems() {
-        return mJsonDataLoader.getLineItems(mAllowedLineItemPositions, true);
-    }
-
-    @Override
-    public void refreshUI() {
-        mLineItems = getLineItems();
-        notifyDataSetChanged();
-    }
-
-    @Override
-    public void refreshData() {
-        String url = Utils.getUrlForData(mPageIndex, mFragment);
-        mJsonDataLoader.load(url);
     }
 }

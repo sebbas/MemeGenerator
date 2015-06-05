@@ -10,20 +10,22 @@ import android.text.style.ImageSpan;
 
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.UIOptions;
+import org.sebbas.android.memegenerator.fragments.EditorFragment;
 import org.sebbas.android.memegenerator.fragments.ExploreFragment;
 import org.sebbas.android.memegenerator.fragments.GalleryFragment;
-import org.sebbas.android.memegenerator.fragments.ImgurFragment;
+import org.sebbas.android.memegenerator.fragments.GifFragment;
+import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.fragments.SimplePreferenceFragment;
-import org.sebbas.android.memegenerator.fragments.TemplatesFragment;
+import org.sebbas.android.memegenerator.fragments.MemeFragment;
 
 public class MainActivityAdapter extends SlidingTabsAdapter {
 
-    private static final String TAG = "MainViewPagerAdapter";
+    private static final String TAG = "MainActivityAdapter";
 
     private static final int TAB_ICONS[] = {
-            R.drawable.selector_template_icon,
-            R.drawable.selector_instances_icon,
-            R.drawable.selector_explore_icon,
+            R.drawable.selector_meme_icon,
+            R.drawable.selector_gif_icon,
+            R.drawable.selector_editor_icon,
             R.drawable.selector_gallery_icon,
             R.drawable.selector_preferences_icon};
 
@@ -38,17 +40,17 @@ public class MainActivityAdapter extends SlidingTabsAdapter {
     protected Fragment createItem(int position) {
         switch (position) {
             case 0:
-                return TemplatesFragment.newInstance(UIOptions.SUPER_SLIM_LAYOUT, false);
+                return MemeFragment.newInstance();
             case 1:
-                return ImgurFragment.newInstance();
+                return GifFragment.newInstance();
             case 2:
-                return ExploreFragment.newInstance(UIOptions.LIST_LAYOUT, false);
+                return EditorFragment.newInstance();
             case 3:
                 return GalleryFragment.newInstance();
             case 4:
                 return SimplePreferenceFragment.newInstance();
             default:
-                return TemplatesFragment.newInstance(UIOptions.LIST_LAYOUT, false);
+                return MemeFragment.newInstance();
         }
     }
 

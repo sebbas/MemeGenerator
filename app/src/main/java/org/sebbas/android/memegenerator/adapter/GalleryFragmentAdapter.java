@@ -6,8 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 import org.sebbas.android.memegenerator.UIOptions;
-import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
-import org.sebbas.android.memegenerator.fragments.ImgurChildFragment;
+import org.sebbas.android.memegenerator.fragments.GifChildFragment;
 
 public class GalleryFragmentAdapter extends SlidingTabsAdapter {
 
@@ -21,19 +20,19 @@ public class GalleryFragmentAdapter extends SlidingTabsAdapter {
 
         switch (position) {
             case 0:
-                fragment = ImgurChildFragment.newInstance(UIOptions.LIST_LAYOUT, true);
+                fragment = GifChildFragment.newInstance(UIOptions.LIST_LAYOUT, true, getScrollY());
                 break;
             case 1:
-                fragment = ImgurChildFragment.newInstance(UIOptions.LIST_LAYOUT, true);
+                fragment = GifChildFragment.newInstance(UIOptions.LIST_LAYOUT, true, getScrollY());
                 break;
             case 2:
-                fragment = ImgurChildFragment.newInstance(UIOptions.LIST_LAYOUT, true);
+                fragment = GifChildFragment.newInstance(UIOptions.LIST_LAYOUT, true, getScrollY());
                 break;
             case 3:
-                fragment = ImgurChildFragment.newInstance(UIOptions.LIST_LAYOUT, true);
+                fragment = GifChildFragment.newInstance(UIOptions.LIST_LAYOUT, true, getScrollY());
                 break;
             default:
-                fragment = ImgurChildFragment.newInstance(UIOptions.LIST_LAYOUT, true);
+                fragment = GifChildFragment.newInstance(UIOptions.LIST_LAYOUT, true, getScrollY());
                 break;
         }
         return fragment;

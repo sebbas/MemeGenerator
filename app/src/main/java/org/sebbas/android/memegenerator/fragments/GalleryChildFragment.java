@@ -6,20 +6,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.adapter.SuperSlimRecyclerAdapter;
+import org.sebbas.android.memegenerator.adapter.CardsRecyclerAdapter;
 
-public class TemplatesFragment extends RecyclerFragment {
+public class GalleryChildFragment extends RecyclerFragment {
 
-    private static final String TAG = "TemplatesFragment";
+    public static final String TAG = "GalleryChildFragment";
 
-    private SuperSlimRecyclerAdapter mSuperSlimRecyclerAdapter;
+    private CardsRecyclerAdapter mCardsRecyclerAdapter;
 
-    public static TemplatesFragment newInstance(int layoutMode, boolean isRefreshable) {
-        TemplatesFragment fragment = new TemplatesFragment();
+    public static GalleryChildFragment newInstance(int layoutMode, boolean isRefreshable, int scrollY) {
+        GalleryChildFragment fragment = new GalleryChildFragment();
         Bundle args = new Bundle();
-        args.putString("fragment_type", TAG);
-        args.putInt("layout_mode", layoutMode);
-        args.putBoolean("refreshable", isRefreshable);
+        args.putString(ARG_FRAGMENT_TYPE, TAG);
+        args.putInt(ARG_LAYOUT_MODE, layoutMode);
+        args.putBoolean(ARG_IS_REFRESHABLE, isRefreshable);
+        args.putInt(ARG_INITIAL_POSITION, scrollY);
         fragment.setArguments(args);
         return fragment;
     }
@@ -28,7 +29,7 @@ public class TemplatesFragment extends RecyclerFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mSuperSlimRecyclerAdapter = new SuperSlimRecyclerAdapter(this);
+        mCardsRecyclerAdapter = new CardsRecyclerAdapter(this);
     }
 
     @Override
@@ -37,7 +38,7 @@ public class TemplatesFragment extends RecyclerFragment {
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
 
         super.init(view);
-        super.with(mSuperSlimRecyclerAdapter);
+        super.with(mCardsRecyclerAdapter);
 
         return view;
     }

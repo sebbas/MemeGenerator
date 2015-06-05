@@ -33,7 +33,7 @@ public abstract class SimpleFragment extends BaseFragment implements ToolbarCall
     @Override
     public boolean onQueryTextChange(String s) {
         RecyclerViewListener recyclerViewListener = mRootFragment;
-        recyclerViewListener.filterAdapterWith(s);
+        recyclerViewListener.filterDataWith(s);
         return true;
     }
 

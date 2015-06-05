@@ -4,39 +4,50 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
+import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.tonicartos.superslim.LayoutManager;
 
+import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
+import org.sebbas.android.memegenerator.dataloader.DataLoader;
 import org.sebbas.android.memegenerator.interfaces.DataLoaderCallback;
 import org.sebbas.android.memegenerator.activities.MainActivity;
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.interfaces.RecyclerViewListener;
-import org.sebbas.android.memegenerator.ScrollingLinearLayoutManager;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 import org.sebbas.android.memegenerator.adapter.RecyclerFragmentAdapter;
 import org.sebbas.android.memegenerator.UIOptions;
 import org.sebbas.android.memegenerator.Utils;
 
+import java.util.List;
+
 
 public abstract class RecyclerFragment extends BaseFragment implements
-        SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener,
-        RecyclerViewListener, ToolbarCallback {
+        SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener, ToolbarCallback {
 
     private static final String TAG = "RecyclerFragment";
+
+    // Keys for values in bundle
+    public static final String ARG_FRAGMENT_TYPE = "ARG_FRAGMENT_TYPE";
+    public static final String ARG_LAYOUT_MODE = "ARG_LAYOUT_MODE";
+    public static final String ARG_IS_REFRESHABLE = "ARG_IS_REFRESHABLE";
+    public static final String ARG_INITIAL_POSITION = "ARG_INITIAL_POSITION";
+
+    // Layout options
+    public static final int GRID_LAYOUT = 0;
+    public static final int LIST_LAYOUT = 1;
+    public static final int SUPER_SLIM_LAYOUT = 2;
 
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerFragmentAdapter mRecyclerFragmentAdapter;
@@ -47,14 +58,21 @@ public abstract class RecyclerFragment extends BaseFragment implements
     private boolean mIsRefreshable;
     private RecyclerView.AdapterDataObserver mAdapterObserver;
     private Toolbar mToolbarView;
+    private int mInitialPosition;
+    private DataLoader mDataLoader;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mFragmentType = getArguments().getString("fragment_type");
-        mLayoutMode = getArguments().getInt("layout_mode");
-        mIsRefreshable = getArguments().getBoolean("refreshable");
+        Bundle args = getArguments();
+        if (args != null) {
+            mFragmentType = args.getString(ARG_FRAGMENT_TYPE);
+            mLayoutMode = args.getInt(ARG_LAYOUT_MODE);
+            mIsRefreshable = args.getBoolean(ARG_IS_REFRESHABLE, false);
+            mInitialPosition = args.getInt(ARG_INITIAL_POSITION, 0);
+        }
+        mDataLoader = new DataLoader(this);
     }
 
     public void init(View view) {
@@ -74,6 +92,14 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
         // Bring activity ui elements to front
         getActivity().findViewById(R.id.header).bringToFront();
+
+        // Scroll to the specified position after layout
+        ScrollUtils.addOnGlobalLayoutListener(mRecyclerView, new Runnable() {
+            @Override
+            public void run() {
+                mRecyclerView.scrollVerticallyToPosition(mInitialPosition);
+            }
+        });
     }
 
     public void with(RecyclerFragmentAdapter recyclerFragmentAdapter) {
@@ -96,20 +122,12 @@ public abstract class RecyclerFragment extends BaseFragment implements
         setupSwipeRefreshLayout();
     }
 
-    /*@Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
-        resetRecyclerView();
-        resetSwipeRefreshLayout();
-    }*/
-
     @Override
     public void onRefresh() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                mRecyclerFragmentAdapter.refreshData();
+                //mRecyclerFragmentAdapter.refreshData();
                 mSwipeRefreshLayout.setRefreshing(false);
             }
         }, Utils.REFRESH_ICON_TIME_SHOWN);
@@ -122,7 +140,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     @Override
     public void onConnectionUnavailable() {
-        mRecyclerFragmentAdapter.refreshUI();
+        //mRecyclerFragmentAdapter.refreshUI();
 
         // Checks when no nested fragments are present
         if (getParentFragment() == null) {
@@ -139,7 +157,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     @Override
     public void onConnectionTimeout() {
-        mRecyclerFragmentAdapter.refreshUI();
+        //mRecyclerFragmentAdapter.refreshUI();
 
         // Checks when no nested fragments are present
         if (getParentFragment() == null) {
@@ -245,33 +263,33 @@ public abstract class RecyclerFragment extends BaseFragment implements
         }
     }
 
-    private void resetRecyclerView() {
-        mRecyclerFragmentAdapter.unregisterAdapterDataObserver(mAdapterObserver);
-        mRecyclerView.setScrollViewCallbacks(null);
-    }
-
-    private void resetSwipeRefreshLayout() {
-        mSwipeRefreshLayout.setOnRefreshListener(null);
-    }
-
     public String getFragmentType() {
         return mFragmentType;
     }
 
-    public ObservableRecyclerView getRecyclerView() {
-        return mRecyclerView;
+    public void filterDataWith(String s) {
+        mDataLoader.filter(s);
+        recyclerViewMoveUp();
     }
 
-    @Override
-    public void filterAdapterWith(String s) {
-        if (mRecyclerFragmentAdapter != null) {
-            mRecyclerFragmentAdapter.getFilter().filter(s);
-            recyclerViewMoveUp();
+    public void load(String url, int location) {
+        mDataLoader.load(url, location);
+    }
+
+    public List<LineItem> getLineItems() {
+        switch (mLayoutMode) {
+            case GRID_LAYOUT:
+            case LIST_LAYOUT:
+                return mDataLoader.getLineItems();
+            case SUPER_SLIM_LAYOUT:
+                return mDataLoader.getSuperSlimLineItems();
+            default:
+                return mDataLoader.getLineItems();
         }
+
     }
 
-    @Override
-    public void refreshAdapter() {
+    private void refreshAdapter() {
         mSwipeRefreshLayout.setRefreshing(true);
         onRefresh();
         recyclerViewMoveUp();
@@ -289,6 +307,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     @Override
     public void onRefreshClicked() {
+        refreshAdapter();
     }
 
     @Override

@@ -8,18 +8,19 @@ import android.view.ViewGroup;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.adapter.CardsRecyclerAdapter;
 
-public class ImgurChildFragment extends RecyclerFragment {
+public class GifChildFragment extends RecyclerFragment {
 
-    private static final String TAG = "SlidingTabsChildFragment";
+    public static final String TAG = "SlidingTabsChildFragment";
 
     private CardsRecyclerAdapter mCardsRecyclerAdapter;
 
-    public static ImgurChildFragment newInstance(int layoutMode, boolean isRefreshable) {
-        ImgurChildFragment fragment = new ImgurChildFragment();
+    public static GifChildFragment newInstance(int layoutMode, boolean isRefreshable, int scrollY) {
+        GifChildFragment fragment = new GifChildFragment();
         Bundle args = new Bundle();
-        args.putString("fragment_type", TAG);
-        args.putInt("layout_mode", layoutMode);
-        args.putBoolean("refreshable", isRefreshable);
+        args.putString(ARG_FRAGMENT_TYPE, TAG);
+        args.putInt(ARG_LAYOUT_MODE, layoutMode);
+        args.putBoolean(ARG_IS_REFRESHABLE, isRefreshable);
+        args.putInt(ARG_INITIAL_POSITION, scrollY);
         fragment.setArguments(args);
         return fragment;
     }

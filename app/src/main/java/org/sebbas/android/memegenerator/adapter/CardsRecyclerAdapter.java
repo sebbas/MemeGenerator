@@ -3,26 +3,18 @@ package org.sebbas.android.memegenerator.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapRegionDecoder;
-import android.graphics.Rect;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.Resource;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.bitmap.Transform;
-import com.squareup.picasso.Transformation;
 
 import org.sebbas.android.memegenerator.LineItem;
-import org.sebbas.android.memegenerator.PicassoCache;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
-import org.sebbas.android.memegenerator.dataloader.JsonDataLoader;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
 
@@ -40,7 +32,6 @@ public class CardsRecyclerAdapter extends RecyclerFragmentAdapter {
 
     private Context mContext;
     private List<LineItem> mLineItems;
-    private JsonDataLoader mJsonDataLoader;
     private int mPageIndex = 0;
     private RecyclerFragment mFragment;
     private BitmapRegionDecoder mDecoder;
@@ -49,11 +40,6 @@ public class CardsRecyclerAdapter extends RecyclerFragmentAdapter {
         mContext = fragment.getActivity();
         mFragment = fragment;
         mLineItems = new ArrayList<>();
-
-        String fragmentType = fragment.getFragmentType();
-
-        mJsonDataLoader = new JsonDataLoader(fragment, fragmentType);
-        refreshData();
     }
 
     @Override
@@ -83,7 +69,7 @@ public class CardsRecyclerAdapter extends RecyclerFragmentAdapter {
         LayoutInflater inflater = LayoutInflater.from(mContext);
 
         if (viewType == VIEW_TYPE_FILLER) {
-            view = inflater.inflate(R.layout.recycler_header_big, parent, false);
+            view = inflater.inflate(R.layout.recycler_padding, parent, false);
         } else {
             view = inflater.inflate(R.layout.card_item, parent, false);
         }
@@ -178,28 +164,6 @@ public class CardsRecyclerAdapter extends RecyclerFragmentAdapter {
             //gifDrawable.start();
             mViewHolderCallback.onItemClick(getPosition());
         }
-    }
-
-    @Override
-    protected List<LineItem> getLineItems() {
-        return mJsonDataLoader.getLineItems(null, false);
-    }
-
-    @Override
-    public void refreshUI() {
-        mLineItems = getLineItems();
-        notifyDataSetChanged();
-    }
-
-    @Override
-    public void refreshData() {
-        String url = Utils.getUrlForData(mPageIndex, mFragment);
-        mJsonDataLoader.load(url);
-    }
-
-    @Override
-    public Filter getFilter() {
-        return null;
     }
 
     /**

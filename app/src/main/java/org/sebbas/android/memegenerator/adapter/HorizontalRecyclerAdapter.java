@@ -17,16 +17,11 @@
 package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.makeramen.roundedimageview.RoundedTransformationBuilder;
-import com.squareup.picasso.Transformation;
 
 import org.sebbas.android.memegenerator.SquaredImageView;
 import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
@@ -34,7 +29,6 @@ import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.PicassoCache;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
-import org.sebbas.android.memegenerator.dataloader.LocalDataLoader;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 
 import java.util.List;
@@ -50,8 +44,6 @@ public class HorizontalRecyclerAdapter extends RecyclerView.Adapter<HorizontalRe
     public HorizontalRecyclerAdapter(RecyclerFragment fragment, int position) {
         mContext = fragment.getActivity();
 
-        LocalDataLoader localDataLoader = new LocalDataLoader(fragment, position);
-        mLineItems = localDataLoader.getLineItems();
     }
 
     @Override

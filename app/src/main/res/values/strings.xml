@@ -5,8 +5,8 @@
 
     <!-- Main tabs titles -->
     <string name="templates">Templates</string>
-    <string name="imgur">Imgur</string>
-    <string name="explore">Explore</string>
+    <string name="gifs">Gifs</string>
+    <string name="Editor">Explore</string>
     <string name="gallery">Gallery</string>
     <string name="preferences">Settings</string>
 
@@ -14,9 +14,10 @@
     <string name="editor">Editor</string>
 
     <!-- Sliding tabs titles -->
-    <string name="all_images">All</string>
-    <string name="memes">Memes</string>
-    <string name="gifs">Gifs</string>
+    <string name="all_items">All</string>
+    <string name="best_items">Best</string>
+    <string name="popular_items">Popular</string>
+    <string name="new_items">New</string>
 
     <string name="my_memes">My Memes</string>
     <string name="favorites">Favorites</string>

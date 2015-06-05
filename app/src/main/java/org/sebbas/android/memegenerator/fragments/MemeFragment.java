@@ -6,23 +6,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
-import org.sebbas.android.memegenerator.adapter.ImgurFragmentAdapter;
 import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.adapter.MemeFragmentAdapter;
+import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
-public class ImgurFragment extends SlidingTabsFragment implements ToolbarCallback {
+public class MemeFragment extends SlidingTabsFragment implements ToolbarCallback {
 
+    private static final String TAG = "MemeFragment";
     private static final int OFF_SCREEN_LIMIT = 3;
-
     private static int[] TAB_TITLES = {
-            R.string.all_images,
-            R.string.memes,
-            R.string.gifs};
+            R.string.all_items,
+            R.string.popular_items,
+            R.string.new_items};
 
-    private ImgurFragmentAdapter mImgurFragmentAdapter;
+    private MemeFragmentAdapter mMemeFragmentAdapter;
 
-    public static ImgurFragment newInstance() {
-        return new ImgurFragment();
+    public static MemeFragment newInstance() {
+        return new MemeFragment();
     }
 
     @Override
@@ -30,7 +30,7 @@ public class ImgurFragment extends SlidingTabsFragment implements ToolbarCallbac
         super.onCreate(savedInstanceState);
 
         FragmentManager fragmentManager = super.getRetainedChildFragmentManager();
-        mImgurFragmentAdapter = new ImgurFragmentAdapter(getActivity(), fragmentManager, TAB_TITLES);
+        mMemeFragmentAdapter = new MemeFragmentAdapter(getActivity(), fragmentManager, TAB_TITLES);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class ImgurFragment extends SlidingTabsFragment implements ToolbarCallbac
         super.onCreateView(inflater, container, bundle);
         View view = inflater.inflate(R.layout.fragment_slidingtabs, container, false);
 
-        super.init(view, mImgurFragmentAdapter, true, OFF_SCREEN_LIMIT);
+        super.init(view, mMemeFragmentAdapter, true, OFF_SCREEN_LIMIT);
 
         return view;
     }

@@ -3,6 +3,7 @@ package org.sebbas.android.memegenerator.fragments;
 import android.app.Activity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
@@ -42,10 +43,18 @@ public abstract class SlidingTabsFragment extends BaseFragment {
         mSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
         mSlidingTabLayout.setDistributeEvenly(true);
         mSlidingTabLayout.setViewPager(mViewPager);
+
+        // Padding for tabs
+        int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
+        getActivity().findViewById(R.id.main_container).setPadding(0, tabHeight, 0, 0);
     }
 
     public void with(SlidingTabsAdapter fragmentAdapter, boolean isSwipeable, int offScreenLimit) {
 
+    }
+
+    public ViewPager getViewPager() {
+        return mViewPager;
     }
 
     public FragmentManager getRetainedChildFragmentManager() {
@@ -81,47 +90,23 @@ public abstract class SlidingTabsFragment extends BaseFragment {
         parentActivity.unregisterToolbarCallback();
     }
 
+    public int getChildFragmentCount() {
+        return mViewPager.getChildCount();
+    }
+
     public RecyclerFragment getFragmentAt(int position) {
         return (RecyclerFragment) mSlidingTabsAdapter.instantiateItem(mViewPager, position);
     }
 
-    public RecyclerFragment getCurrentFragment() {
-        return getFragmentAt(mViewPager.getCurrentItem());
+    public SlidingTabsAdapter getSlidingTabsAdapter() {
+        return mSlidingTabsAdapter;
     }
 
-    public int getFragmentCount() {
-        return mViewPager.getChildCount();
-    }
-
-    public int getViewPagerPosition() {
+    public int getCurrentPosition() {
         return mViewPager.getCurrentItem();
     }
 
-
-    /*
-     * Toolbar Callbacks
-     */
-    /*@Override
-    public boolean onQueryTextSubmit(String s) {
-        //int fragmentId = mViewPager.getCurrentItem();
-        //Fragment visibleFragment = getChildFragmentManager().findFragmentById(fragmentId);
-        //AdapterFilterListener adapterFilterListener = (AdapterFilterListener) visibleFragment;
-        //adapterFilterListener.filterAdapterWith(s);
-        //return true;
+    public Fragment getCurrentFragment() {
+        return getFragmentAt(getCurrentPosition());
     }
-
-    @Override
-    public boolean onQueryTextChange(String s) {
-        return true;
-    }
-
-    @Override
-    public void onRefreshClicked() {
-        int position = mViewPager.getCurrentItem();
-        BaseFragment baseFragment = (BaseFragment) mSlidingTabsFragmentAdapter
-                .instantiateItem(mViewPager, position);
-        RecyclerViewListener recyclerViewListener = (RecyclerViewListener) baseFragment;
-        recyclerViewListener.refreshAdapter();
-
-    }*/
 }

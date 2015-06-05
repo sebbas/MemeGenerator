@@ -6,10 +6,10 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 
-import org.sebbas.android.memegenerator.fragments.ExploreFragment;
+import org.sebbas.android.memegenerator.fragments.MemeChildFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
-import org.sebbas.android.memegenerator.fragments.ImgurChildFragment;
-import org.sebbas.android.memegenerator.fragments.TemplatesFragment;
+import org.sebbas.android.memegenerator.fragments.GifChildFragment;
+import org.sebbas.android.memegenerator.fragments.MemeFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,10 +64,10 @@ public class Utils {
 
     public static final String getUrlForData(int pageIndex, RecyclerFragment fragment) {
         String url = "";
-        if (fragment instanceof TemplatesFragment) {
+        if (fragment instanceof MemeChildFragment) {
             url = BASE_TEMPLATES;
         }
-        if (fragment instanceof ImgurChildFragment) {
+        if (fragment instanceof GifChildFragment) {
             url = BASE_TIME + pageIndex;
         }
         return url;

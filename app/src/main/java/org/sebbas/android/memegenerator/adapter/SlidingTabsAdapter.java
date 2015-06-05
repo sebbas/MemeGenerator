@@ -16,6 +16,7 @@ public abstract class SlidingTabsAdapter extends CacheFragmentStatePagerAdapter 
 
     private Context mContext;
     private int[] mTitleResources;
+    private int mScrollY;
 
     public SlidingTabsAdapter(Context context, FragmentManager fragmentManager,
                               int[] titleResources) {
@@ -37,5 +38,13 @@ public abstract class SlidingTabsAdapter extends CacheFragmentStatePagerAdapter 
 
     private String[] getTitles() {
         return Utils.resourceArrayToStringArray(mContext, mTitleResources);
+    }
+
+    public void setScrollY(int scrollY) {
+        mScrollY = scrollY;
+    }
+
+    public int getScrollY() {
+        return mScrollY;
     }
 }
