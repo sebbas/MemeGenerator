@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.tonicartos.superslim.LayoutManager;
@@ -37,6 +36,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener, ToolbarCallback {
 
     private static final String TAG = "RecyclerFragment";
+    private static final String BUNDLE_RECYCLER_LAYOUT = "classname.recycler.layout";
 
     // Keys for values in bundle
     public static final String ARG_FRAGMENT_TYPE = "ARG_FRAGMENT_TYPE";
@@ -60,11 +60,13 @@ public abstract class RecyclerFragment extends BaseFragment implements
     private Toolbar mToolbarView;
     private int mInitialPosition;
     private DataLoader mDataLoader;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private int mScrollPosition;
+    private Parcelable mRecyclerState;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         Bundle args = getArguments();
         if (args != null) {
             mFragmentType = args.getString(ARG_FRAGMENT_TYPE);
@@ -86,20 +88,12 @@ public abstract class RecyclerFragment extends BaseFragment implements
         mSwipeRefreshLayout.setEnabled(mIsRefreshable);
 
         // Set custom progress icon position because of toolbar and sliding tabs layout
-        int tabHeight = getResources().getDimensionPixelOffset(R.dimen.tab_height);
-        int offset = getActionBarSize() + tabHeight;
-        mSwipeRefreshLayout.setProgressViewOffset(true, offset,offset + tabHeight);
+        //int tabHeight = getResources().getDimensionPixelOffset(R.dimen.tab_height);
+        //int offset = getActionBarSize() + tabHeight;
+        //mSwipeRefreshLayout.setProgressViewOffset(true, offset,offset + tabHeight);
 
         // Bring activity ui elements to front
         getActivity().findViewById(R.id.header).bringToFront();
-
-        // Scroll to the specified position after layout
-        ScrollUtils.addOnGlobalLayoutListener(mRecyclerView, new Runnable() {
-            @Override
-            public void run() {
-                mRecyclerView.scrollVerticallyToPosition(mInitialPosition);
-            }
-        });
     }
 
     public void with(RecyclerFragmentAdapter recyclerFragmentAdapter) {
@@ -120,6 +114,23 @@ public abstract class RecyclerFragment extends BaseFragment implements
         setupRecyclerView();
         updatePlaceholder();
         setupSwipeRefreshLayout();
+        restoreRecylerViewState();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        saveRecyclerViewState();
+    }
+
+    private void restoreRecylerViewState() {
+        if (mRecyclerState != null) {
+            mRecyclerView.onRestoreInstanceState(mRecyclerState);
+        }
+    }
+
+    private void saveRecyclerViewState() {
+        mRecyclerView.onSaveInstanceState();
     }
 
     @Override
@@ -232,7 +243,10 @@ public abstract class RecyclerFragment extends BaseFragment implements
                 mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(UIOptions.getGridColumnCount(), StaggeredGridLayoutManager.VERTICAL));
                 break;
             case UIOptions.SUPER_SLIM_LAYOUT:
-                mRecyclerView.setLayoutManager(new LayoutManager(parentActivity));
+                if (mLayoutManager == null) {
+                    mLayoutManager = new LayoutManager(parentActivity);
+                }
+                mRecyclerView.setLayoutManager(mLayoutManager);
                 break;
             case UIOptions.LIST_LAYOUT:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
@@ -286,13 +300,26 @@ public abstract class RecyclerFragment extends BaseFragment implements
             default:
                 return mDataLoader.getLineItems();
         }
-
     }
 
     private void refreshAdapter() {
         mSwipeRefreshLayout.setRefreshing(true);
         onRefresh();
         recyclerViewMoveUp();
+    }
+
+    public int getFirstVisibleItemPosition() {
+        int position = 0;
+        RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
+
+        if (layoutManager != null) {
+            if (layoutManager instanceof LayoutManager) {
+                position = ((LayoutManager) layoutManager).findFirstVisibleItemPosition();
+            } else if (layoutManager instanceof LinearLayoutManager) {
+                position = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+            }
+        }
+        return position;
     }
 
     @Override

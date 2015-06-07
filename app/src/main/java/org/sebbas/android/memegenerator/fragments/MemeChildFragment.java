@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
+
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
@@ -46,5 +48,12 @@ public class MemeChildFragment extends RecyclerFragment {
         super.with(superSlimRecyclerAdapter);
 
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+
     }
 }

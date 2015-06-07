@@ -27,6 +27,7 @@ import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.fragments.EditorFragment;
 import org.sebbas.android.memegenerator.fragments.GifFragment;
 import org.sebbas.android.memegenerator.fragments.MemeFragment;
+import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.fragments.SlidingTabsFragment;
 import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
 
@@ -98,15 +99,22 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
             }
         });
 
+        // Setup top sliding tabs
+        SlidingTabLayout mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
+        mSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
+        mSlidingTabLayout.setDistributeEvenly(true);
+
         // Setup toolbar and sliding tabs for initial fragment in viewpager
         setupFragmentToolbarAt(0);
         setupSlidingTabsAt(0);
         registerFragmentToolbarCallbacks(0);
     }
 
+
     /*
-     * ItemClickCallback
-     */
+         * ItemClickCallback
+         */
     @Override
     public void onItemClick(int position, List<LineItem> lineItems) {
         LineItem lineItem = lineItems.get(position);
@@ -134,7 +142,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         }
     }
 
-    void setupFragmentToolbarAt(int position) {
+    private void setupFragmentToolbarAt(int position) {
         int titleResource = 0;
         int menuResource = 0;
 
@@ -165,27 +173,23 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         setupToolbar(titleResource, menuResource, false);
     }
 
-    void setupSlidingTabsAt(int position) {
+    private void setupSlidingTabsAt(int position) {
         SlidingTabLayout slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
-        ViewPager pager;
         switch(position) {
             case 0:
                 slidingTabLayout.setVisibility(View.VISIBLE);
-                pager = ((SlidingTabsFragment) mMainActivityAdapter.instantiateItem(mViewPager, position)).getViewPager();
-                slidingTabLayout.setViewPager(pager);
+                setSlidingTabsViewPagerAt(position);
                 break;
             case 1:
                 slidingTabLayout.setVisibility(View.VISIBLE);
-                pager = ((SlidingTabsFragment) mMainActivityAdapter.instantiateItem(mViewPager, position)).getViewPager();
-                slidingTabLayout.setViewPager(pager);
+                setSlidingTabsViewPagerAt(position);
                 break;
             case 2:
                 slidingTabLayout.setVisibility(View.GONE);
                 break;
             case 3:
                 slidingTabLayout.setVisibility(View.VISIBLE);
-                pager = ((SlidingTabsFragment) mMainActivityAdapter.instantiateItem(mViewPager, position)).getViewPager();
-                slidingTabLayout.setViewPager(pager);
+                setSlidingTabsViewPagerAt(position);
                 break;
             case 4:
                 slidingTabLayout.setVisibility(View.GONE);
@@ -196,7 +200,15 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         }
     }
 
-    void registerFragmentToolbarCallbacks(int position) {
+    private void setSlidingTabsViewPagerAt(int position) {
+        SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) getFragmentAt(position);
+        SlidingTabLayout slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+
+        ViewPager pager = slidingTabsFragment.getViewPager();
+        slidingTabLayout.setViewPager(pager);
+    }
+
+    private void registerFragmentToolbarCallbacks(int position) {
         BaseFragment fragment = getFragmentAt(position);
         registerToolbarCallback(fragment);
     }
@@ -235,7 +247,6 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         }
 
         if (fragment instanceof SlidingTabsFragment) {
-            Log.d(TAG, "yuhu is instance");
             SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) fragment;
 
             // Skip destroyed or not created item
@@ -264,11 +275,14 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         int scrollY = scrollView.getCurrentScrollY();
         if (scrollState == ScrollState.DOWN) {
             showToolbar();
+            showMainTabs();
         } else if (scrollState == ScrollState.UP) {
             if (toolbarHeight <= scrollY) {
                 hideToolbar();
+                hideMainTabs();
             } else {
                 showToolbar();
+                showMainTabs();
             }
         } else {
             // Even if onScrollChanged occurs without scrollY changing, toolbar should be adjusted
@@ -280,6 +294,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
                 // Toolbar is moving but doesn't know which to move:
                 // you can change this to hideToolbar()
                 showToolbar();
+                showMainTabs();
             }
         }
     }
@@ -289,7 +304,6 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
     }
 
     private void propagateToolbarState(boolean isShown) {
-        int toolbarHeight = mToolbarView.getHeight();
 
         Fragment fragment = getCurrentFragment();
 
@@ -307,7 +321,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
                 }
 
                 // Skip destroyed or not created item
-                Fragment childFragment = slidingTabsFragment.getFragmentAt(i);
+                RecyclerFragment childFragment = slidingTabsFragment.getFragmentAt(i);
                 if (childFragment == null) {
                     continue;
                 }
@@ -316,26 +330,27 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
                 if (view == null) {
                     continue;
                 }
-                //propagateToolbarState(isShown, childFragment, toolbarHeight);
-                propagateToolbarState(isShown, view, toolbarHeight);
+                propagateToolbarState(isShown, view, childFragment);
             }
         }
     }
 
-    private void propagateToolbarState(boolean isShown, View view, int toolbarHeight) {
+    private void propagateToolbarState(boolean isShown, View view, RecyclerFragment fragment) {
         ObservableRecyclerView recyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
         if (recyclerView == null) {
             return;
         }
-        LayoutManager layoutManager = (LayoutManager) recyclerView.getLayoutManager();
+
+        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+
         if (isShown) {
             // Scroll up
-            if (layoutManager.findFirstVisibleItemPosition() == 1) {
+            if (fragment.getFirstVisibleItemPosition() == 1) {
                 layoutManager.scrollToPosition(0);
             }
         } else {
             // Scroll down (to hide padding)
-            if (layoutManager.findFirstVisibleItemPosition() == 0) {
+            if (fragment.getFirstVisibleItemPosition() == 0) {
                 layoutManager.scrollToPosition(1);
             }
         }
@@ -368,81 +383,6 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         propagateToolbarState(false);
     }
 
-    /*@Override
-    public void onScrollChanged(int scrollY, boolean firstScroll, boolean dragging) {
-        if (dragging) {
-            int toolbarHeight = mToolbarView.getHeight();
-            if (firstScroll) {
-                float currentHeaderTranslationY = ViewHelper.getTranslationY(mHeaderView);
-                if (-toolbarHeight < currentHeaderTranslationY) {
-                    mBaseTranslationY = scrollY;
-                }
-            }
-            float headerTranslationY = ScrollUtils.getFloat(-(scrollY - mBaseTranslationY), -toolbarHeight, 0);
-            ViewPropertyAnimator.animate(mHeaderView).cancel();
-            ViewHelper.setTranslationY(mHeaderView, headerTranslationY);
-
-
-        }
-    }
-
-    @Override
-    public void onDownMotionEvent() {
-    }
-
-    @Override
-    public void onUpOrCancelMotionEvent(ScrollState scrollState) {
-        mBaseTranslationY = 0;
-
-        ObservableRecyclerView recyclerView = getRecyclerView();
-
-        if (scrollState == ScrollState.DOWN) {
-            showToolbar();
-            showMainTabs();
-        } else if (scrollState == ScrollState.UP) {
-            int toolbarHeight = mToolbarView.getHeight();
-            int scrollY = recyclerView.getCurrentScrollY();
-            if (toolbarHeight <= scrollY) {
-                hideToolbar();
-                hideMainTabs();
-            } else {
-                showToolbar();
-                showMainTabs();
-            }
-        } else {
-            // Even if onScrollChanged occurs without scrollY changing, toolbar should be adjusted
-            if (!toolbarIsShown() && !toolbarIsHidden()) {
-                // Toolbar is moving but doesn't know which to move:
-                // you can change this to hideToolbar()
-                showToolbar();
-                showMainTabs();
-            }
-        }
-    }
-
-    private boolean toolbarIsShown() {
-        return ViewHelper.getTranslationY(mHeaderView) == 0;
-    }
-
-    private boolean toolbarIsHidden() {
-        return ViewHelper.getTranslationY(mHeaderView) == -mToolbarView.getHeight();
-    }
-
-    private void showToolbar() {
-        float headerTranslationY = ViewHelper.getTranslationY(mHeaderView);
-        if (headerTranslationY != 0) {
-            animateView(mHeaderView, 0, 200);
-        }
-    }
-
-    private void hideToolbar() {
-        float headerTranslationY = ViewHelper.getTranslationY(mHeaderView);
-        int toolbarHeight = mToolbarView.getHeight();
-        if (headerTranslationY != -toolbarHeight) {
-            animateView(mHeaderView, -toolbarHeight, 200);
-        }
-    }
-
     private void showMainTabs() {
         float headerTranslationY = ViewHelper.getTranslationY(mFooterView);
         if (headerTranslationY != 0) {
@@ -462,34 +402,4 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         ViewPropertyAnimator.animate(view).cancel();
         ViewPropertyAnimator.animate(view).translationY(translation).setDuration(duration).start();
     }
-
-    private List<ObservableRecyclerView> getNonVisibleRecyclerViewsInFragment() {
-        ArrayList<ObservableRecyclerView> viewArrayList = new ArrayList<>();
-
-        BaseFragment baseFragment = getFragmentAt(mViewPager.getCurrentItem());
-        if (baseFragment instanceof SlidingTabsFragment) {
-            SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) baseFragment;
-            for (int i = 0; i < slidingTabsFragment.getFragmentCount(); i++) {
-                if (i != slidingTabsFragment.getViewPagerPosition()) {
-                    RecyclerFragment recyclerFragment = slidingTabsFragment.getFragmentAt(i);
-                    ObservableRecyclerView recyclerView = recyclerFragment.getRecyclerView();
-                    viewArrayList.add(recyclerView);
-                }
-            }
-        }
-        return viewArrayList;
-    }
-
-    private ObservableRecyclerView getRecyclerView() {
-        ObservableRecyclerView recyclerView = null;
-        BaseFragment baseFragment = getFragmentAt(mViewPager.getCurrentItem());
-        if (baseFragment instanceof SlidingTabsFragment) {
-            RecyclerFragment currentFragment = ((SlidingTabsFragment) baseFragment).getCurrentFragment();
-            recyclerView = currentFragment.getRecyclerView();
-        }
-        if (baseFragment instanceof RecyclerFragment) {
-            recyclerView = ((RecyclerFragment) baseFragment).getRecyclerView();
-        }
-        return recyclerView;
-    }*/
 }

@@ -55,11 +55,9 @@ public class MemeFragment extends SlidingTabsFragment implements ToolbarCallback
 
     @Override
     public void onRefreshClicked() {
-
     }
 
     @Override
     public void onBackPressed() {
-
     }
 }

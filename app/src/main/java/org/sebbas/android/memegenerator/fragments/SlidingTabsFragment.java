@@ -1,6 +1,8 @@
 package org.sebbas.android.memegenerator.fragments;
 
 import android.app.Activity;
+import android.content.res.Configuration;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -22,16 +24,11 @@ public abstract class SlidingTabsFragment extends BaseFragment {
 
     private SlidingTabsAdapter mSlidingTabsAdapter;
     private ToggleSwipeViewPager mViewPager;
-    private View mToolbarView;
     private FragmentManager mRetainedChildFragmentManager;
-
-    private SlidingTabLayout mSlidingTabLayout;
 
     public void init(View view, SlidingTabsAdapter fragmentAdapter, boolean isSwipeable, int offScreenLimit) {
 
-        mToolbarView = getActivity().findViewById(R.id.toolbar);
         mViewPager = (ToggleSwipeViewPager) view.findViewById(R.id.toogle_swipe_viewpager);
-        mSlidingTabLayout = (SlidingTabLayout) getActivity().findViewById(R.id.sliding_tabs);
 
         // TODO move this to with()?
         mSlidingTabsAdapter = fragmentAdapter;
@@ -39,14 +36,11 @@ public abstract class SlidingTabsFragment extends BaseFragment {
         mViewPager.setAdapter(fragmentAdapter);
         mViewPager.setOffscreenPageLimit(offScreenLimit);
 
-        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
-        mSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
-        mSlidingTabLayout.setDistributeEvenly(true);
-        mSlidingTabLayout.setViewPager(mViewPager);
-
-        // Padding for tabs
-        int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
-        getActivity().findViewById(R.id.main_container).setPadding(0, tabHeight, 0, 0);
+        // Padding for tabs (only in portrait mode)
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
+            getActivity().findViewById(R.id.main_container).setPadding(0, tabHeight, 0, 0);
+        }
     }
 
     public void with(SlidingTabsAdapter fragmentAdapter, boolean isSwipeable, int offScreenLimit) {
@@ -58,7 +52,7 @@ public abstract class SlidingTabsFragment extends BaseFragment {
     }
 
     public FragmentManager getRetainedChildFragmentManager() {
-        if(mRetainedChildFragmentManager == null) {
+        if (mRetainedChildFragmentManager == null) {
             mRetainedChildFragmentManager = getChildFragmentManager();
         }
         return mRetainedChildFragmentManager;
