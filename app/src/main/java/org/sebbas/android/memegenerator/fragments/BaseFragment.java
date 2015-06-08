@@ -3,23 +3,14 @@ package org.sebbas.android.memegenerator.fragments;
 import android.app.Activity;
 import android.content.res.TypedArray;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.GridView;
-import android.widget.ListView;
 
 import org.sebbas.android.memegenerator.R;
-
-import java.util.ArrayList;
+import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 
 public abstract class BaseFragment extends Fragment {
+
+    private FragmentCallback mFragmentCallback;
 
     protected int getActionBarSize() {
         Activity activity = getActivity();
@@ -42,4 +33,20 @@ public abstract class BaseFragment extends Fragment {
         }
         return activity.findViewById(android.R.id.content).getHeight();
     }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mFragmentCallback = (FragmentCallback) activity;
+        } catch (final ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement " + FragmentCallback.class.toString());
+        }
+    }
+
+    protected void onFragmentComplete(String fragmentTag) {
+        mFragmentCallback.onFragmentComplete(fragmentTag);
+    }
+
+    abstract public String getFragmentTag();
 }

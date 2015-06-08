@@ -1,16 +1,12 @@
 package org.sebbas.android.memegenerator.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.adapter.ScrollBoxRecyclerAdapter;
-import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
-import org.sebbas.android.memegenerator.UIOptions;
 
 public class ExploreFragment extends RecyclerFragment {
 
@@ -44,5 +40,10 @@ public class ExploreFragment extends RecyclerFragment {
         super.with(mScrollBoxRecyclerAdapter);
 
         return view;
+    }
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
     }
 }

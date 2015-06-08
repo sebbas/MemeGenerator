@@ -5,7 +5,6 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import org.sebbas.android.memegenerator.UIOptions;
 import org.sebbas.android.memegenerator.fragments.GifChildFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 

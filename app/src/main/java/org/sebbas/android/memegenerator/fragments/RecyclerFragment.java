@@ -26,7 +26,6 @@ import org.sebbas.android.memegenerator.activities.MainActivity;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 import org.sebbas.android.memegenerator.adapter.RecyclerFragmentAdapter;
-import org.sebbas.android.memegenerator.UIOptions;
 import org.sebbas.android.memegenerator.Utils;
 
 import java.util.List;
@@ -48,6 +47,8 @@ public abstract class RecyclerFragment extends BaseFragment implements
     public static final int GRID_LAYOUT = 0;
     public static final int LIST_LAYOUT = 1;
     public static final int SUPER_SLIM_LAYOUT = 2;
+    private static final int GRID_COLUMN_COUNT = 2;
+
 
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerFragmentAdapter mRecyclerFragmentAdapter;
@@ -130,7 +131,9 @@ public abstract class RecyclerFragment extends BaseFragment implements
     }
 
     private void saveRecyclerViewState() {
-        mRecyclerView.onSaveInstanceState();
+        if (mRecyclerState != null) {
+            mRecyclerView.onSaveInstanceState();
+        }
     }
 
     @Override
@@ -239,16 +242,16 @@ public abstract class RecyclerFragment extends BaseFragment implements
         mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.main_container));
 
         switch (mLayoutMode) {
-            case UIOptions.GRID_LAYOUT:
-                mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(UIOptions.getGridColumnCount(), StaggeredGridLayoutManager.VERTICAL));
+            case GRID_LAYOUT:
+                mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(GRID_COLUMN_COUNT, StaggeredGridLayoutManager.VERTICAL));
                 break;
-            case UIOptions.SUPER_SLIM_LAYOUT:
+            case SUPER_SLIM_LAYOUT:
                 if (mLayoutManager == null) {
                     mLayoutManager = new LayoutManager(parentActivity);
                 }
                 mRecyclerView.setLayoutManager(mLayoutManager);
                 break;
-            case UIOptions.LIST_LAYOUT:
+            case LIST_LAYOUT:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
                 break;
             default:

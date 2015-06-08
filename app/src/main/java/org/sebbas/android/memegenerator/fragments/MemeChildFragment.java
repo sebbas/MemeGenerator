@@ -51,9 +51,7 @@ public class MemeChildFragment extends RecyclerFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-
+    public String getFragmentTag() {
+        return TAG;
     }
 }

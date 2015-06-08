@@ -4,9 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
@@ -17,7 +15,6 @@ import com.github.ksoichiro.android.observablescrollview.Scrollable;
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
-import com.tonicartos.superslim.LayoutManager;
 
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
@@ -25,19 +22,21 @@ import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.adapter.MainActivityAdapter;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.fragments.EditorFragment;
-import org.sebbas.android.memegenerator.fragments.GifFragment;
 import org.sebbas.android.memegenerator.fragments.MemeFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.fragments.SlidingTabsFragment;
+import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
 
 import java.util.List;
 
-public class MainActivity extends BaseActivity implements ItemClickCallback, ObservableScrollViewCallbacks {
+public class MainActivity extends BaseActivity implements ItemClickCallback,
+        ObservableScrollViewCallbacks, FragmentCallback {
 
     private static final String TAG = "MainActivity";
     private static final int OFF_SCREEN_LIMIT = 5;
     private static final boolean IS_SWIPEABLE = false;
+    private static final int FIRST_FRAGMENT_POSITION = 0;
 
     private static int[] TAB_TITLES = {
             R.string.templates,
@@ -106,15 +105,10 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         mSlidingTabLayout.setDistributeEvenly(true);
 
         // Setup toolbar and sliding tabs for initial fragment in viewpager
-        setupFragmentToolbarAt(0);
-        setupSlidingTabsAt(0);
-        registerFragmentToolbarCallbacks(0);
+        setupFragmentToolbarAt(FIRST_FRAGMENT_POSITION);
+        registerFragmentToolbarCallbacks(FIRST_FRAGMENT_POSITION);
     }
 
-
-    /*
-         * ItemClickCallback
-         */
     @Override
     public void onItemClick(int position, List<LineItem> lineItems) {
         LineItem lineItem = lineItems.get(position);
@@ -299,8 +293,8 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
         }
     }
 
-    private Fragment getCurrentFragment() {
-        return mMainActivityAdapter.getItemAt(mViewPager.getCurrentItem());
+    private BaseFragment getCurrentFragment() {
+        return (BaseFragment) mMainActivityAdapter.getItemAt(mViewPager.getCurrentItem());
     }
 
     private void propagateToolbarState(boolean isShown) {
@@ -401,5 +395,13 @@ public class MainActivity extends BaseActivity implements ItemClickCallback, Obs
     private void animateView(View view, int translation, int duration) {
         ViewPropertyAnimator.animate(view).cancel();
         ViewPropertyAnimator.animate(view).translationY(translation).setDuration(duration).start();
+    }
+
+    @Override
+    public void onFragmentComplete(String fragmentTag) {
+
+        if (fragmentTag.equals(getCurrentFragment().getFragmentTag())) {
+            setupSlidingTabsAt(FIRST_FRAGMENT_POSITION);
+        }
     }
 }

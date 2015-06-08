@@ -1,25 +1,21 @@
 package org.sebbas.android.memegenerator.fragments;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.UIOptions;
-import org.sebbas.android.memegenerator.Utils;
-import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
 public class EditorFragment extends SimpleFragment implements ToolbarCallback {
+
+    private static final String TAG = "EditorFragment";
 
     private Picasso mPicasso;
     private ImageView mImageView;
@@ -86,12 +82,15 @@ public class EditorFragment extends SimpleFragment implements ToolbarCallback {
 
     @Override
     public void onRefreshClicked() {
-
     }
 
     @Override
     public void onBackPressed() {
-        getActivity().onBackPressed();
+    }
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
     }
 
     /*@Override

@@ -14,7 +14,6 @@ import com.tonicartos.superslim.GridSLM;
 
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.UIOptions;
 import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
@@ -133,7 +132,7 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
                         .centerCrop()
                         .transform(trans)
                         .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(),
-                                UIOptions.THUMBNAIL_SIZE_LIST));
+                                Utils.IMAGE_SMALL));
                 /*PicassoCache.getPicassoInstance(mContext)
                         .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), UIOptions.THUMBNAIL_SIZE_LIST))
                         .placeholder(R.color.invisible)

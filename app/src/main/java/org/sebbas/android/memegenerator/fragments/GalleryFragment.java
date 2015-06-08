@@ -13,6 +13,7 @@ import org.sebbas.android.memegenerator.R;
 public class GalleryFragment extends SlidingTabsFragment implements ToolbarCallback {
 
     private static final int OFF_SCREEN_LIMIT = 3;
+    private static final String TAG = "GalleryFragment";
 
     private static int[] TAB_TITLES = {
             R.string.my_memes,
@@ -43,6 +44,12 @@ public class GalleryFragment extends SlidingTabsFragment implements ToolbarCallb
     }
 
     @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        super.onFragmentComplete(TAG);
+    }
+
+    @Override
     public boolean onQueryTextSubmit(String s) {
         return false;
     }
@@ -54,11 +61,14 @@ public class GalleryFragment extends SlidingTabsFragment implements ToolbarCallb
 
     @Override
     public void onRefreshClicked() {
-
     }
 
     @Override
     public void onBackPressed() {
+    }
 
+    @Override
+    public String getFragmentTag() {
+        return TAG;
     }
 }

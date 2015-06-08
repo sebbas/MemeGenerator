@@ -44,6 +44,12 @@ public class MemeFragment extends SlidingTabsFragment implements ToolbarCallback
     }
 
     @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        super.onFragmentComplete(TAG);
+    }
+
+    @Override
     public boolean onQueryTextSubmit(String s) {
         return false;
     }
@@ -59,5 +65,10 @@ public class MemeFragment extends SlidingTabsFragment implements ToolbarCallback
 
     @Override
     public void onBackPressed() {
+    }
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
     }
 }

@@ -9,12 +9,9 @@ import android.text.SpannableString;
 import android.text.style.ImageSpan;
 
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.UIOptions;
 import org.sebbas.android.memegenerator.fragments.EditorFragment;
-import org.sebbas.android.memegenerator.fragments.ExploreFragment;
 import org.sebbas.android.memegenerator.fragments.GalleryFragment;
 import org.sebbas.android.memegenerator.fragments.GifFragment;
-import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.fragments.SimplePreferenceFragment;
 import org.sebbas.android.memegenerator.fragments.MemeFragment;
 

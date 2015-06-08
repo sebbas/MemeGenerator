@@ -10,7 +10,7 @@ import org.sebbas.android.memegenerator.adapter.CardsRecyclerAdapter;
 
 public class GifChildFragment extends RecyclerFragment {
 
-    public static final String TAG = "SlidingTabsChildFragment";
+    public static final String TAG = "GifChildFragment";
 
     private CardsRecyclerAdapter mCardsRecyclerAdapter;
 
@@ -41,5 +41,10 @@ public class GifChildFragment extends RecyclerFragment {
         super.with(mCardsRecyclerAdapter);
 
         return view;
+    }
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
     }
 }

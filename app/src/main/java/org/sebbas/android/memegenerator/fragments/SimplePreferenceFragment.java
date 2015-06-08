@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.UIOptions;
 import org.sebbas.android.memegenerator.adapter.PreferencesAdapter;
 
 public class SimplePreferenceFragment extends RecyclerFragment {
@@ -19,7 +18,7 @@ public class SimplePreferenceFragment extends RecyclerFragment {
         SimplePreferenceFragment fragment = new SimplePreferenceFragment();
         Bundle args = new Bundle();
         args.putString("fragment_type", TAG);
-        args.putInt("layout_mode", UIOptions.LIST_LAYOUT);
+        args.putInt("layout_mode", RecyclerFragment.LIST_LAYOUT);
         args.putBoolean("refreshable", false);
         fragment.setArguments(args);
         return fragment;
@@ -41,5 +40,16 @@ public class SimplePreferenceFragment extends RecyclerFragment {
         super.with(mPreferencesAdapter);
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        super.onFragmentComplete(TAG);
+    }
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
     }
 }

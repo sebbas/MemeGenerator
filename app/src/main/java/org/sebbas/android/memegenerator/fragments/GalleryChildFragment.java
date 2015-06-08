@@ -42,4 +42,9 @@ public class GalleryChildFragment extends RecyclerFragment {
 
         return view;
     }
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
+    }
 }
