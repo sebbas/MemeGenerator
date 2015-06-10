@@ -26,6 +26,7 @@ public class ScrollBoxRecyclerAdapter extends RecyclerFragmentAdapter {
     private RecyclerFragment mFragment;
 
     public ScrollBoxRecyclerAdapter(RecyclerFragment fragment) {
+        super(fragment, new ArrayList<LineItem>());
         mContext = fragment.getActivity();
         mFragment = fragment;
         mLineItems = new ArrayList<>();

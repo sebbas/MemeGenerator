@@ -106,7 +106,6 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
 
         // Setup toolbar and sliding tabs for initial fragment in viewpager
         setupFragmentToolbarAt(FIRST_FRAGMENT_POSITION);
-        registerFragmentToolbarCallbacks(FIRST_FRAGMENT_POSITION);
     }
 
     @Override
@@ -204,7 +203,17 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
 
     private void registerFragmentToolbarCallbacks(int position) {
         BaseFragment fragment = getFragmentAt(position);
-        registerToolbarCallback(fragment);
+
+        if (fragment instanceof RecyclerFragment) {
+            registerToolbarCallback(fragment);
+
+        } else if (fragment instanceof SlidingTabsFragment) {
+            SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) fragment;
+
+            for (int i = 0; i < 1; i++) {
+                registerToolbarCallback(slidingTabsFragment.getFragmentAt(i));
+            }
+        }
     }
 
     private BaseFragment getFragmentAt(int position) {
@@ -402,6 +411,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
 
         if (fragmentTag.equals(getCurrentFragment().getFragmentTag())) {
             setupSlidingTabsAt(FIRST_FRAGMENT_POSITION);
+            registerFragmentToolbarCallbacks(FIRST_FRAGMENT_POSITION);
         }
     }
 }

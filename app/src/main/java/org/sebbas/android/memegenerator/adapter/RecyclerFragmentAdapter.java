@@ -16,16 +16,31 @@
 
 package org.sebbas.android.memegenerator.adapter;
 
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.fragments.BaseFragment;
+import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
+
+import java.util.List;
 
 
 public abstract class RecyclerFragmentAdapter extends RecyclerView.Adapter<RecyclerFragmentAdapter.MainViewHolder> {
 
     private static final String TAG = "RecyclerFragmentAdapter";
+
+    protected List<LineItem> mLineItems;
+    private BaseFragment mFragment;
+
+    public RecyclerFragmentAdapter(BaseFragment fragment, List<LineItem> lineItems) {
+        mFragment = fragment;
+        mLineItems = lineItems;
+    }
 
     abstract static class MainViewHolder extends RecyclerView.ViewHolder {
         TextView textViewTitle;
@@ -48,5 +63,10 @@ public abstract class RecyclerFragmentAdapter extends RecyclerView.Adapter<Recyc
 
     public void refreshUI() {
         this.notifyDataSetChanged();
+    }
+
+    public void setLineItems(List <LineItem> lineItems) {
+        mLineItems.clear();
+        mLineItems = lineItems;
     }
 }

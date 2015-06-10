@@ -4,6 +4,5 @@ public interface ToolbarCallback {
 
     boolean onQueryTextSubmit(String s);
     boolean onQueryTextChange(String s);
-    void onRefreshClicked();
     void onBackPressed();
 }

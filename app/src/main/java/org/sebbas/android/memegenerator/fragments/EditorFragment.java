@@ -11,9 +11,8 @@ import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
-public class EditorFragment extends SimpleFragment implements ToolbarCallback {
+public class EditorFragment extends SimpleFragment {
 
     private static final String TAG = "EditorFragment";
 
@@ -68,24 +67,6 @@ public class EditorFragment extends SimpleFragment implements ToolbarCallback {
                                 .load(mImageUrl);
                     }
                 });*/
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String s) {
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String s) {
-        return false;
-    }
-
-    @Override
-    public void onRefreshClicked() {
-    }
-
-    @Override
-    public void onBackPressed() {
     }
 
     @Override

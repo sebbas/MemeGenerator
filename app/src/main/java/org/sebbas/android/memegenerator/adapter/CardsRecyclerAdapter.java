@@ -37,6 +37,7 @@ public class CardsRecyclerAdapter extends RecyclerFragmentAdapter {
     private BitmapRegionDecoder mDecoder;
 
     public CardsRecyclerAdapter(RecyclerFragment fragment) {
+        super(fragment, new ArrayList<LineItem>());
         mContext = fragment.getActivity();
         mFragment = fragment;
         mLineItems = new ArrayList<>();

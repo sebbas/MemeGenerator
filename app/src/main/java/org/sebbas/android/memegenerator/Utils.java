@@ -106,7 +106,7 @@ public class Utils {
     }
 
     public static boolean stringPatternMatch(String sentence, String pattern) {
-        return sentence.toLowerCase().contains(pattern);
+        return sentence.toLowerCase().contains(pattern.toLowerCase());
     }
 
     public static String[] resourceArrayToStringArray(Context context, int[] intArray) {

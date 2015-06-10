@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -35,7 +36,6 @@ public abstract class RecyclerFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener, ToolbarCallback {
 
     private static final String TAG = "RecyclerFragment";
-    private static final String BUNDLE_RECYCLER_LAYOUT = "classname.recycler.layout";
 
     // Keys for values in bundle
     public static final String ARG_FRAGMENT_TYPE = "ARG_FRAGMENT_TYPE";
@@ -186,6 +186,12 @@ public abstract class RecyclerFragment extends BaseFragment implements
         }
     }
 
+    @Override
+    public void onFilterComplete() {
+        this.updateLineItems();
+        this.refreshAdapter();
+    }
+
     private void showConnectionUnavailableNotification() {
         new SnackBar.Builder(this.getActivity())
                 .withOnClickListener(this)
@@ -286,7 +292,6 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     public void filterDataWith(String s) {
         mDataLoader.filter(s);
-        recyclerViewMoveUp();
     }
 
     public void load(String url, int location) {
@@ -305,10 +310,25 @@ public abstract class RecyclerFragment extends BaseFragment implements
         }
     }
 
+    private void updateLineItems() {
+        List<LineItem> lineItems;
+        switch (mLayoutMode) {
+            case GRID_LAYOUT:
+            case LIST_LAYOUT:
+                lineItems = mDataLoader.getLineItems();
+                break;
+            case SUPER_SLIM_LAYOUT:
+                lineItems = mDataLoader.getSuperSlimLineItems();
+                break;
+            default:
+                lineItems = mDataLoader.getLineItems();
+        }
+        Log.d(TAG, "line items size is: " + lineItems.size());
+        mRecyclerFragmentAdapter.setLineItems(lineItems);
+    }
+
     private void refreshAdapter() {
-        mSwipeRefreshLayout.setRefreshing(true);
-        onRefresh();
-        recyclerViewMoveUp();
+        mRecyclerFragmentAdapter.notifyDataSetChanged();
     }
 
     public int getFirstVisibleItemPosition() {
@@ -332,12 +352,10 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     @Override
     public boolean onQueryTextChange(String s) {
-        return false;
-    }
+        this.filterDataWith(s);
+        //this.recyclerViewMoveUp();
 
-    @Override
-    public void onRefreshClicked() {
-        refreshAdapter();
+        return true;
     }
 
     @Override

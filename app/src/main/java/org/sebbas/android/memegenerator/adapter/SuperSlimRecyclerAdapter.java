@@ -28,13 +28,10 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
     private static final int CORNER_RADIUS = 250;
 
     private Context mContext;
-    private List<LineItem> mLineItems;
-    private RecyclerFragment mFragment;
 
     public SuperSlimRecyclerAdapter(RecyclerFragment fragment, List<LineItem> lineItems) {
+        super(fragment, lineItems);
         mContext = fragment.getActivity();
-        mFragment = fragment;
-        mLineItems = lineItems;
     }
 
     @Override
@@ -42,7 +39,7 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
         if (position == 0) {
             return VIEW_TYPE_FILLER;
         } else {
-            if (mLineItems.get(position).isHeaderItem()) {
+            if (super.mLineItems.get(position).isHeaderItem()) {
                 return VIEW_TYPE_HEADER;
             } else {
                 return VIEW_TYPE_CONTENT;
@@ -52,7 +49,7 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
 
     @Override
     public int getItemCount() {
-        return mLineItems.size();
+        return super.mLineItems.size();
     }
 
     @Override
@@ -63,7 +60,7 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
             public void onItemClick(int position) {
                 // Only trigger click event for content items
                 if (getItemViewType(position) == VIEW_TYPE_CONTENT) {
-                    ((ItemClickCallback) mContext).onItemClick(position, mLineItems);
+                    ((ItemClickCallback) mContext).onItemClick(position, SuperSlimRecyclerAdapter.super.mLineItems);
                 }
             }
         };
@@ -87,7 +84,7 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
 
     @Override
     public void onBindViewHolder(final MainViewHolder viewHolder, int position) {
-        final LineItem item = mLineItems.get(position);
+        final LineItem item = super.mLineItems.get(position);
         final View itemView = viewHolder.itemView;
         final GridSLM.LayoutParams lp = new GridSLM.LayoutParams(itemView.getLayoutParams());
 

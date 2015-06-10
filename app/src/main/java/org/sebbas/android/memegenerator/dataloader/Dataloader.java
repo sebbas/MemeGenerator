@@ -48,6 +48,7 @@ public class DataLoader implements Filterable {
         mContext = fragment.getActivity();
         mDataLoaderCallback = fragment;
         mFragmentType = fragment.getFragmentType();
+        mExcludedLineItemPositions = new ArrayList<>();
 
         // Restore array lists from previous session or if restore not possible (on startup)
         // then get new lists
@@ -65,6 +66,7 @@ public class DataLoader implements Filterable {
     }
 
     public void filter(String constraint) {
+        Log.d(TAG, "filtering with " + constraint);
         this.getFilter().filter(constraint);
     }
 
@@ -85,7 +87,7 @@ public class DataLoader implements Filterable {
                 resultItems.add(LineItem.newSuperSlimHeaderInstance(
                         "", true, sectionManager, sectionFirstPosition));
             } else {
-                boolean isAllowedPosition = isAllowedPosition(i);
+                boolean isAllowedPosition = isAllowedPosition(i - 1);
                 if (isAllowedPosition) {
                     String title = getTitleAt(i - 1);
                     String imageUrl = getImageUrlAt(i - 1);
@@ -141,11 +143,11 @@ public class DataLoader implements Filterable {
     }
 
     private boolean isAllowedPosition(int i) {
-        // If the are no excluded line items then all items are allowed -> return true
+        // List of excluded items is empty -> all items are allowed
         if (mExcludedLineItemPositions == null || mExcludedLineItemPositions.isEmpty()) {
             return true;
         }
-        // If excluded line item list contains item at position i, then this item is not allowed -> return false
+        // If excluded items list contains position -> item not allowed!
         return !mExcludedLineItemPositions.contains(i);
     }
 
@@ -358,21 +360,24 @@ public class DataLoader implements Filterable {
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 mExcludedLineItemPositions = (ArrayList<Integer>) filterResults.values;
+
+                // Notify fragment that filtering has finished
+                mDataLoaderCallback.onFilterComplete();
             }
 
-            private List<Integer> getFilteredResults(CharSequence constraint){
-                if (constraint.length() == 0) {
-                    mExcludedLineItemPositions.clear();
-                    return mExcludedLineItemPositions;
-                }
-
+            private List<Integer> getFilteredResults(CharSequence constraint) {
                 ArrayList<Integer> excludedItems = new ArrayList<>();
+
+                if (constraint.length() == 0) {
+                    return excludedItems;
+                }
 
                 for (int i = 0; i < getItemCount(); i++) {
 
                     String currentLineItemTitle = getTitleAt(i);
 
-                    if (Utils.stringPatternMatch(currentLineItemTitle, (String) constraint)) {
+                    // If title and pattern do not match -> exclude item
+                    if (!Utils.stringPatternMatch(currentLineItemTitle, (String) constraint)) {
                         excludedItems.add(i);
                     }
                 }

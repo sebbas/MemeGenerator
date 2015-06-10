@@ -5,5 +5,6 @@ public interface DataLoaderCallback {
     void onDataLoadSuccessful();
     void onConnectionUnavailable();
     void onConnectionTimeout();
+    void onFilterComplete();
 
 }

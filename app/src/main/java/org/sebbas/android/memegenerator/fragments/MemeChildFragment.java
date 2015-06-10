@@ -12,6 +12,7 @@ import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.adapter.SuperSlimRecyclerAdapter;
 import org.sebbas.android.memegenerator.dataloader.DataLoader;
+import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
 import java.util.List;
 

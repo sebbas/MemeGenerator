@@ -6,9 +6,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.fragments.PreferencesFragment;
+
+import java.util.ArrayList;
 
 public class PreferencesAdapter extends RecyclerFragmentAdapter {
 
@@ -18,6 +21,7 @@ public class PreferencesAdapter extends RecyclerFragmentAdapter {
     private BaseFragment mFragment;
 
     public PreferencesAdapter(BaseFragment fragment) {
+        super(fragment, new ArrayList<LineItem>());
         mFragment = fragment;
     }
 
