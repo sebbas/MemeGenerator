@@ -69,7 +69,7 @@ public class Utils {
             url = BASE_TEMPLATES;
         }
         if (fragment instanceof GifChildFragment) {
-            url = BASE_TIME + pageIndex;
+            url = BASE_TEMPLATES;
         }
         return url;
     }
@@ -119,7 +119,7 @@ public class Utils {
     }
 
    /*
-    * Taken from https://gist.github.com/dmsherazi/5985a093076a8c4e7c38 and slightly adapted
+    * Taken from https://gist.github.com/dmsherazi/5985a093076a8c4e7c38 and adapted slightly
     */
     public static String getTimeAgoString(Context context, long timeStamp) {
 

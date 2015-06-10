@@ -20,19 +20,19 @@ public class GalleryFragmentAdapter extends SlidingTabsAdapter {
 
         switch (position) {
             case 0:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.LIST_LAYOUT, true, getScrollY());
+                fragment = GifChildFragment.newInstance(RecyclerFragment.LIST_LAYOUT, true);
                 break;
             case 1:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.LIST_LAYOUT, true, getScrollY());
+                fragment = GifChildFragment.newInstance(RecyclerFragment.LIST_LAYOUT, true);
                 break;
             case 2:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.LIST_LAYOUT, true, getScrollY());
+                fragment = GifChildFragment.newInstance(RecyclerFragment.LIST_LAYOUT, true);
                 break;
             case 3:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.LIST_LAYOUT, true, getScrollY());
+                fragment = GifChildFragment.newInstance(RecyclerFragment.LIST_LAYOUT, true);
                 break;
             default:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.LIST_LAYOUT, true, getScrollY());
+                fragment = GifChildFragment.newInstance(RecyclerFragment.LIST_LAYOUT, true);
                 break;
         }
         return fragment;

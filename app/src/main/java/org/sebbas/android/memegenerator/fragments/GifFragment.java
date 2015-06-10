@@ -30,7 +30,9 @@ public class GifFragment extends SlidingTabsFragment {
         super.onCreate(savedInstanceState);
 
         FragmentManager fragmentManager = super.getRetainedChildFragmentManager();
-        mGifFragmentAdapter = new GifFragmentAdapter(getActivity(), fragmentManager, TAB_TITLES);
+        if (mGifFragmentAdapter == null) {
+            mGifFragmentAdapter = new GifFragmentAdapter(getActivity(), fragmentManager, TAB_TITLES);
+        }
     }
 
     @Override

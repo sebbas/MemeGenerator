@@ -11,7 +11,7 @@ import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 
 public class MemeFragmentAdapter extends SlidingTabsAdapter {
 
-    private static final String TAG = "GifFragmentAdapter";
+    private static final String TAG = "MemeFragmentAdapter";
 
     public MemeFragmentAdapter(Context context, FragmentManager fragmentManager, int[] titleResources) {
         super(context, fragmentManager, titleResources);
@@ -23,32 +23,16 @@ public class MemeFragmentAdapter extends SlidingTabsAdapter {
 
         switch (position) {
             case 0:
-                if (0 < getScrollY()) {
-                    fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, true, 1);
-                } else {
-                    fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, true, 0);
-                }
+                fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, true);
                 break;
             case 1:
-                if (0 < getScrollY()) {
-                    fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, true, 1);
-                } else {
-                    fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, true, 0);
-                }
+                fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, true);
                 break;
             case 2:
-                if (0 < getScrollY()) {
-                    fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, true, 1);
-                } else {
-                    fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, true, 0);
-                }
+                fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, true);
                 break;
             default:
-                if (0 < getScrollY()) {
-                    fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, true, 1);
-                } else {
-                    fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, true, 0);
-                }
+                fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, true);
                 break;
         }
         return fragment;

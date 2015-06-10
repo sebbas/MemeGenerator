@@ -99,7 +99,7 @@ public class CardsRecyclerAdapter extends RecyclerFragmentAdapter {
                     gl.glGetIntegerv(GLES10.GL_MAX_TEXTURE_SIZE, maxTextureSize, 0);
                     int maxTexture = maxTextureSize[0];*/
 
-                if (targetHeight > Utils.DEFAULT_MAX_BITMAP_DIMENSION) {
+                    if (targetHeight > Utils.DEFAULT_MAX_BITMAP_DIMENSION) {
                         targetHeight = Utils.DEFAULT_MAX_BITMAP_DIMENSION;
                         targetWidth = (int) (targetHeight / aspectRatio);
                     }

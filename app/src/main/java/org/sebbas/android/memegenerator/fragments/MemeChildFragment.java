@@ -20,13 +20,12 @@ public class MemeChildFragment extends RecyclerFragment {
 
     public static final String TAG = "MemeChildFragment";
 
-    public static MemeChildFragment newInstance(int layoutMode, boolean isRefreshable, int scrollY) {
+    public static MemeChildFragment newInstance(int layoutMode, boolean isRefreshable) {
         MemeChildFragment fragment = new MemeChildFragment();
         Bundle args = new Bundle();
         args.putString(ARG_FRAGMENT_TYPE, TAG);
         args.putInt(ARG_LAYOUT_MODE, layoutMode);
         args.putBoolean(ARG_IS_REFRESHABLE, isRefreshable);
-        args.putInt(ARG_INITIAL_POSITION, scrollY);
         fragment.setArguments(args);
         return fragment;
     }

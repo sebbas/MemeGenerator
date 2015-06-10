@@ -5,40 +5,44 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.adapter.CardsRecyclerAdapter;
+import org.sebbas.android.memegenerator.Utils;
+import org.sebbas.android.memegenerator.adapter.SimpleRecyclerAdapter;
+import org.sebbas.android.memegenerator.dataloader.DataLoader;
+
+import java.util.List;
 
 public class GifChildFragment extends RecyclerFragment {
 
     public static final String TAG = "GifChildFragment";
 
-    private CardsRecyclerAdapter mCardsRecyclerAdapter;
-
-    public static GifChildFragment newInstance(int layoutMode, boolean isRefreshable, int scrollY) {
+    public static GifChildFragment newInstance(int layoutMode, boolean isRefreshable) {
         GifChildFragment fragment = new GifChildFragment();
         Bundle args = new Bundle();
         args.putString(ARG_FRAGMENT_TYPE, TAG);
         args.putInt(ARG_LAYOUT_MODE, layoutMode);
         args.putBoolean(ARG_IS_REFRESHABLE, isRefreshable);
-        args.putInt(ARG_INITIAL_POSITION, scrollY);
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        mCardsRecyclerAdapter = new CardsRecyclerAdapter(this);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
 
+        // Get url for content
+        String url = Utils.getUrlForData(0, this);
+        super.load(url, DataLoader.INTERNET);
+
+        // Setup adapter
+        List<LineItem> lineItems = super.getLineItems();
+        SimpleRecyclerAdapter simpleRecyclerAdapter = new SimpleRecyclerAdapter(this, lineItems);
+
+        // Create the view
+        View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
         super.init(view);
-        super.with(mCardsRecyclerAdapter);
+        super.with(simpleRecyclerAdapter);
 
         return view;
     }

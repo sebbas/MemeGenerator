@@ -30,7 +30,9 @@ public class MemeFragment extends SlidingTabsFragment {
         super.onCreate(savedInstanceState);
 
         FragmentManager fragmentManager = super.getRetainedChildFragmentManager();
-        mMemeFragmentAdapter = new MemeFragmentAdapter(getActivity(), fragmentManager, TAB_TITLES);
+        if (mMemeFragmentAdapter == null) {
+            mMemeFragmentAdapter = new MemeFragmentAdapter(getActivity(), fragmentManager, TAB_TITLES);
+        }
     }
 
     @Override

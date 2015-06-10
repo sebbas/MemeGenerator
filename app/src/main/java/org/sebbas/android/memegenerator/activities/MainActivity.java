@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
@@ -22,7 +23,6 @@ import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.adapter.MainActivityAdapter;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.fragments.EditorFragment;
-import org.sebbas.android.memegenerator.fragments.MemeFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.fragments.SlidingTabsFragment;
 import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
@@ -39,9 +39,9 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
     private static final int FIRST_FRAGMENT_POSITION = 0;
 
     private static int[] TAB_TITLES = {
-            R.string.templates,
+            R.string.memes,
             R.string.gifs,
-            R.string.Editor,
+            R.string.editor,
             R.string.gallery,
             R.string.preferences};
 
@@ -141,7 +141,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
 
         switch(position) {
             case 0:
-                titleResource = R.string.templates;
+                titleResource = R.string.memes;
                 menuResource = R.menu.menu_simple_fragment;
                 break;
             case 1:
@@ -149,7 +149,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
                 menuResource = R.menu.menu_sliding_tabs_fragment;
                 break;
             case 2:
-                titleResource = R.string.Editor;
+                titleResource = R.string.editor;
                 break;
             case 3:
                 titleResource = R.string.gallery;
@@ -206,13 +206,6 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
 
         if (fragment instanceof RecyclerFragment) {
             registerToolbarCallback(fragment);
-
-        } else if (fragment instanceof SlidingTabsFragment) {
-            SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) fragment;
-
-            for (int i = 0; i < 1; i++) {
-                registerToolbarCallback(slidingTabsFragment.getFragmentAt(i));
-            }
         }
     }
 
@@ -231,8 +224,14 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
                 }
             }
             float headerTranslationY = ScrollUtils.getFloat(-(scrollY - mBaseTranslationY), -toolbarHeight, 0);
+
+            // Translate toolbar while scrolling
             ViewPropertyAnimator.animate(mHeaderView).cancel();
             ViewHelper.setTranslationY(mHeaderView, headerTranslationY);
+
+            // Translate footer while scrolling
+            ViewPropertyAnimator.animate(mFooterView).cancel();
+            ViewHelper.setTranslationY(mFooterView, -headerTranslationY);
         }
     }
 
@@ -303,7 +302,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
     }
 
     private BaseFragment getCurrentFragment() {
-        return (BaseFragment) mMainActivityAdapter.getItemAt(mViewPager.getCurrentItem());
+        return getFragmentAt(mViewPager.getCurrentItem());
     }
 
     private void propagateToolbarState(boolean isShown) {
@@ -312,9 +311,6 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
 
         if (fragment instanceof SlidingTabsFragment) {
             SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) fragment;
-
-            // Set scrollY for the fragments that are not created yet
-            slidingTabsFragment.getSlidingTabsAdapter().setScrollY(isShown ? 0 : 1);
 
             // Set scrollY for the active fragments
             for (int i = 0; i < slidingTabsFragment.getChildFragmentCount(); i++) {
@@ -409,7 +405,9 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
     @Override
     public void onFragmentComplete(String fragmentTag) {
 
-        if (fragmentTag.equals(getCurrentFragment().getFragmentTag())) {
+        BaseFragment currentFragment = getCurrentFragment();
+
+        if (fragmentTag.equals(currentFragment.getFragmentTag())) {
             setupSlidingTabsAt(FIRST_FRAGMENT_POSITION);
             registerFragmentToolbarCallbacks(FIRST_FRAGMENT_POSITION);
         }

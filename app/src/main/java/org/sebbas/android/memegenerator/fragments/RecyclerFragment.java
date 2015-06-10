@@ -4,10 +4,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,17 +38,17 @@ public abstract class RecyclerFragment extends BaseFragment implements
     private static final String TAG = "RecyclerFragment";
 
     // Keys for values in bundle
-    public static final String ARG_FRAGMENT_TYPE = "ARG_FRAGMENT_TYPE";
-    public static final String ARG_LAYOUT_MODE = "ARG_LAYOUT_MODE";
-    public static final String ARG_IS_REFRESHABLE = "ARG_IS_REFRESHABLE";
-    public static final String ARG_INITIAL_POSITION = "ARG_INITIAL_POSITION";
+    protected static final String ARG_FRAGMENT_TYPE = "ARG_FRAGMENT_TYPE";
+    protected static final String ARG_LAYOUT_MODE = "ARG_LAYOUT_MODE";
+    protected static final String ARG_IS_REFRESHABLE = "ARG_IS_REFRESHABLE";
+    protected static final String ARG_INITIAL_POSITION = "ARG_INITIAL_POSITION";
 
     // Layout options
     public static final int GRID_LAYOUT = 0;
     public static final int LIST_LAYOUT = 1;
     public static final int SUPER_SLIM_LAYOUT = 2;
-    private static final int GRID_COLUMN_COUNT = 2;
 
+    private static final int GRID_COLUMN_COUNT = 3;
 
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerFragmentAdapter mRecyclerFragmentAdapter;
@@ -58,11 +58,8 @@ public abstract class RecyclerFragment extends BaseFragment implements
     private int mLayoutMode;
     private boolean mIsRefreshable;
     private RecyclerView.AdapterDataObserver mAdapterObserver;
-    private Toolbar mToolbarView;
-    private int mInitialPosition;
     private DataLoader mDataLoader;
     private RecyclerView.LayoutManager mLayoutManager;
-    private int mScrollPosition;
     private Parcelable mRecyclerState;
 
     @Override
@@ -73,13 +70,11 @@ public abstract class RecyclerFragment extends BaseFragment implements
             mFragmentType = args.getString(ARG_FRAGMENT_TYPE);
             mLayoutMode = args.getInt(ARG_LAYOUT_MODE);
             mIsRefreshable = args.getBoolean(ARG_IS_REFRESHABLE, false);
-            mInitialPosition = args.getInt(ARG_INITIAL_POSITION, 0);
         }
         mDataLoader = new DataLoader(this);
     }
 
     public void init(View view) {
-        mToolbarView = (Toolbar) getActivity().findViewById(R.id.toolbar);
 
         mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.recycler_container);
         mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
@@ -244,12 +239,20 @@ public abstract class RecyclerFragment extends BaseFragment implements
         MainActivity parentActivity = (MainActivity) getActivity();
 
         mRecyclerView.setAdapter(mRecyclerFragmentAdapter);
-        mRecyclerView.setHasFixedSize(false);
-        mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.main_container));
+        mRecyclerView.setHasFixedSize(true);
+        //mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.main_container));
 
         switch (mLayoutMode) {
             case GRID_LAYOUT:
-                mRecyclerView.setLayoutManager(new StaggeredGridLayoutManager(GRID_COLUMN_COUNT, StaggeredGridLayoutManager.VERTICAL));
+                final GridLayoutManager manager = new GridLayoutManager(parentActivity,
+                        GRID_COLUMN_COUNT, GridLayoutManager.VERTICAL, false);
+                manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                    @Override
+                    public int getSpanSize(int position) {
+                        return (position == 0) ? manager.getSpanCount() : 1;
+                    }
+                });
+                mRecyclerView.setLayoutManager(manager);
                 break;
             case SUPER_SLIM_LAYOUT:
                 if (mLayoutManager == null) {
@@ -342,6 +345,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
                 position = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
             }
         }
+        Log.d(TAG, "item position is " + position);
         return position;
     }
 
