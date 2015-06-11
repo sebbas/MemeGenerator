@@ -361,6 +361,7 @@ public class DataLoader implements Filterable {
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 mExcludedLineItemPositions = (ArrayList<Integer>) filterResults.values;
 
+                Log.d(TAG, "publish Results");
                 // Notify fragment that filtering has finished
                 mDataLoaderCallback.onFilterComplete();
             }

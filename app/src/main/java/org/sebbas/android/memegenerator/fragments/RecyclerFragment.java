@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
@@ -242,7 +243,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
         mRecyclerView.setAdapter(mRecyclerFragmentAdapter);
         mRecyclerView.setHasFixedSize(true);
-        //mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.main_container));
+        mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.main_container));
 
         switch (mLayoutMode) {
             case GRID_LAYOUT:
@@ -355,6 +356,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     @Override
     public boolean onQueryTextChange(String s) {
+        Log.d(TAG, "onQueryTextChange");
         this.filterDataWith(s);
         //this.recyclerViewMoveUp();
 

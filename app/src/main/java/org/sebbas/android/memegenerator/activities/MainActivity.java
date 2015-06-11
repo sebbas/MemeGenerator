@@ -4,9 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
@@ -80,7 +77,6 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
         slidingTabLayoutMain.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
             }
 
             @Override
@@ -95,17 +91,34 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
 
             @Override
             public void onPageScrollStateChanged(int state) {
-
             }
         });
 
         // Setup top sliding tabs
-        SlidingTabLayout mSlidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
-        mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
-        mSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
-        mSlidingTabLayout.setDistributeEvenly(true);
+        SlidingTabLayout slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+        slidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
+        slidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
+        slidingTabLayout.setDistributeEvenly(true);
+        slidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
 
-        // Setup toolbar and sliding tabs for initial fragment in viewpager
+            @Override
+            public void onPageSelected(int position) {
+                // Close a previously opened search view
+                MainActivity.super.closeSearchView();
+
+                // Make sure that child fragments in slidingtabsfragment register toolbarcallback
+                registerFragmentToolbarCallbacks(mViewPager.getCurrentItem());
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+
+        // Setup toolbar for initial fragment in viewpager
         setupFragmentToolbarAt(FIRST_FRAGMENT_POSITION);
     }
 
@@ -207,6 +220,10 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
 
         if (fragment instanceof RecyclerFragment) {
             registerToolbarCallback(fragment);
+        } else if (fragment instanceof SlidingTabsFragment) {
+            SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) fragment;
+            BaseFragment currentChildFragment = slidingTabsFragment.getCurrentFragment();
+            registerToolbarCallback(currentChildFragment);
         }
     }
 

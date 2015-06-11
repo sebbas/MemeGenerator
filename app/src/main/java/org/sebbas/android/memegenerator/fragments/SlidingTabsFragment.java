@@ -92,15 +92,11 @@ public abstract class SlidingTabsFragment extends BaseFragment {
         return (RecyclerFragment) mSlidingTabsAdapter.instantiateItem(mViewPager, position);
     }
 
-    public SlidingTabsAdapter getSlidingTabsAdapter() {
-        return mSlidingTabsAdapter;
-    }
-
     public int getCurrentPosition() {
         return mViewPager.getCurrentItem();
     }
 
-    public Fragment getCurrentFragment() {
+    public BaseFragment getCurrentFragment() {
         return getFragmentAt(getCurrentPosition());
     }
 }

@@ -19,7 +19,7 @@ package org.sebbas.android.memegenerator.activities;
 import android.app.ActivityManager;
 import android.content.res.TypedArray;
 import android.os.Build;
-import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -27,19 +27,13 @@ import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
-import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
-import com.github.ksoichiro.android.observablescrollview.ScrollState;
-import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
-import com.nineoldandroids.view.ViewHelper;
-import com.nineoldandroids.view.ViewPropertyAnimator;
-
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
-import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
 public abstract class BaseActivity extends ActionBarActivity {
+
+    private MenuItem mSearchMenuItem;
 
     protected int getActionBarSize() {
         TypedValue typedValue = new TypedValue();
@@ -119,6 +113,8 @@ public abstract class BaseActivity extends ActionBarActivity {
     }
 
     private void setupSearchView(MenuItem menuItem, final ToolbarCallback toolbarCallback) {
+        mSearchMenuItem = menuItem;
+
         SearchView searchView = (SearchView) menuItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -131,5 +127,11 @@ public abstract class BaseActivity extends ActionBarActivity {
                 return toolbarCallback.onQueryTextChange(s);
             }
         });
+    }
+
+    public void closeSearchView() {
+        if (mSearchMenuItem != null) {
+            MenuItemCompat.collapseActionView(mSearchMenuItem);
+        }
     }
 }
