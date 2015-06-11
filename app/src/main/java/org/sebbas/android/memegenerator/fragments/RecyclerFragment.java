@@ -48,7 +48,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
     public static final int LIST_LAYOUT = 1;
     public static final int SUPER_SLIM_LAYOUT = 2;
 
-    private static final int GRID_COLUMN_COUNT = 3;
+    private static final int GRID_COLUMN_COUNT = 4;
 
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerFragmentAdapter mRecyclerFragmentAdapter;
@@ -59,7 +59,6 @@ public abstract class RecyclerFragment extends BaseFragment implements
     private boolean mIsRefreshable;
     private RecyclerView.AdapterDataObserver mAdapterObserver;
     private DataLoader mDataLoader;
-    private RecyclerView.LayoutManager mLayoutManager;
     private Parcelable mRecyclerState;
 
     @Override
@@ -255,16 +254,13 @@ public abstract class RecyclerFragment extends BaseFragment implements
                 mRecyclerView.setLayoutManager(manager);
                 break;
             case SUPER_SLIM_LAYOUT:
-                if (mLayoutManager == null) {
-                    mLayoutManager = new LayoutManager(parentActivity);
-                }
-                mRecyclerView.setLayoutManager(mLayoutManager);
+                mRecyclerView.setLayoutManager(new LayoutManager(parentActivity));
                 break;
             case LIST_LAYOUT:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
                 break;
             default:
-                mRecyclerView.setLayoutManager(new LayoutManager(parentActivity));
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
             /*case UIOptions.CARD_LAYOUT:
                 int scrollDuration = getResources().getInteger(R.integer.scroll_duration);
                 mRecyclerView.setLayoutManager(new ScrollingLinearLayoutManager(
@@ -326,7 +322,6 @@ public abstract class RecyclerFragment extends BaseFragment implements
             default:
                 lineItems = mDataLoader.getLineItems();
         }
-        Log.d(TAG, "line items size is: " + lineItems.size());
         mRecyclerFragmentAdapter.setLineItems(lineItems);
     }
 

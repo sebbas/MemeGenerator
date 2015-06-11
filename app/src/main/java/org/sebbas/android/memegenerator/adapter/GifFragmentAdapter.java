@@ -22,7 +22,7 @@ public class GifFragmentAdapter extends SlidingTabsAdapter {
 
         switch (position) {
             case 0:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.GRID_LAYOUT, false);
+                fragment = GifChildFragment.newInstance(RecyclerFragment.GRID_LAYOUT, true);
                 break;
             case 1:
                 fragment = GifChildFragment.newInstance(RecyclerFragment.GRID_LAYOUT, false);

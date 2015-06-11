@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -340,17 +341,16 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
             return;
         }
 
-        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
-
         if (isShown) {
             // Scroll up
             if (fragment.getFirstVisibleItemPosition() == 1) {
-                layoutManager.scrollToPosition(0);
+                // Note: layoutmanager.scrollToPosition() does not work for some reason
+                recyclerView.scrollVerticallyToPosition(0);
             }
         } else {
             // Scroll down (to hide padding)
             if (fragment.getFirstVisibleItemPosition() == 0) {
-                layoutManager.scrollToPosition(1);
+                recyclerView.scrollVerticallyToPosition(1);
             }
         }
     }
