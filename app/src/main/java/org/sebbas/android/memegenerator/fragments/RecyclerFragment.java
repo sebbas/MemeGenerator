@@ -7,10 +7,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout;
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
@@ -19,6 +17,7 @@ import com.github.mrengineer13.snackbar.SnackBar;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.tonicartos.superslim.LayoutManager;
 
+import org.sebbas.android.memegenerator.GridSpacingItemDecoration;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.dataloader.DataLoader;
@@ -48,7 +47,10 @@ public abstract class RecyclerFragment extends BaseFragment implements
     public static final int LIST_LAYOUT = 1;
     public static final int SUPER_SLIM_LAYOUT = 2;
 
-    private static final int GRID_COLUMN_COUNT = 4;
+    // Specific setup for grid layout
+    private static final int GRID_COLUMN_COUNT = 3;
+    private static final int GRID_SPACING = 5;
+    private static final boolean GRID_INCLUDE_EDGE = true;
 
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerFragmentAdapter mRecyclerFragmentAdapter;
@@ -182,6 +184,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     @Override
     public void onFilterComplete() {
+        Log.d(TAG, "onFilterComplete");
         this.updateLineItems();
         this.refreshAdapter();
     }
@@ -252,6 +255,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
                     }
                 });
                 mRecyclerView.setLayoutManager(manager);
+                mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(GRID_COLUMN_COUNT, GRID_SPACING, GRID_INCLUDE_EDGE));
                 break;
             case SUPER_SLIM_LAYOUT:
                 mRecyclerView.setLayoutManager(new LayoutManager(parentActivity));

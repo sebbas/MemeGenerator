@@ -127,6 +127,7 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
                         .error(android.R.color.holo_red_dark)
                         .resize(CORNER_RADIUS, CORNER_RADIUS)
                         .centerCrop()
+                        .crossfade(true)
                         .transform(trans)
                         .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(),
                                 Utils.IMAGE_SMALL));

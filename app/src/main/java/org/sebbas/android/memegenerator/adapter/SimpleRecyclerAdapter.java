@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.bitmap.Transform;
+import com.makeramen.roundedimageview.RoundedDrawable;
 
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
@@ -29,6 +30,7 @@ public class SimpleRecyclerAdapter extends RecyclerFragmentAdapter {
 
     private static final int VIEW_TYPE_FILLER = 0;
     private static final int VIEW_TYPE_CONTENT = 1;
+    private static final int CORNER_RADIUS = 250;
 
     private Context mContext;
 
@@ -83,9 +85,6 @@ public class SimpleRecyclerAdapter extends RecyclerFragmentAdapter {
             Ion.with(squareViewHolder.imageView)
                     .placeholder(android.R.color.holo_blue_bright)
                     .error(android.R.color.holo_red_dark)
-                            //.animateLoad(spinAnimation)
-                            //.animateIn(fadeInAnimation)
-                    //.resize(0, Utils.DEFAULT_MAX_BITMAP_DIMENSION)
                     .centerCrop()
                     .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(),
                             Utils.IMAGE_SMALL));
