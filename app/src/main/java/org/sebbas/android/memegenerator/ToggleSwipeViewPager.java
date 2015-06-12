@@ -7,10 +7,12 @@ import android.view.MotionEvent;
 
 public class ToggleSwipeViewPager extends ViewPager {
     private boolean mSwipeEnabled;
+    private boolean mSmoothScrollEnabled;
 
     public ToggleSwipeViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
         mSwipeEnabled = true;
+        mSmoothScrollEnabled = true;
     }
 
     @Override
@@ -39,5 +41,19 @@ public class ToggleSwipeViewPager extends ViewPager {
      */
     public void setPagingEnabled(boolean enabled) {
         mSwipeEnabled = enabled;
+    }
+
+    public void setSmoothScrollEnabled(boolean enabled) {
+        mSmoothScrollEnabled = enabled;
+    }
+
+    @Override
+    public void setCurrentItem(int item) {
+        setCurrentItem(item, mSmoothScrollEnabled);
+    }
+
+    @Override
+    public void setCurrentItem(int item, boolean smoothScroll) {
+        super.setCurrentItem(item, mSmoothScrollEnabled);
     }
 }

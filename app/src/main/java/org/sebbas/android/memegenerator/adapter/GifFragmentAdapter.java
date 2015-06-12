@@ -17,7 +17,7 @@ public class GifFragmentAdapter extends SlidingTabsAdapter {
     }
 
     @Override
-    public Fragment getItem(int position) {
+    protected Fragment createItem(int position) {
         Fragment fragment;
 
         switch (position) {

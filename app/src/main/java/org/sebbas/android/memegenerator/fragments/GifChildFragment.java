@@ -49,12 +49,6 @@ public class GifChildFragment extends RecyclerFragment {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        //super.onFragmentComplete(this);
-    }
-
-    @Override
     public String getFragmentTag() {
         return TAG;
     }

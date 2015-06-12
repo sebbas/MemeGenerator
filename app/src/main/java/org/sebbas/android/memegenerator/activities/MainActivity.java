@@ -35,6 +35,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
     private static final String TAG = "MainActivity";
     private static final int OFF_SCREEN_LIMIT = 5;
     private static final boolean IS_SWIPEABLE = false;
+    private static final boolean IS_SMOOTH_SCROLL = false;
 
     private static final int[] LAST_FRAGMENT_POSITIONS = new int[2];
     private static final int[] TAB_TITLES = {
@@ -66,6 +67,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
 
         mViewPager = (ToggleSwipeViewPager) findViewById(R.id.toogle_swipe_viewpager);
         mViewPager.setPagingEnabled(IS_SWIPEABLE);
+        mViewPager.setSmoothScrollEnabled(IS_SMOOTH_SCROLL);
         mViewPager.setAdapter(mMainActivityAdapter);
         mViewPager.setOffscreenPageLimit(OFF_SCREEN_LIMIT);
 
@@ -277,6 +279,18 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
             return;
         }
 
+        if (fragment instanceof RecyclerFragment) {
+
+            View view = fragment.getView();
+            if (view == null) {
+                return;
+            }
+
+            // ObservableXxxViews have same API
+            // but currently they don't have any common interfaces.
+            adjustToolbar(scrollState, view);
+        }
+
         if (fragment instanceof SlidingTabsFragment) {
             SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) fragment;
 
@@ -372,6 +386,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
         if (recyclerView == null) {
             return;
         }
+
 
         if (isShown) {
             // Scroll up
