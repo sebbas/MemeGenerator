@@ -18,22 +18,21 @@ public class MemeFragmentAdapter extends SlidingTabsAdapter {
     }
 
     @Override
-    protected Fragment createItem(int position) {
+    public Fragment getItem(int position) {
         Fragment fragment;
 
         switch (position) {
             case 0:
-                fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, true);
+                fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, false, position);
                 break;
             case 1:
-                fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, true);
+                fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, false, position);
                 break;
             case 2:
-                fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, true);
+                fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, false, position);
                 break;
             default:
-                fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, true);
-                break;
+                fragment = MemeChildFragment.newInstance(RecyclerFragment.SUPER_SLIM_LAYOUT, false, position);
         }
         return fragment;
     }

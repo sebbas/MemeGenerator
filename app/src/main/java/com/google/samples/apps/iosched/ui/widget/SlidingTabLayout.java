@@ -303,7 +303,6 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 mViewPagerPageChangeListener.onPageSelected(position);
             }
         }
-
     }
 
     private class TabClickListener implements OnClickListener {
@@ -316,6 +315,10 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 }
             }
         }
+    }
+
+    public void refreshTabStrip(int position, int offset) {
+        mTabStrip.onViewPagerPageChanged(position, offset);
     }
 
 }

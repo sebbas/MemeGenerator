@@ -20,12 +20,13 @@ public class MemeChildFragment extends RecyclerFragment {
 
     public static final String TAG = "MemeChildFragment";
 
-    public static MemeChildFragment newInstance(int layoutMode, boolean isRefreshable) {
+    public static MemeChildFragment newInstance(int layoutMode, boolean isRefreshable, int position) {
         MemeChildFragment fragment = new MemeChildFragment();
         Bundle args = new Bundle();
         args.putString(ARG_FRAGMENT_TYPE, TAG);
         args.putInt(ARG_LAYOUT_MODE, layoutMode);
         args.putBoolean(ARG_IS_REFRESHABLE, isRefreshable);
+        args.putInt(ARG_POSITION_IN_PARENT, position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -44,10 +45,16 @@ public class MemeChildFragment extends RecyclerFragment {
 
         // Create the view
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
-        super.init(view);
         super.with(superSlimRecyclerAdapter);
+        super.init(view);
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        //super.onFragmentComplete(this);
     }
 
     @Override

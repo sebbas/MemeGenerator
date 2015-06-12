@@ -40,5 +40,4 @@ public class ToggleSwipeViewPager extends ViewPager {
     public void setPagingEnabled(boolean enabled) {
         mSwipeEnabled = enabled;
     }
-
 }

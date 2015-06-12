@@ -17,22 +17,21 @@ public class GifFragmentAdapter extends SlidingTabsAdapter {
     }
 
     @Override
-    protected Fragment createItem(int position) {
+    public Fragment getItem(int position) {
         Fragment fragment;
 
         switch (position) {
             case 0:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.GRID_LAYOUT, true);
+                fragment = GifChildFragment.newInstance(RecyclerFragment.GRID_LAYOUT, false, position);
                 break;
             case 1:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.GRID_LAYOUT, false);
+                fragment = GifChildFragment.newInstance(RecyclerFragment.GRID_LAYOUT, false, position);
                 break;
             case 2:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.GRID_LAYOUT, false);
+                fragment = GifChildFragment.newInstance(RecyclerFragment.GRID_LAYOUT, false, position);
                 break;
             default:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.GRID_LAYOUT, false);
-                break;
+                fragment = GifChildFragment.newInstance(RecyclerFragment.GRID_LAYOUT, false, position);
         }
         return fragment;
     }

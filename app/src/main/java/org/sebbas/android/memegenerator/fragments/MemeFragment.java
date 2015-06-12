@@ -2,6 +2,7 @@ package org.sebbas.android.memegenerator.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,12 @@ public class MemeFragment extends SlidingTabsFragment {
 
     private MemeFragmentAdapter mMemeFragmentAdapter;
 
-    public static MemeFragment newInstance() {
-        return new MemeFragment();
+    public static MemeFragment newInstance(int position) {
+        MemeFragment memeFragment = new MemeFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_POSITION_IN_PARENT, position);
+        memeFragment.setArguments(args);
+        return memeFragment;
     }
 
     @Override
@@ -40,15 +45,10 @@ public class MemeFragment extends SlidingTabsFragment {
         super.onCreateView(inflater, container, bundle);
         View view = inflater.inflate(R.layout.fragment_slidingtabs, container, false);
 
-        super.init(view, mMemeFragmentAdapter, true, OFF_SCREEN_LIMIT);
+        super.with(mMemeFragmentAdapter);
+        super.init(view, true, OFF_SCREEN_LIMIT);
 
         return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        super.onFragmentComplete(TAG);
     }
 
     @Override

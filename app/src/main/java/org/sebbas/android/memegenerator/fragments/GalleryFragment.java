@@ -22,8 +22,12 @@ public class GalleryFragment extends SlidingTabsFragment {
 
     private GalleryFragmentAdapter mGalleryFragmentAdapter;
 
-    public static GalleryFragment newInstance() {
-        return new GalleryFragment();
+    public static GalleryFragment newInstance(int position) {
+        GalleryFragment galleryFragment = new GalleryFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_POSITION_IN_PARENT, position);
+        galleryFragment.setArguments(args);
+        return galleryFragment;
     }
 
     @Override
@@ -38,15 +42,10 @@ public class GalleryFragment extends SlidingTabsFragment {
         super.onCreateView(inflater, container, bundle);
         View view = inflater.inflate(R.layout.fragment_slidingtabs, container, false);
 
-        super.init(view, mGalleryFragmentAdapter, true, OFF_SCREEN_LIMIT);
+        super.with(mGalleryFragmentAdapter);
+        super.init(view, true, OFF_SCREEN_LIMIT);
 
         return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        super.onFragmentComplete(TAG);
     }
     
     @Override

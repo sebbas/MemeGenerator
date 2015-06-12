@@ -3,6 +3,7 @@ package org.sebbas.android.memegenerator.fragments;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,7 +42,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
     protected static final String ARG_FRAGMENT_TYPE = "ARG_FRAGMENT_TYPE";
     protected static final String ARG_LAYOUT_MODE = "ARG_LAYOUT_MODE";
     protected static final String ARG_IS_REFRESHABLE = "ARG_IS_REFRESHABLE";
-    protected static final String ARG_INITIAL_POSITION = "ARG_INITIAL_POSITION";
+    protected static final String ARG_POSITION_IN_PARENT = "ARG_POSITION_IN_PARENT";
 
     // Layout options
     public static final int GRID_LAYOUT = 0;
@@ -63,6 +64,8 @@ public abstract class RecyclerFragment extends BaseFragment implements
     private RecyclerView.AdapterDataObserver mAdapterObserver;
     private DataLoader mDataLoader;
     private Parcelable mRecyclerState;
+    private int mPositionInParent;
+    private boolean mIsVisibleToUser;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,6 +75,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
             mFragmentType = args.getString(ARG_FRAGMENT_TYPE);
             mLayoutMode = args.getInt(ARG_LAYOUT_MODE);
             mIsRefreshable = args.getBoolean(ARG_IS_REFRESHABLE, false);
+            mPositionInParent = args.getInt(ARG_POSITION_IN_PARENT, 0);
         }
         mDataLoader = new DataLoader(this);
     }
@@ -92,6 +96,13 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
         // Bring activity ui elements to front
         getActivity().findViewById(R.id.header).bringToFront();
+
+        setupRecyclerView();
+        updatePlaceholder();
+        setupSwipeRefreshLayout();
+        restoreRecylerViewState();
+
+        super.onFragmentComplete(this);
     }
 
     public void with(RecyclerFragmentAdapter recyclerFragmentAdapter) {
@@ -103,16 +114,6 @@ public abstract class RecyclerFragment extends BaseFragment implements
         super.onDestroyView();
         BaseActivity parentActivity = (BaseActivity) getActivity();
         parentActivity.unregisterToolbarCallback();
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        setupRecyclerView();
-        updatePlaceholder();
-        setupSwipeRefreshLayout();
-        restoreRecylerViewState();
     }
 
     @Override
@@ -345,7 +346,20 @@ public abstract class RecyclerFragment extends BaseFragment implements
                 position = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
             }
         }
-        Log.d(TAG, "item position is " + position);
+        return position;
+    }
+
+    public int getPositionInParent() {
+        return mPositionInParent;
+    }
+
+    public int getParentPosition() {
+        int position = -1;
+        Fragment parentFragment = getParentFragment();
+        if (parentFragment instanceof SlidingTabsFragment) {
+            SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) parentFragment;
+            position = slidingTabsFragment.getPositionInParent();
+        }
         return position;
     }
 
@@ -356,7 +370,6 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     @Override
     public boolean onQueryTextChange(String s) {
-        Log.d(TAG, "onQueryTextChange");
         this.filterDataWith(s);
         //this.recyclerViewMoveUp();
 
@@ -365,5 +378,15 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     @Override
     public void onBackPressed() {
+    }
+
+    public boolean isIsVisibleToUser() {
+        return mIsVisibleToUser;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        mIsVisibleToUser = isVisibleToUser;
     }
 }

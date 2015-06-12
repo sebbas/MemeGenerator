@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
 import android.view.View;
 
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
@@ -14,6 +15,7 @@ import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.adapter.SlidingTabsAdapter;
+import org.sebbas.android.memegenerator.dataloader.DataLoader;
 
 import java.lang.reflect.Field;
 
@@ -21,30 +23,47 @@ import java.lang.reflect.Field;
 public abstract class SlidingTabsFragment extends BaseFragment {
 
     private static final String TAG = "SlidingTabsFragment";
+    protected static final String ARG_POSITION_IN_PARENT = "ARG_POSITION_IN_PARENT";
 
     private SlidingTabsAdapter mSlidingTabsAdapter;
     private ToggleSwipeViewPager mViewPager;
     private FragmentManager mRetainedChildFragmentManager;
+    private int mLastPage;
+    private int mPositionInParent;
 
-    public void init(View view, SlidingTabsAdapter fragmentAdapter, boolean isSwipeable, int offScreenLimit) {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle args = getArguments();
+        if (args != null) {
+            mPositionInParent = args.getInt(ARG_POSITION_IN_PARENT, 0);
+        }
+    }
+    public void init(View view, boolean isSwipeable, int offScreenLimit) {
 
         mViewPager = (ToggleSwipeViewPager) view.findViewById(R.id.toogle_swipe_viewpager);
+        mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                mLastPage = position;
+            }
+        });
 
-        // TODO move this to with()?
-        mSlidingTabsAdapter = fragmentAdapter;
         mViewPager.setPagingEnabled(isSwipeable);
-        mViewPager.setAdapter(fragmentAdapter);
         mViewPager.setOffscreenPageLimit(offScreenLimit);
+        mViewPager.setAdapter(mSlidingTabsAdapter);
 
         // Padding for tabs (only in portrait mode)
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
             getActivity().findViewById(R.id.main_container).setPadding(0, tabHeight, 0, 0);
         }
+        super.onFragmentComplete(this);
     }
 
-    public void with(SlidingTabsAdapter fragmentAdapter, boolean isSwipeable, int offScreenLimit) {
-
+    public void with(SlidingTabsAdapter fragmentAdapter) {
+        mSlidingTabsAdapter = fragmentAdapter;
     }
 
     public ViewPager getViewPager() {
@@ -88,15 +107,23 @@ public abstract class SlidingTabsFragment extends BaseFragment {
         return mViewPager.getChildCount();
     }
 
-    public RecyclerFragment getFragmentAt(int position) {
-        return (RecyclerFragment) mSlidingTabsAdapter.instantiateItem(mViewPager, position);
+    public Fragment getFragmentAt(int position) {
+        return  mSlidingTabsAdapter.getRegisteredFragment(position);
     }
 
     public int getCurrentPosition() {
         return mViewPager.getCurrentItem();
     }
 
-    public BaseFragment getCurrentFragment() {
-        return getFragmentAt(getCurrentPosition());
+    public Fragment getCurrentFragment() {
+        return mSlidingTabsAdapter.getRegisteredFragment(getCurrentPosition());
+    }
+
+    public int getLastPage() {
+        return mLastPage;
+    }
+
+    public int getPositionInParent() {
+        return mPositionInParent;
     }
 }

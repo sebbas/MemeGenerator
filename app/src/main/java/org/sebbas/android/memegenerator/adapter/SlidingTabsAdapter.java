@@ -3,20 +3,26 @@ package org.sebbas.android.memegenerator.adapter;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
+import android.util.SparseArray;
+import android.view.ViewGroup;
 
 import com.github.ksoichiro.android.observablescrollview.CacheFragmentStatePagerAdapter;
 
 import org.sebbas.android.memegenerator.Utils;
+import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.fragments.SlidingTabsFragment;
 
 
-public abstract class SlidingTabsAdapter extends CacheFragmentStatePagerAdapter {
+public abstract class SlidingTabsAdapter extends FragmentStatePagerAdapter {
 
     private static final String TAG = "SlidingTabsFragmentAdapter";
 
     private Context mContext;
     private int[] mTitleResources;
-    private int mScrollY;
+    private SparseArray<Fragment> mRegisteredFragments;
+
 
     public SlidingTabsAdapter(Context context, FragmentManager fragmentManager,
                               int[] titleResources) {
@@ -24,6 +30,10 @@ public abstract class SlidingTabsAdapter extends CacheFragmentStatePagerAdapter 
 
         mContext = context;
         mTitleResources = titleResources;
+
+        if (mRegisteredFragments == null) {
+            mRegisteredFragments = new SparseArray<>();
+        }
     }
 
     @Override
@@ -40,11 +50,21 @@ public abstract class SlidingTabsAdapter extends CacheFragmentStatePagerAdapter 
         return Utils.resourceArrayToStringArray(mContext, mTitleResources);
     }
 
-    public void setScrollY(int scrollY) {
-        mScrollY = scrollY;
+    public Fragment getRegisteredFragment(int position) {
+        Log.d(TAG, "size is " + mRegisteredFragments.size());
+        return mRegisteredFragments.get(position);
     }
 
-    public int getScrollY() {
-        return mScrollY;
+    @Override
+    public void destroyItem(ViewGroup container, int position, Object object) {
+        mRegisteredFragments.remove(position);
+        super.destroyItem(container, position, object);
+    }
+
+    @Override
+    public Object instantiateItem(ViewGroup container, int position) {
+        Fragment fragment = (Fragment) super.instantiateItem(container, position);
+        mRegisteredFragments.put(position, fragment);
+        return fragment;
     }
 }

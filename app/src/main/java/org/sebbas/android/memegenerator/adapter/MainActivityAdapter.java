@@ -34,21 +34,29 @@ public class MainActivityAdapter extends SlidingTabsAdapter {
     }
 
     @Override
-    protected Fragment createItem(int position) {
+    public Fragment getItem(int position) {
+        Fragment fragment;
+
         switch (position) {
             case 0:
-                return MemeFragment.newInstance();
+                fragment = MemeFragment.newInstance(position);
+                break;
             case 1:
-                return GifFragment.newInstance();
+                fragment = GifFragment.newInstance(position);
+                break;
             case 2:
-                return EditorFragment.newInstance();
+                fragment = EditorFragment.newInstance(position);
+                break;
             case 3:
-                return GalleryFragment.newInstance();
+                fragment = GalleryFragment.newInstance(position);
+                break;
             case 4:
-                return SimplePreferenceFragment.newInstance();
+                fragment = SimplePreferenceFragment.newInstance(position);
+                break;
             default:
-                return MemeFragment.newInstance();
+                fragment = MemeFragment.newInstance(position);
         }
+        return fragment;
     }
 
     @Override

@@ -14,12 +14,13 @@ public class SimplePreferenceFragment extends RecyclerFragment {
 
     private PreferencesAdapter mPreferencesAdapter;
 
-    public static SimplePreferenceFragment newInstance() {
+    public static SimplePreferenceFragment newInstance(int position) {
         SimplePreferenceFragment fragment = new SimplePreferenceFragment();
         Bundle args = new Bundle();
-        args.putString("fragment_type", TAG);
-        args.putInt("layout_mode", RecyclerFragment.LIST_LAYOUT);
-        args.putBoolean("refreshable", false);
+        args.putString(ARG_FRAGMENT_TYPE, TAG);
+        args.putInt(ARG_LAYOUT_MODE, RecyclerFragment.LIST_LAYOUT);
+        args.putBoolean(ARG_IS_REFRESHABLE, false);
+        args.putInt(ARG_POSITION_IN_PARENT, position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -36,8 +37,8 @@ public class SimplePreferenceFragment extends RecyclerFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
 
-        super.init(view);
         super.with(mPreferencesAdapter);
+        super.init(view);
 
         return view;
     }
@@ -45,7 +46,7 @@ public class SimplePreferenceFragment extends RecyclerFragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        super.onFragmentComplete(TAG);
+        super.onFragmentComplete(this);
     }
 
     @Override

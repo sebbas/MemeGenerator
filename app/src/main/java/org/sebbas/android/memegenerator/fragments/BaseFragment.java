@@ -44,8 +44,8 @@ public abstract class BaseFragment extends Fragment {
         }
     }
 
-    protected void onFragmentComplete(String fragmentTag) {
-        mFragmentCallback.onFragmentComplete(fragmentTag);
+    protected void onFragmentComplete(BaseFragment baseFragment) {
+        mFragmentCallback.onFragmentComplete(baseFragment);
     }
 
     abstract public String getFragmentTag();

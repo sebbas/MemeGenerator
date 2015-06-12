@@ -124,7 +124,7 @@ public class DataLoader implements Filterable {
             if (i == 0) {
                 resultItems.add(LineItem.newHeaderInstance(""));
             } else {
-                boolean isAllowedPosition = isAllowedPosition(i);
+                boolean isAllowedPosition = isAllowedPosition(i - 1);
                 if (isAllowedPosition) {
                     String title = getTitleAt(i - 1);
                     String imageUrl = getImageUrlAt(i - 1);
@@ -361,7 +361,6 @@ public class DataLoader implements Filterable {
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
                 mExcludedLineItemPositions = (ArrayList<Integer>) filterResults.values;
 
-                Log.d(TAG, "publish Results");
                 // Notify fragment that filtering has finished
                 mDataLoaderCallback.onFilterComplete();
             }

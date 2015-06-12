@@ -12,7 +12,7 @@ import com.squareup.picasso.Picasso;
 
 import org.sebbas.android.memegenerator.R;
 
-public class EditorFragment extends SimpleFragment {
+public class EditorFragment extends RecyclerFragment {
 
     private static final String TAG = "EditorFragment";
 
@@ -23,8 +23,12 @@ public class EditorFragment extends SimpleFragment {
     private int mImageWidth;
     private int mImageHeight;
 
-    public static EditorFragment newInstance() {
-        return new EditorFragment();
+    public static EditorFragment newInstance(int position) {
+        EditorFragment editorFragment = new EditorFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_POSITION_IN_PARENT, position);
+        editorFragment.setArguments(args);
+        return editorFragment;
     }
 
     @Override
@@ -45,8 +49,6 @@ public class EditorFragment extends SimpleFragment {
 
         mImageView = (ImageView) view.findViewById(R.id.item_image);
 
-        //setupFragmentToolbarAt(0);
-        //registerFragmentToolbarCallbacks(0);
         return view;
     }
 
@@ -74,17 +76,4 @@ public class EditorFragment extends SimpleFragment {
         return TAG;
     }
 
-    /*@Override
-    void setupFragmentToolbarAt(int position) {
-        int titleResource = R.string.editor;
-        int menuResource = R.menu.menu_simple_fragment;
-
-        BaseActivity parentActivity = (BaseActivity) getActivity();
-        parentActivity.setupToolbar(titleResource, menuResource, true);
-    }
-
-    @Override
-    void registerFragmentToolbarCallbacks(int position) {
-        ((BaseActivity) getActivity()).registerToolbarCallback(this);
-    }*/
 }

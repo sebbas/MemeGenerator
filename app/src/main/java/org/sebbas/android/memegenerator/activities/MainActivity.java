@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
@@ -34,9 +35,9 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
     private static final String TAG = "MainActivity";
     private static final int OFF_SCREEN_LIMIT = 5;
     private static final boolean IS_SWIPEABLE = false;
-    private static final int FIRST_FRAGMENT_POSITION = 0;
 
-    private static int[] TAB_TITLES = {
+    private static final int[] LAST_FRAGMENT_POSITIONS = new int[2];
+    private static final int[] TAB_TITLES = {
             R.string.memes,
             R.string.gifs,
             R.string.editor,
@@ -81,8 +82,9 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
 
             @Override
             public void onPageSelected(int position) {
+                LAST_FRAGMENT_POSITIONS[0] = position;
                 setupFragmentToolbarAt(position);
-                setupSlidingTabsAt(position);
+                setupSlidingTabsAt(position, getFragmentAt(position));
                 registerFragmentToolbarCallbacks(position);
 
                 // Make sure that toolbar is shown when other page is selected
@@ -106,6 +108,8 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
 
             @Override
             public void onPageSelected(int position) {
+                LAST_FRAGMENT_POSITIONS[1] = position;
+
                 // Close a previously opened search view
                 MainActivity.super.closeSearchView();
 
@@ -119,7 +123,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
         });
 
         // Setup toolbar for initial fragment in viewpager
-        setupFragmentToolbarAt(FIRST_FRAGMENT_POSITION);
+        setupFragmentToolbarAt(getCurrentPosition());
     }
 
     @Override
@@ -130,13 +134,13 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
         int imageWidth = lineItem.getImageWidth();
         int imageHeight = lineItem.getImageHeight();
 
-        EditorFragment editorFragment = EditorFragment.newInstance();
+        EditorFragment editorFragment = EditorFragment.newInstance(0);
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        //fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         fragmentTransaction.add(R.id.main_container, editorFragment, EditorFragment.class.getName());
         fragmentTransaction.addToBackStack(EditorFragment.class.getName());
-        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
+        //fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
         fragmentTransaction.commit();
     }
 
@@ -180,23 +184,22 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
         setupToolbar(titleResource, menuResource, false);
     }
 
-    private void setupSlidingTabsAt(int position) {
+    private void setupSlidingTabsAt(int position, Fragment fragment) {
         SlidingTabLayout slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+
+        // Setup visibility of tabs layout
         switch(position) {
             case 0:
                 slidingTabLayout.setVisibility(View.VISIBLE);
-                setSlidingTabsViewPagerAt(position);
                 break;
             case 1:
                 slidingTabLayout.setVisibility(View.VISIBLE);
-                setSlidingTabsViewPagerAt(position);
                 break;
             case 2:
                 slidingTabLayout.setVisibility(View.GONE);
                 break;
             case 3:
                 slidingTabLayout.setVisibility(View.VISIBLE);
-                setSlidingTabsViewPagerAt(position);
                 break;
             case 4:
                 slidingTabLayout.setVisibility(View.GONE);
@@ -205,30 +208,38 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
                 slidingTabLayout.setVisibility(View.GONE);
                 break;
         }
-    }
 
-    private void setSlidingTabsViewPagerAt(int position) {
-        SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) getFragmentAt(position);
-        SlidingTabLayout slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
-
-        ViewPager pager = slidingTabsFragment.getViewPager();
-        slidingTabLayout.setViewPager(pager);
-    }
-
-    private void registerFragmentToolbarCallbacks(int position) {
-        BaseFragment fragment = getFragmentAt(position);
-
-        if (fragment instanceof RecyclerFragment) {
-            registerToolbarCallback(fragment);
-        } else if (fragment instanceof SlidingTabsFragment) {
+        // Setup viewpager for tabs layout
+        if (fragment != null && fragment instanceof SlidingTabsFragment) {
             SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) fragment;
-            BaseFragment currentChildFragment = slidingTabsFragment.getCurrentFragment();
-            registerToolbarCallback(currentChildFragment);
+
+            // Set the pager
+            ViewPager pager = slidingTabsFragment.getViewPager();
+            slidingTabLayout.setViewPager(pager);
+
+            // Set the tab strip to the last known position
+            int currentTab = slidingTabsFragment.getLastPage();
+            slidingTabLayout.refreshTabStrip(currentTab, 0);
         }
     }
 
-    private BaseFragment getFragmentAt(int position) {
-        return (BaseFragment) mMainActivityAdapter.instantiateItem(mViewPager, position);
+    private void registerFragmentToolbarCallbacks(int position) {
+        this.registerFragmentToolbarCallbacks(getFragmentAt(position));
+    }
+
+    private void registerFragmentToolbarCallbacks(Fragment fragment) {
+        if (fragment instanceof RecyclerFragment) {
+            super.registerToolbarCallback(fragment);
+
+        } else if (fragment instanceof SlidingTabsFragment) {
+            SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) fragment;
+            BaseFragment currentChildFragment = (BaseFragment) slidingTabsFragment.getCurrentFragment();
+            super.registerToolbarCallback(currentChildFragment);
+        }
+    }
+
+    private Fragment getFragmentAt(int position) {
+        return  mMainActivityAdapter.getRegisteredFragment(position); //(BaseFragment) mMainActivityAdapter.instantiateItem(mViewPager, position);
     }
 
     @Override
@@ -319,8 +330,12 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
         }
     }
 
-    private BaseFragment getCurrentFragment() {
-        return getFragmentAt(mViewPager.getCurrentItem());
+    private Fragment getCurrentFragment() {
+        return mMainActivityAdapter.getRegisteredFragment(getCurrentPosition());
+    }
+
+    private int getCurrentPosition() {
+        return mViewPager.getCurrentItem();
     }
 
     private void propagateToolbarState(boolean isShown) {
@@ -338,7 +353,7 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
                 }
 
                 // Skip destroyed or not created item
-                RecyclerFragment childFragment = slidingTabsFragment.getFragmentAt(i);
+                RecyclerFragment childFragment = (RecyclerFragment) slidingTabsFragment.getFragmentAt(i);
                 if (childFragment == null) {
                     continue;
                 }
@@ -420,13 +435,28 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
     }
 
     @Override
-    public void onFragmentComplete(String fragmentTag) {
+    public void onFragmentComplete(BaseFragment baseFragment) {
 
-        BaseFragment currentFragment = getCurrentFragment();
+        if (baseFragment instanceof SlidingTabsFragment) {
+            SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) baseFragment;
+            int lastPosition = LAST_FRAGMENT_POSITIONS[0];
+            int fragmentPosition = slidingTabsFragment.getPositionInParent();
+            if (lastPosition == fragmentPosition) {
+                setupSlidingTabsAt(fragmentPosition, baseFragment);
+            }
+        }
 
-        if (fragmentTag.equals(currentFragment.getFragmentTag())) {
-            setupSlidingTabsAt(FIRST_FRAGMENT_POSITION);
-            registerFragmentToolbarCallbacks(FIRST_FRAGMENT_POSITION);
+        if (baseFragment instanceof RecyclerFragment) {
+            RecyclerFragment recyclerFragment = (RecyclerFragment) baseFragment;
+            int lastParentPosition = LAST_FRAGMENT_POSITIONS[0];
+            int fragmentParentPosition = recyclerFragment.getParentPosition();
+
+            int lastPosition = LAST_FRAGMENT_POSITIONS[1];
+            int fragmentPosition = recyclerFragment.getPositionInParent();
+
+            if (lastParentPosition == fragmentParentPosition && lastPosition == fragmentPosition) {
+                registerToolbarCallback(recyclerFragment);
+            }
         }
     }
 }

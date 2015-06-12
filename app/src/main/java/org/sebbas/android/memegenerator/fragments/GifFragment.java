@@ -21,8 +21,12 @@ public class GifFragment extends SlidingTabsFragment {
 
     private GifFragmentAdapter mGifFragmentAdapter;
 
-    public static GifFragment newInstance() {
-        return new GifFragment();
+    public static GifFragment newInstance(int position) {
+        GifFragment gifFragment = new GifFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_POSITION_IN_PARENT, position);
+        gifFragment.setArguments(args);
+        return gifFragment;
     }
 
     @Override
@@ -40,15 +44,10 @@ public class GifFragment extends SlidingTabsFragment {
         super.onCreateView(inflater, container, bundle);
         View view = inflater.inflate(R.layout.fragment_slidingtabs, container, false);
 
-        super.init(view, mGifFragmentAdapter, true, OFF_SCREEN_LIMIT);
+        super.with(mGifFragmentAdapter);
+        super.init(view, true, OFF_SCREEN_LIMIT);
 
         return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        super.onFragmentComplete(TAG);
     }
 
     @Override

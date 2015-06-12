@@ -14,13 +14,13 @@ public class GalleryChildFragment extends RecyclerFragment {
 
     private CardsRecyclerAdapter mCardsRecyclerAdapter;
 
-    public static GalleryChildFragment newInstance(int layoutMode, boolean isRefreshable, int scrollY) {
+    public static GalleryChildFragment newInstance(int layoutMode, boolean isRefreshable, int position) {
         GalleryChildFragment fragment = new GalleryChildFragment();
         Bundle args = new Bundle();
         args.putString(ARG_FRAGMENT_TYPE, TAG);
         args.putInt(ARG_LAYOUT_MODE, layoutMode);
         args.putBoolean(ARG_IS_REFRESHABLE, isRefreshable);
-        args.putInt(ARG_INITIAL_POSITION, scrollY);
+        args.putInt(ARG_POSITION_IN_PARENT, position);
         fragment.setArguments(args);
         return fragment;
     }
