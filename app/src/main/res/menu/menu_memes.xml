@@ -11,6 +11,12 @@
         app:showAsAction="collapseActionView|ifRoom"
         app:actionViewClass="android.support.v7.widget.SearchView" />
 
+    <item
+        android:id="@+id/menu_image"
+        android:title="@string/action_image"
+        android:icon="@drawable/ic_photo_camera_white_24dp"
+        app:showAsAction="collapseActionView|ifRoom" />
+
    <!-- <item
         android:id="@+id/menu_settings"
         android:title="@string/action_settings"

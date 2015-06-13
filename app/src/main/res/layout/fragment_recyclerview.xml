@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.example.android.swiperefreshmultipleviews.MultiSwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:recyclerviewfastscroller="http://schemas.android.com/apk/res-auto"
     android:id="@+id/recycler_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -13,7 +14,27 @@
             android:id="@+id/scroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="none"/>
+            android:scrollbars="none"
+            android:fadeScrollbars="true" />
+
+        <xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller
+            android:id="@+id/fast_scroller"
+            android:layout_width="@dimen/fast_scroller_width"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+
+            recyclerviewfastscroller:rfs_barColor="@color/accent"
+            recyclerviewfastscroller:rfs_handleBackground="@drawable/fast_scroller_handle" />
+
+        <org.sebbas.android.memegenerator.ScrollBarSectionIndicator
+            android:id="@+id/fast_scroller_section_title_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/fast_scroller"
+            android:layout_toStartOf="@id/fast_scroller"
+
+            recyclerviewfastscroller:rfs_backgroundColor="@color/accent"
+            recyclerviewfastscroller:rfs_textColor="@android:color/white" />
 
         <com.github.rahatarmanahmed.cpv.CircularProgressView
             xmlns:app="http://schemas.android.com/apk/res-auto"

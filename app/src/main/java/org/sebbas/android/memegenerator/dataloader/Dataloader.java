@@ -85,7 +85,7 @@ public class DataLoader implements Filterable {
                 sectionFirstPosition = tmp + headerCount;
                 headerCount += 1;
                 resultItems.add(LineItem.newSuperSlimHeaderInstance(
-                        "", true, sectionManager, sectionFirstPosition));
+                        "#", false, sectionManager, sectionFirstPosition));
             } else {
                 boolean isAllowedPosition = isAllowedPosition(i - 1);
                 if (isAllowedPosition) {
@@ -96,7 +96,7 @@ public class DataLoader implements Filterable {
                     String timeStamp = getTimeStampAt(i - 1);
                     int imageWidth = getImageWidthAt(i - 1);
                     int imageHeight = getImageHeightAt(i - 1);
-                    String header = Utils.getScrollHeaderTitleLetter(getTitleAt(i - 1));
+                    String header = String.valueOf(Utils.getTitleLetter(getTitleAt(i - 1)));
 
                     if (!TextUtils.equals(lastHeader, header)) {
                         // Insert new header view and update section data.
@@ -122,7 +122,7 @@ public class DataLoader implements Filterable {
 
         for (int i = 0; i < getItemCount() + 1; i++) {
             if (i == 0) {
-                resultItems.add(LineItem.newHeaderInstance(""));
+                resultItems.add(LineItem.newHeaderInstance("#"));
             } else {
                 boolean isAllowedPosition = isAllowedPosition(i - 1);
                 if (isAllowedPosition) {

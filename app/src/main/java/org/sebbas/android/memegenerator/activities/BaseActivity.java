@@ -76,7 +76,10 @@ public abstract class BaseActivity extends ActionBarActivity {
                     case R.id.menu_search:
                         setupSearchView(menuItem, toolbarCallback);
                         break;
-                    case R.id.menu_refresh:
+                    case R.id.menu_image:
+                        //toolbarCallback.onRefreshClicked();
+                        break;
+                    case R.id.menu_video:
                         //toolbarCallback.onRefreshClicked();
                         break;
                 }

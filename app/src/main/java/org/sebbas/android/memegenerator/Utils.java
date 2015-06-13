@@ -32,6 +32,7 @@ public class Utils {
     private static final String BASE_MEMES = "https://api.imgur.com/3/g/memes/time/";
     private static final String BASE_TEMPLATES = "https://api.imgur.com/3/memegen/defaults";
     private static final String BASE_SEARCH = "https://api.imgur.com/3/gallery/search";
+    private static final String MEMES = "https://api.imgur.com/3/album/dPXBy/images";
 
     private static final String JPG = ".jpg";
 
@@ -96,12 +97,26 @@ public class Utils {
         return context.getResources().getString(R.string.client_id);
     }
 
-    public static String getScrollHeaderTitleLetter(String title) {
+    public static char getTitleLetter(String title) {
         String firstLetter = title.substring(0, 1);
         if (firstLetter.matches("[a-zA-Z]")) {
-            return firstLetter;
+            return firstLetter.toUpperCase().charAt(0);
         } else {
-            return NUMBERS_HEADER_LETTER;
+            return NUMBERS_HEADER_LETTER.charAt(0);
+        }
+    }
+
+    public static int getTitleLetterPosition(char titleLetter) {
+        // Make sure that title letter is upper case
+        int letter = Character.toUpperCase(titleLetter);
+
+        // Magic ascii number for upper case letter
+        int magicNumber = 64;
+
+        if (letter <= 90 & letter >= 65) {
+            return  (letter - magicNumber);
+        } else {
+            return 0;
         }
     }
 

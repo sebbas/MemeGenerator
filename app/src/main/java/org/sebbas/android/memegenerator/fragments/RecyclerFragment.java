@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +22,7 @@ import com.tonicartos.superslim.LayoutManager;
 
 import org.sebbas.android.memegenerator.GridSpacingItemDecoration;
 import org.sebbas.android.memegenerator.LineItem;
+import org.sebbas.android.memegenerator.ScrollBarSectionIndicator;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.dataloader.DataLoader;
 import org.sebbas.android.memegenerator.interfaces.DataLoaderCallback;
@@ -31,6 +33,8 @@ import org.sebbas.android.memegenerator.adapter.RecyclerFragmentAdapter;
 import org.sebbas.android.memegenerator.Utils;
 
 import java.util.List;
+
+import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 
 public abstract class RecyclerFragment extends BaseFragment implements
@@ -63,7 +67,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
     private boolean mIsRefreshable;
     private RecyclerView.AdapterDataObserver mAdapterObserver;
     private DataLoader mDataLoader;
-    private Parcelable mRecyclerState;
+    //private Parcelable mRecyclerState;
     private int mPositionInParent;
     private boolean mIsVisibleToUser;
 
@@ -100,7 +104,8 @@ public abstract class RecyclerFragment extends BaseFragment implements
         setupRecyclerView();
         updatePlaceholder();
         setupSwipeRefreshLayout();
-        restoreRecylerViewState();
+        //restoreRecylerViewState();
+        setupFastScroller(view);
 
         super.onFragmentComplete(this);
     }
@@ -119,10 +124,10 @@ public abstract class RecyclerFragment extends BaseFragment implements
     @Override
     public void onPause() {
         super.onPause();
-        saveRecyclerViewState();
+        //saveRecyclerViewState();
     }
 
-    private void restoreRecylerViewState() {
+    /*private void restoreRecylerViewState() {
         if (mRecyclerState != null) {
             mRecyclerView.onRestoreInstanceState(mRecyclerState);
         }
@@ -132,7 +137,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
         if (mRecyclerState != null) {
             mRecyclerView.onSaveInstanceState();
         }
-    }
+    }*/
 
     @Override
     public void onRefresh() {
@@ -257,6 +262,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
                     }
                 });
                 mRecyclerView.setLayoutManager(manager);
+                mRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(GRID_COLUMN_COUNT, GRID_SPACING, GRID_INCLUDE_EDGE));
                 break;
             case SUPER_SLIM_LAYOUT:
@@ -283,6 +289,21 @@ public abstract class RecyclerFragment extends BaseFragment implements
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.accent);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setSwipeableChildren(R.id.scroll);
+    }
+
+    private void setupFastScroller(View view) {
+        // Grab your RecyclerView and the RecyclerViewFastScroller from the layout
+        VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller) view.findViewById(R.id.fast_scroller);
+
+        // Connect the recycler to the scroller (to let the scroller scroll the list)
+        fastScroller.setRecyclerView(mRecyclerView);
+
+        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
+        mRecyclerView.setOnScrollListener(fastScroller.getOnScrollListener());
+
+        // Connect the section indicator to the scroller
+        ScrollBarSectionIndicator sectionTitleIndicator = (ScrollBarSectionIndicator) view.findViewById(R.id.fast_scroller_section_title_indicator);
+        fastScroller.setSectionIndicator(sectionTitleIndicator);
     }
 
     private void recyclerViewMoveUp() {

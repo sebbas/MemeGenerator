@@ -16,30 +16,36 @@
 
 package org.sebbas.android.memegenerator.adapter;
 
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
-public abstract class RecyclerFragmentAdapter extends RecyclerView.Adapter<RecyclerFragmentAdapter.MainViewHolder> {
+public abstract class RecyclerFragmentAdapter extends
+        RecyclerView.Adapter<RecyclerFragmentAdapter.MainViewHolder> implements SectionIndexer {
 
     private static final String TAG = "RecyclerFragmentAdapter";
 
     protected List<LineItem> mLineItems;
-    private BaseFragment mFragment;
+    protected List<Character> mSectionItems;
+    private RecyclerFragment mFragment;
 
     public RecyclerFragmentAdapter(BaseFragment fragment, List<LineItem> lineItems) {
-        mFragment = fragment;
+        mFragment = (RecyclerFragment) fragment;
         mLineItems = lineItems;
+        mSectionItems = new ArrayList<>();
+        mSectionItems = getSectionItems();
     }
 
     abstract static class MainViewHolder extends RecyclerView.ViewHolder {
@@ -68,5 +74,49 @@ public abstract class RecyclerFragmentAdapter extends RecyclerView.Adapter<Recyc
     public void setLineItems(List <LineItem> lineItems) {
         mLineItems.clear();
         mLineItems = lineItems;
+    }
+
+    public ArrayList<Character> getSectionItems() {
+        ArrayList<Character> sectionItems = new ArrayList<>();
+        char headerCurrentHeaderLetter = '\0';
+
+        for (int i = 0; i < mLineItems.size(); i++) {
+            LineItem lineItem = mLineItems.get(i);
+            char itemLetter = Utils.getTitleLetter(lineItem.getTitle());
+
+            // New section begins if either header letter is empty (1st section) or item letter
+            // does not match current header letter
+            if (headerCurrentHeaderLetter == '\0' || itemLetter != headerCurrentHeaderLetter) {
+                headerCurrentHeaderLetter = itemLetter;
+
+                sectionItems.add(itemLetter);
+            }
+        }
+        return sectionItems;
+    }
+
+    @Override
+    public Object[] getSections() {
+        return mSectionItems.toArray();
+    }
+
+    @Override
+    public int getPositionForSection(int sectionNumber) {
+        return 0;
+    }
+
+    @Override
+    public int getSectionForPosition(int itemPosition) {
+        if (itemPosition >= mLineItems.size()) {
+            itemPosition = mLineItems.size() - 1;
+        }
+
+        LineItem lineItem = mLineItems.get(itemPosition);
+        String title = lineItem.getTitle();
+        char letter = Utils.getTitleLetter(title);
+
+        int letterPosition = mSectionItems.indexOf(letter);
+
+        return letterPosition;
     }
 }

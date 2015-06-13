@@ -15,7 +15,7 @@ public class GifFragment extends SlidingTabsFragment {
     private static final String TAG = "GifFragment";
     private static final int OFF_SCREEN_LIMIT = 3;
     private static int[] TAB_TITLES = {
-            R.string.best_items,
+            R.string.all_items,
             R.string.popular_items,
             R.string.new_items};
 

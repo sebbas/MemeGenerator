@@ -86,6 +86,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 22 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="recyclerviewfastscroller-" level="project" />
     <orderEntry type="library" exported="" name="floatingactionbutton-1.9.0" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="floatingactionbutton-1.0.7" level="project" />
@@ -96,10 +97,10 @@
     <orderEntry type="library" exported="" name="circularprogressview-2.0.1" level="project" />
     <orderEntry type="library" exported="" name="okhttp-urlconnection-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="roundedimageview-2.0.1" level="project" />
-    <orderEntry type="library" exported="" name="androidasync-2.1.4" level="project" />
     <orderEntry type="library" exported="" name="okhttp-2.4.0" level="project" />
+    <orderEntry type="library" exported="" name="androidasync-2.1.6" level="project" />
     <orderEntry type="library" exported="" name="superslim-0.4.9" level="project" />
-    <orderEntry type="library" exported="" name="ion-2.1.4" level="project" />
+    <orderEntry type="library" exported="" name="ion-2.1.6" level="project" />
     <orderEntry type="library" exported="" name="support-v4-22.2.0" level="project" />
     <orderEntry type="library" exported="" name="android-gif-drawable-1.1.7" level="project" />
     <orderEntry type="library" exported="" name="support-v4-preferencefragment-1.0.0" level="project" />

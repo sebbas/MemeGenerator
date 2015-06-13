@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
@@ -162,25 +161,25 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
         switch(position) {
             case 0:
                 titleResource = R.string.memes;
-                menuResource = R.menu.menu_simple_fragment;
+                menuResource = R.menu.menu_memes;
                 break;
             case 1:
                 titleResource = R.string.gifs;
-                menuResource = R.menu.menu_sliding_tabs_fragment;
+                menuResource = R.menu.menu_gifs;
                 break;
             case 2:
                 titleResource = R.string.editor;
                 break;
             case 3:
                 titleResource = R.string.gallery;
-                menuResource = R.menu.menu_sliding_tabs_fragment;
+                menuResource = R.menu.menu_gallery;
                 break;
             case 4:
                 titleResource = R.string.preferences;
                 break;
             default:
                 titleResource = R.string.app_name;
-                menuResource = R.menu.menu_simple_fragment;
+                menuResource = R.menu.menu_memes;
                 break;
         }
         setupToolbar(titleResource, menuResource, false);
