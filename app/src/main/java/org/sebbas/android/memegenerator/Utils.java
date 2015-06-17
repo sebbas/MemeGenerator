@@ -6,6 +6,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 
+import com.koushikdutta.async.util.FileUtility;
+
 import org.sebbas.android.memegenerator.fragments.MemeChildFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.fragments.GifChildFragment;
@@ -33,12 +35,14 @@ public class Utils {
     private static final String BASE_TEMPLATES = "https://api.imgur.com/3/memegen/defaults";
     private static final String BASE_SEARCH = "https://api.imgur.com/3/gallery/search";
     private static final String MEMES = "https://api.imgur.com/3/album/dPXBy/images";
+    private static final String GIFS = "https://api.imgur.com/3/album/zQK3s/images";
 
     private static final String JPG = ".jpg";
 
     public static final int REFRESH_ICON_TIME_SHOWN = 3000;
     public static final short NO_CONNECTION_HINT_TIME = 4000;
     public static final short TIMEOUT_HINT_TIME = 4000;
+    public static final String GIF_EXTENSION = ".gif";
     private static final String NUMBERS_HEADER_LETTER = "#";
 
     private Utils() {
@@ -67,10 +71,10 @@ public class Utils {
     public static final String getUrlForData(int pageIndex, RecyclerFragment fragment) {
         String url = "";
         if (fragment instanceof MemeChildFragment) {
-            url = BASE_TEMPLATES;
+            url = MEMES;
         }
         if (fragment instanceof GifChildFragment) {
-            url = BASE_TEMPLATES;
+            url = GIFS;
         }
         return url;
     }
@@ -106,17 +110,14 @@ public class Utils {
         }
     }
 
-    public static int getTitleLetterPosition(char titleLetter) {
-        // Make sure that title letter is upper case
-        int letter = Character.toUpperCase(titleLetter);
-
-        // Magic ascii number for upper case letter
-        int magicNumber = 64;
-
-        if (letter <= 90 & letter >= 65) {
-            return  (letter - magicNumber);
+    public static String changeFileExtension(String url, String newExtension) {
+        String urlWithoutExtension;
+        if (url.contains(".")) {
+            urlWithoutExtension = url.substring(0, url.lastIndexOf('.'));
+            return urlWithoutExtension + newExtension;
         } else {
-            return 0;
+            // Could not change file extension
+            return url;
         }
     }
 

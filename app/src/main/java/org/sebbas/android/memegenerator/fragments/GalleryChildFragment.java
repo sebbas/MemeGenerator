@@ -5,14 +5,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.adapter.CardsRecyclerAdapter;
+import org.sebbas.android.memegenerator.Utils;
+import org.sebbas.android.memegenerator.adapter.SimpleRecyclerAdapter;
+import org.sebbas.android.memegenerator.dataloader.DataLoader;
+
+import java.util.List;
 
 public class GalleryChildFragment extends RecyclerFragment {
 
     public static final String TAG = "GalleryChildFragment";
-
-    private CardsRecyclerAdapter mCardsRecyclerAdapter;
 
     public static GalleryChildFragment newInstance(int layoutMode, boolean isRefreshable, int position) {
         GalleryChildFragment fragment = new GalleryChildFragment();
@@ -26,19 +29,21 @@ public class GalleryChildFragment extends RecyclerFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        mCardsRecyclerAdapter = new CardsRecyclerAdapter(this);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
 
+        // Get url for content
+        String url = Utils.getUrlForData(0, this);
+        super.load(url, DataLoader.INTERNET);
+
+        // Setup adapter
+        List<LineItem> lineItems = super.getLineItems();
+        SimpleRecyclerAdapter simpleRecyclerAdapter = new SimpleRecyclerAdapter(this, lineItems);
+
+        // Create the view
+        View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
+        super.with(simpleRecyclerAdapter);
         super.init(view);
-        super.with(mCardsRecyclerAdapter);
 
         return view;
     }

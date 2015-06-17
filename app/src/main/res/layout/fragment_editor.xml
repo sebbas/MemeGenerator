@@ -1,18 +1,4 @@
-<!--
-  Copyright 2014 Soichiro Kashima
-
-  Licensed under the Apache License, Version 2.0 (the "License");
-  you may not use this file except in compliance with the License.
-  You may obtain a copy of the License at
-
-      http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
--->
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -66,47 +52,11 @@
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/card_view_image"
+            <org.sebbas.android.memegenerator.WrapContentHeightViewPager
+                android:id="@+id/card_pager"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                app:cardElevation="@dimen/margin_extra_short"
-                app:cardUseCompatPadding="true"
-                app:cardCornerRadius="@dimen/google_cards_corner_radius">
+                android:layout_height="400dp" />
 
-                <RelativeLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/margin_short">
-
-                    <ImageView
-                        android:id="@+id/item_image"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true" />
-
-                    <TextView
-                        android:id="@+id/text_top"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:text="@string/app_name"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"/>
-
-                    <TextView
-                        android:id="@+id/text_bottom"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        android:text="@string/app_name"
-                        android:layout_alignParentBottom="true"
-                        android:layout_centerHorizontal="true"/>
-
-                </RelativeLayout>
-            </android.support.v7.widget.CardView>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

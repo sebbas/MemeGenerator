@@ -91,6 +91,7 @@ public class DataLoader implements Filterable {
                 if (isAllowedPosition) {
                     String title = getTitleAt(i - 1);
                     String imageUrl = getImageUrlAt(i - 1);
+                    Log.d(TAG, imageUrl);
                     String imageId = getImageIdAt(i - 1);
                     String viewCount = getViewCountAt(i - 1);
                     String timeStamp = getTimeStampAt(i - 1);

@@ -18,6 +18,7 @@ import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
+import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.tonicartos.superslim.LayoutManager;
 
 import org.sebbas.android.memegenerator.GridSpacingItemDecoration;
@@ -70,6 +71,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
     //private Parcelable mRecyclerState;
     private int mPositionInParent;
     private boolean mIsVisibleToUser;
+    private VerticalRecyclerViewFastScroller mFastScroller;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -293,17 +295,22 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     private void setupFastScroller(View view) {
         // Grab your RecyclerView and the RecyclerViewFastScroller from the layout
-        VerticalRecyclerViewFastScroller fastScroller = (VerticalRecyclerViewFastScroller) view.findViewById(R.id.fast_scroller);
+        mFastScroller = (VerticalRecyclerViewFastScroller) view.findViewById(R.id.fast_scroller);
 
         // Connect the recycler to the scroller (to let the scroller scroll the list)
-        fastScroller.setRecyclerView(mRecyclerView);
+        mFastScroller.setRecyclerView(mRecyclerView);
 
         // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
-        mRecyclerView.setOnScrollListener(fastScroller.getOnScrollListener());
+        mRecyclerView.addOnScrollListener(mFastScroller.getOnScrollListener());
+        mRecyclerView.addOnScrollListener(new MyScrollListener());
 
         // Connect the section indicator to the scroller
         ScrollBarSectionIndicator sectionTitleIndicator = (ScrollBarSectionIndicator) view.findViewById(R.id.fast_scroller_section_title_indicator);
-        fastScroller.setSectionIndicator(sectionTitleIndicator);
+        mFastScroller.setSectionIndicator(sectionTitleIndicator);
+        mFastScroller.setScrollArea(1, mRecyclerFragmentAdapter.getLineItemCount());
+
+        // Make sure that fast scroller is not visible when view is first created
+        mFastScroller.setVisibility(View.GONE);
     }
 
     private void recyclerViewMoveUp() {
@@ -409,5 +416,24 @@ public abstract class RecyclerFragment extends BaseFragment implements
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         mIsVisibleToUser = isVisibleToUser;
+    }
+
+    private class MyScrollListener extends RecyclerView.OnScrollListener {
+
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+        }
+
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            if (dy < 0) {
+                animateView(mFastScroller, 30, 100);
+            } else if (dy > 0) {
+                mFastScroller.setVisibility(View.VISIBLE);
+                animateView(mFastScroller, 0, 100);
+            }
+        }
+    }
+
+    private void animateView(View view, int translationX, int duration) {
+        ViewPropertyAnimator.animate(view).translationX(translationX).setDuration(duration).start();
     }
 }

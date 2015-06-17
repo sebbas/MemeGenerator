@@ -26,6 +26,7 @@ import org.sebbas.android.memegenerator.fragments.SlidingTabsFragment;
 import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends BaseActivity implements ItemClickCallback,
@@ -129,13 +130,26 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
 
     @Override
     public void onItemClick(int position, List<LineItem> lineItems) {
-        LineItem lineItem = lineItems.get(position);
-        String imageUrl = lineItem.getImageUrl();
-        String imageId = lineItem.getImageId();
-        int imageWidth = lineItem.getImageWidth();
-        int imageHeight = lineItem.getImageHeight();
 
-        EditorFragment editorFragment = EditorFragment.newInstance(0);
+        ArrayList<String> imageUrls = new ArrayList<>();
+        ArrayList<Integer> imageWidths = new ArrayList<>();
+        ArrayList<Integer> imageHeights = new ArrayList<>();
+        for (LineItem lineItem : lineItems) {
+            try {
+                String url = lineItem.getImageUrl();
+                imageUrls.add(url);
+
+                int width = lineItem.getImageWidth();
+                imageWidths.add(width);
+
+                int height = lineItem.getImageHeight();
+                imageHeights.add(height);
+            } catch (Exception e) {
+
+            }
+        }
+
+        EditorFragment editorFragment = EditorFragment.newInstance(position, imageUrls, imageWidths, imageHeights);
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         //fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
@@ -443,9 +457,9 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
         }
     }
 
-    private void animateView(View view, int translation, int duration) {
+    private void animateView(View view, int translationY, int duration) {
         ViewPropertyAnimator.animate(view).cancel();
-        ViewPropertyAnimator.animate(view).translationY(translation).setDuration(duration).start();
+        ViewPropertyAnimator.animate(view).translationY(translationY).setDuration(duration).start();
     }
 
     @Override

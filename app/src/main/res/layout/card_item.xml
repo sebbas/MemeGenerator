@@ -1,113 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:cardview="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal"
-    cardview:cardElevation="@dimen/margin_extra_short"
-    cardview:cardUseCompatPadding="true"
-    cardview:contentPadding="@dimen/margin_short"
-    android:paddingTop="@dimen/google_cards_padding_short"
-    android:paddingBottom="@dimen/google_cards_padding_short"
-    cardview:cardCornerRadius="@dimen/google_cards_corner_radius">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <android.support.v7.widget.CardView
+        xmlns:cardview="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/item_title"
-            style="@android:style/TextAppearance.DeviceDefault.Medium.Inverse"
-            android:text="No title"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:fontFamily="sans-serif-light"
-            android:ellipsize="marquee"
-            android:singleLine="false"
-            android:minLines="1"
-            android:textStyle="bold"
-            android:paddingBottom="@dimen/margin_extra_short"
-            android:textColor="?android:attr/textColorPrimary"/>
+        cardview:cardElevation="@dimen/margin_extra_short"
+        cardview:cardUseCompatPadding="true"
+        android:padding="@dimen/margin_short"
+        android:layout_gravity="top"
+        cardview:cardCornerRadius="@dimen/google_cards_corner_radius">
 
         <ImageView
             android:id="@+id/item_image"
             android:src="@android:color/holo_blue_bright"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"/>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/item_viewcount"
-                style="@android:style/TextAppearance.DeviceDefault"
-                android:text="123456789 Views"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:fontFamily="sans-serif-light"
-                android:ellipsize="marquee"
-                android:singleLine="false"
-                android:maxLines="1"
-                android:paddingTop="@dimen/margin_extra_short"
-                android:textColor="?android:attr/textColorSecondary" />
-
-            <TextView
-                android:id="@+id/card_bullet_point"
-                style="@android:style/TextAppearance.DeviceDefault"
-                android:text="&#8226;"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:fontFamily="sans-serif-light"
-                android:ellipsize="marquee"
-                android:singleLine="false"
-                android:maxLines="1"
-                android:paddingLeft="@dimen/margin_extra_short"
-                android:paddingTop="@dimen/margin_extra_short"
-                android:textColor="?android:attr/textColorSecondary" />
-
-            <TextView
-                android:id="@+id/item_datetime"
-                style="@android:style/TextAppearance.DeviceDefault"
-                android:text="23 hours ago"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:fontFamily="sans-serif-light"
-                android:ellipsize="marquee"
-                android:singleLine="false"
-                android:maxLines="1"
-                android:paddingLeft="@dimen/margin_extra_short"
-                android:paddingTop="@dimen/margin_extra_short"
-                android:textColor="?android:attr/textColorSecondary" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="@dimen/margin_extra_short">
-
-            <Button
-                android:layout_width="70dp"
-                android:layout_height="40dp"
-                android:text="Edit"
-                android:background="@drawable/custom_button"
-                android:textColor="@android:color/white"
-                android:id="@+id/button_edit" />
-
-            <Button
-                android:layout_width="100dp"
-                android:layout_height="40dp"
-                android:text="Favourite"
-                android:background="@drawable/custom_button"
-                android:textColor="@android:color/white"
-                android:layout_marginLeft="@dimen/margin_extra_short"
-                android:id="@+id/button_favorite" />
-        </LinearLayout>
-    </LinearLayout>
-
-</android.support.v7.widget.CardView>
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true" />
+    </android.support.v7.widget.CardView>
+</LinearLayout>

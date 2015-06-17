@@ -76,6 +76,10 @@ public abstract class RecyclerFragmentAdapter extends
         mLineItems = lineItems;
     }
 
+    public int getLineItemCount() {
+        return  mLineItems.size();
+    }
+
     public ArrayList<Character> getSectionItems() {
         ArrayList<Character> sectionItems = new ArrayList<>();
         char headerCurrentHeaderLetter = '\0';

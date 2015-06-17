@@ -45,7 +45,7 @@ public class MainActivityAdapter extends SlidingTabsAdapter {
                 fragment = GifFragment.newInstance(position);
                 break;
             case 2:
-                fragment = EditorFragment.newInstance(position);
+                fragment = GalleryFragment.newInstance(position);
                 break;
             case 3:
                 fragment = GalleryFragment.newInstance(position);
