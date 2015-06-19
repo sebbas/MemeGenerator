@@ -24,12 +24,10 @@ import org.sebbas.android.memegenerator.fragments.EditorFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.fragments.SlidingTabsFragment;
 import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
-import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class MainActivity extends BaseActivity implements ItemClickCallback,
+public class MainActivity extends BaseActivity implements
         ObservableScrollViewCallbacks, FragmentCallback {
 
     private static final String TAG = "MainActivity";
@@ -129,40 +127,12 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
     }
 
     @Override
-    public void onItemClick(int position, List<LineItem> lineItems) {
-
-        ArrayList<String> imageUrls = new ArrayList<>();
-        ArrayList<Integer> imageWidths = new ArrayList<>();
-        ArrayList<Integer> imageHeights = new ArrayList<>();
-        for (LineItem lineItem : lineItems) {
-            try {
-                String url = lineItem.getImageUrl();
-                imageUrls.add(url);
-
-                int width = lineItem.getImageWidth();
-                imageWidths.add(width);
-
-                int height = lineItem.getImageHeight();
-                imageHeights.add(height);
-            } catch (Exception e) {
-
-            }
-        }
-
-        EditorFragment editorFragment = EditorFragment.newInstance(position, imageUrls, imageWidths, imageHeights);
-
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        //fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-        fragmentTransaction.add(R.id.main_container, editorFragment, EditorFragment.class.getName());
-        fragmentTransaction.addToBackStack(EditorFragment.class.getName());
-        //fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_ENTER_MASK);
-        fragmentTransaction.commit();
-    }
-
-    @Override
     public void onBackPressed() {
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
+
+            // Make sure main view tabs are shown
+            showMainTabs();
         } else {
             this.finish();
         }
@@ -197,6 +167,11 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
                 break;
         }
         setupToolbar(titleResource, menuResource, false);
+    }
+
+    private void setupFragmentToolbarWith(String title, boolean upEnabled) {
+        int menuResource = 0;
+        setupToolbar(title, menuResource, upEnabled);
     }
 
     private void setupSlidingTabsAt(int position, Fragment fragment) {
@@ -486,5 +461,25 @@ public class MainActivity extends BaseActivity implements ItemClickCallback,
                 registerToolbarCallback(recyclerFragment);
             }
         }
+    }
+
+    @Override
+    public void onFragmentChangeToolbar(String title) {
+        setupFragmentToolbarWith(title, true);
+    }
+
+    @Override
+    public void onItemClick(int clickPosition, ArrayList<LineItem> lineItems) {
+
+        EditorFragment editorFragment = EditorFragment.newInstance(clickPosition, lineItems);
+
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        fragmentTransaction.add(R.id.main_container, editorFragment, EditorFragment.class.getName());
+        fragmentTransaction.addToBackStack(EditorFragment.class.getName());
+        fragmentTransaction.commit();
+
+        // Hide main view tabs
+        hideMainTabs();
     }
 }

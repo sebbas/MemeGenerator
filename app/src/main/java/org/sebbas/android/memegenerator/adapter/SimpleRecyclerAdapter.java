@@ -1,40 +1,29 @@
 package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapRegionDecoder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.bitmap.Transform;
-import com.makeramen.roundedimageview.RoundedDrawable;
 
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.SquaredImageView;
 import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
-import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
+import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
+import java.util.ArrayList;
 
 public class SimpleRecyclerAdapter extends RecyclerFragmentAdapter {
 
     private static final int VIEW_TYPE_FILLER = 0;
     private static final int VIEW_TYPE_CONTENT = 1;
-    private static final int CORNER_RADIUS = 250;
 
     private Context mContext;
 
-    public SimpleRecyclerAdapter(RecyclerFragment fragment, List<LineItem> lineItems) {
+    public SimpleRecyclerAdapter(RecyclerFragment fragment, ArrayList<LineItem> lineItems) {
         super(fragment, lineItems);
         mContext = fragment.getActivity();
     }
@@ -57,7 +46,7 @@ public class SimpleRecyclerAdapter extends RecyclerFragmentAdapter {
             public void onItemClick(int position) {
                 // Only trigger click event for content items
                 if (getItemViewType(position) == VIEW_TYPE_CONTENT) {
-                    ((ItemClickCallback) mContext).onItemClick(position,
+                    ((FragmentCallback) mContext).onItemClick(position,
                             SimpleRecyclerAdapter.super.mLineItems);
                 }
             }

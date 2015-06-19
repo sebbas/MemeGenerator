@@ -33,6 +33,7 @@ import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 import org.sebbas.android.memegenerator.adapter.RecyclerFragmentAdapter;
 import org.sebbas.android.memegenerator.Utils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
@@ -331,7 +332,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
         mDataLoader.load(url, location);
     }
 
-    public List<LineItem> getLineItems() {
+    public ArrayList<LineItem> getLineItems() {
         switch (mLayoutMode) {
             case GRID_LAYOUT:
             case LIST_LAYOUT:
@@ -344,7 +345,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
     }
 
     private void updateLineItems() {
-        List<LineItem> lineItems;
+        ArrayList<LineItem> lineItems;
         switch (mLayoutMode) {
             case GRID_LAYOUT:
             case LIST_LAYOUT:

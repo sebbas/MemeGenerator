@@ -5,16 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
-
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.adapter.SuperSlimRecyclerAdapter;
 import org.sebbas.android.memegenerator.dataloader.DataLoader;
-import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class MemeChildFragment extends RecyclerFragment {
 
@@ -40,7 +37,7 @@ public class MemeChildFragment extends RecyclerFragment {
         super.load(url, DataLoader.INTERNET);
 
         // Setup adapter
-        List<LineItem> lineItems = super.getLineItems();
+        ArrayList<LineItem> lineItems = super.getLineItems();
         SuperSlimRecyclerAdapter superSlimRecyclerAdapter = new SuperSlimRecyclerAdapter(this, lineItems);
 
         // Create the view

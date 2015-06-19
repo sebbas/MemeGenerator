@@ -16,9 +16,9 @@ import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
-import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
+import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
 
@@ -29,7 +29,7 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
 
     private Context mContext;
 
-    public SuperSlimRecyclerAdapter(RecyclerFragment fragment, List<LineItem> lineItems) {
+    public SuperSlimRecyclerAdapter(RecyclerFragment fragment, ArrayList<LineItem> lineItems) {
         super(fragment, lineItems);
         mContext = fragment.getActivity();
     }
@@ -60,7 +60,7 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
             public void onItemClick(int position) {
                 // Only trigger click event for content items
                 if (getItemViewType(position) == VIEW_TYPE_CONTENT) {
-                    ((ItemClickCallback) mContext).onItemClick(position, SuperSlimRecyclerAdapter.super.mLineItems);
+                    ((FragmentCallback) mContext).onItemClick(position, SuperSlimRecyclerAdapter.super.mLineItems);
                 }
             }
         };

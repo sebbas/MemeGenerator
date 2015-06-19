@@ -1,6 +1,18 @@
 package org.sebbas.android.memegenerator;
 
-public class LineItem {
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class LineItem implements Parcelable {
+
+    private static final String KEY_TITLE = "title";
+    private static final String KEY_IMAGE_URL = "imageUrl";
+    private static final String KEY_IMAGE_ID = "imageId";
+    private static final String KEY_VIEW_COUNT = "viewCount";
+    private static final String KEY_TIMESTAMP = "timestamp";
+    private static final String KEY_IMAGE_WIDTH = "imageWidth";
+    private static final String KEY_IMAGE_HEIGHT = "imageHeight";
 
     private int mSectionManager;
     private int mSectionFirstPosition;
@@ -117,4 +129,26 @@ public class LineItem {
         return mImageHeight;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        // create a bundle for the key value pairs
+        Bundle bundle = new Bundle();
+
+        // insert the key value pairs to the bundle
+        bundle.putString(KEY_TITLE, getTitle());
+        bundle.putString(KEY_IMAGE_URL, getImageUrl());
+        bundle.putString(KEY_IMAGE_ID, getImageId());
+        bundle.putString(KEY_VIEW_COUNT, getViewCount());
+        bundle.putString(KEY_TIMESTAMP, getTimeStamp());
+        bundle.putInt(KEY_IMAGE_WIDTH, getImageWidth());
+        bundle.putInt(KEY_IMAGE_HEIGHT, getImageHeight());
+
+        // write the key value pairs to the parcel
+        dest.writeBundle(bundle);
+    }
 }

@@ -1,19 +1,3 @@
-/*
- * Copyright 2014 Soichiro Kashima
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
@@ -24,14 +8,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.sebbas.android.memegenerator.SquaredImageView;
-import org.sebbas.android.memegenerator.interfaces.ItemClickCallback;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.PicassoCache;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
+import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 
-import java.util.List;
+import java.util.ArrayList;
 
 
 public class HorizontalRecyclerAdapter extends RecyclerView.Adapter<HorizontalRecyclerAdapter.ViewHolder> {
@@ -39,7 +23,7 @@ public class HorizontalRecyclerAdapter extends RecyclerView.Adapter<HorizontalRe
     private static final String TAG = "HorizontalRecyclerAdapter";
 
     private Context mContext;
-    private List<LineItem> mLineItems = null;
+    private ArrayList<LineItem> mLineItems = null;
 
     public HorizontalRecyclerAdapter(RecyclerFragment fragment, int position) {
         mContext = fragment.getActivity();
@@ -57,7 +41,7 @@ public class HorizontalRecyclerAdapter extends RecyclerView.Adapter<HorizontalRe
         ViewHolder.ViewHolderCallback viewHolderCallback = new ViewHolder.ViewHolderCallback() {
             @Override
             public void onItemClick(int position) {
-                ((ItemClickCallback) mContext).onItemClick(position, mLineItems);
+                ((FragmentCallback) mContext).onItemClick(position, mLineItems);
             }
         };
 

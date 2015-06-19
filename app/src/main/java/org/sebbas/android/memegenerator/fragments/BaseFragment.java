@@ -48,5 +48,9 @@ public abstract class BaseFragment extends Fragment {
         mFragmentCallback.onFragmentComplete(baseFragment);
     }
 
+    protected void onFragmentChangeToolbar(String title) {
+        mFragmentCallback.onFragmentChangeToolbar(title);
+    }
+
     abstract public String getFragmentTag();
 }

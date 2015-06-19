@@ -64,6 +64,27 @@ public abstract class BaseActivity extends ActionBarActivity {
         }
     }
 
+    public void setupToolbar(String title, int menuResource, boolean isUpEnabled) {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        // Make sure that toolbar is clear
+        toolbar.getMenu().clear();
+
+        // Setup toolbar title
+        toolbar.setTitle(title);
+
+        // Setup toolbar menu
+        if (menuResource != 0) {
+            toolbar.inflateMenu(menuResource);
+        }
+
+        if (isUpEnabled) {
+            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+        } else {
+            toolbar.setNavigationIcon(null);
+        }
+    }
+
     public void registerToolbarCallback(Fragment fragment) {
         final ToolbarCallback toolbarCallback = (ToolbarCallback) fragment;
         Toolbar toolbar = (Toolbar) this.findViewById(R.id.toolbar);

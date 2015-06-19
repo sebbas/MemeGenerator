@@ -11,7 +11,7 @@ import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.adapter.SimpleRecyclerAdapter;
 import org.sebbas.android.memegenerator.dataloader.DataLoader;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class GifChildFragment extends RecyclerFragment {
 
@@ -37,7 +37,7 @@ public class GifChildFragment extends RecyclerFragment {
         super.load(url, DataLoader.INTERNET);
 
         // Setup adapter
-        List<LineItem> lineItems = super.getLineItems();
+        ArrayList<LineItem> lineItems = super.getLineItems();
         SimpleRecyclerAdapter simpleRecyclerAdapter = new SimpleRecyclerAdapter(this, lineItems);
 
         // Create the view

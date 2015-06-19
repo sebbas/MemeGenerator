@@ -51,7 +51,6 @@ public abstract class SlidingTabsAdapter extends CacheFragmentStatePagerAdapter 
     }
 
     public Fragment getRegisteredFragment(int position) {
-        Log.d(TAG, "size is " + mRegisteredFragments.size());
         return mRegisteredFragments.get(position);
     }
 

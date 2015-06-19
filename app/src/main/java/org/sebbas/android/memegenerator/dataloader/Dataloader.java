@@ -70,7 +70,7 @@ public class DataLoader implements Filterable {
         this.getFilter().filter(constraint);
     }
 
-    public List<LineItem> getSuperSlimLineItems() {
+    public ArrayList<LineItem> getSuperSlimLineItems() {
         String lastHeader = "";
         int sectionManager = -1;
         int headerCount = 0;
@@ -118,7 +118,7 @@ public class DataLoader implements Filterable {
         return resultItems;
     }
 
-    public List<LineItem> getLineItems() {
+    public ArrayList<LineItem> getLineItems() {
         ArrayList<LineItem> resultItems = new ArrayList<>();
 
         for (int i = 0; i < getItemCount() + 1; i++) {

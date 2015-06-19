@@ -16,14 +16,12 @@ public class CardPagerAdapter extends PagerAdapter {
     private static final String TAG = "CardPagerAdapter";
 
     private ArrayList<String> mImageUrls;
-    private ArrayList<Integer> mImageHeights;
     private LayoutInflater mLayoutInflater;
     private Context mContext;
 
-    public CardPagerAdapter(Context context, ArrayList<String> imageUrls, ArrayList<Integer> imageHeights) {
+    public CardPagerAdapter(Context context, ArrayList<String> imageUrls) {
         mContext = context;
         mImageUrls = imageUrls;
-        mImageHeights = imageHeights;
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 

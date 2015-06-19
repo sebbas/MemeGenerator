@@ -37,11 +37,11 @@ public abstract class RecyclerFragmentAdapter extends
 
     private static final String TAG = "RecyclerFragmentAdapter";
 
-    protected List<LineItem> mLineItems;
+    protected ArrayList<LineItem> mLineItems;
     protected List<Character> mSectionItems;
     private RecyclerFragment mFragment;
 
-    public RecyclerFragmentAdapter(BaseFragment fragment, List<LineItem> lineItems) {
+    public RecyclerFragmentAdapter(BaseFragment fragment, ArrayList<LineItem> lineItems) {
         mFragment = (RecyclerFragment) fragment;
         mLineItems = lineItems;
         mSectionItems = new ArrayList<>();
@@ -71,7 +71,7 @@ public abstract class RecyclerFragmentAdapter extends
         this.notifyDataSetChanged();
     }
 
-    public void setLineItems(List <LineItem> lineItems) {
+    public void setLineItems(ArrayList <LineItem> lineItems) {
         mLineItems.clear();
         mLineItems = lineItems;
     }
