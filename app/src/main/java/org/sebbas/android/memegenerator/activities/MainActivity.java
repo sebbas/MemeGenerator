@@ -34,6 +34,7 @@ public class MainActivity extends BaseActivity implements
     private static final int OFF_SCREEN_LIMIT = 5;
     private static final boolean IS_SWIPEABLE = false;
     private static final boolean IS_SMOOTH_SCROLL = false;
+    private static final int ANIMATION_SPEED = 200;
 
     private static final int[] LAST_FRAGMENT_POSITIONS = new int[2];
     private static final int[] TAB_TITLES = {
@@ -133,6 +134,12 @@ public class MainActivity extends BaseActivity implements
 
             // Make sure main view tabs are shown
             showMainTabs();
+
+            // Show sliding tabs at top
+            setupSlidingTabsAt(mViewPager.getCurrentItem(), null);
+
+            // Setup toolbar title
+            setupFragmentToolbarAt(mViewPager.getCurrentItem());
         } else {
             this.finish();
         }
@@ -401,8 +408,7 @@ public class MainActivity extends BaseActivity implements
     private void showToolbar() {
         float headerTranslationY = ViewHelper.getTranslationY(mHeaderView);
         if (headerTranslationY != 0) {
-            ViewPropertyAnimator.animate(mHeaderView).cancel();
-            ViewPropertyAnimator.animate(mHeaderView).translationY(0).setDuration(200).start();
+            animateView(mHeaderView, 0, ANIMATION_SPEED);
         }
         propagateToolbarState(true);
     }
@@ -411,8 +417,7 @@ public class MainActivity extends BaseActivity implements
         float headerTranslationY = ViewHelper.getTranslationY(mHeaderView);
         int toolbarHeight = mToolbarView.getHeight();
         if (headerTranslationY != -toolbarHeight) {
-            ViewPropertyAnimator.animate(mHeaderView).cancel();
-            ViewPropertyAnimator.animate(mHeaderView).translationY(-toolbarHeight).setDuration(200).start();
+            animateView(mHeaderView, -toolbarHeight, ANIMATION_SPEED);
         }
         propagateToolbarState(false);
     }
@@ -420,7 +425,7 @@ public class MainActivity extends BaseActivity implements
     private void showMainTabs() {
         float headerTranslationY = ViewHelper.getTranslationY(mFooterView);
         if (headerTranslationY != 0) {
-            animateView(mFooterView, 0, 200);
+            animateView(mFooterView, 0, ANIMATION_SPEED);
         }
     }
 
@@ -428,7 +433,7 @@ public class MainActivity extends BaseActivity implements
         float headerTranslationY = ViewHelper.getTranslationY(mFooterView);
         int slidingTabLayoutHeight = mFooterView.getHeight();
         if (headerTranslationY != -slidingTabLayoutHeight) {
-            animateView(mFooterView, slidingTabLayoutHeight, 200);
+            animateView(mFooterView, slidingTabLayoutHeight, ANIMATION_SPEED);
         }
     }
 
@@ -479,7 +484,13 @@ public class MainActivity extends BaseActivity implements
         fragmentTransaction.addToBackStack(EditorFragment.class.getName());
         fragmentTransaction.commit();
 
+        // Make sure that toolbar is visible
+        showToolbar();
+
         // Hide main view tabs
         hideMainTabs();
+        
+        // Hide sliding tabs at top, -1 and null because this is not a viewpager position
+        setupSlidingTabsAt(-1, null);
     }
 }
