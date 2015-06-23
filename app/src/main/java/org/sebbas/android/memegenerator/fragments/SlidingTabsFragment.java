@@ -6,16 +6,12 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.SimpleOnPageChangeListener;
 import android.view.View;
-
-import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 
 import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.adapter.SlidingTabsAdapter;
-import org.sebbas.android.memegenerator.dataloader.DataLoader;
 
 import java.lang.reflect.Field;
 
@@ -57,7 +53,7 @@ public abstract class SlidingTabsFragment extends BaseFragment {
         // Padding for tabs (only in portrait mode)
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
-            getActivity().findViewById(R.id.main_container).setPadding(0, tabHeight, 0, 0);
+            view.findViewById(R.id.pager_wrapper).setPadding(0, tabHeight, 0, 0);
         }
         super.onFragmentComplete(this);
     }

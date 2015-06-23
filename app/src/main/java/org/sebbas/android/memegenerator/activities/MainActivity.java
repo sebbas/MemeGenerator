@@ -228,6 +228,9 @@ public class MainActivity extends BaseActivity implements
         if (fragment instanceof RecyclerFragment) {
             super.registerToolbarCallback(fragment);
 
+        } else if (fragment instanceof EditorFragment) {
+            super.registerToolbarCallback(fragment);
+
         } else if (fragment instanceof SlidingTabsFragment) {
             SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) fragment;
             BaseFragment currentChildFragment = (BaseFragment) slidingTabsFragment.getCurrentFragment();
@@ -382,7 +385,6 @@ public class MainActivity extends BaseActivity implements
             return;
         }
 
-
         if (isShown) {
             // Scroll up
             if (fragment.getFirstVisibleItemPosition() == 1) {
@@ -492,5 +494,13 @@ public class MainActivity extends BaseActivity implements
         
         // Hide sliding tabs at top, -1 and null because this is not a viewpager position
         setupSlidingTabsAt(-1, null);
+
+        // Make sure toolbar new fragment can receive toolbar callbacks
+        registerFragmentToolbarCallbacks(editorFragment);
+    }
+
+    public void bringMainNavigationToFront() {
+        findViewById(R.id.header).bringToFront();
+        findViewById(R.id.footer).bringToFront();
     }
 }

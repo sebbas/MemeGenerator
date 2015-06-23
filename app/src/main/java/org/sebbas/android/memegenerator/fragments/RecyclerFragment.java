@@ -34,7 +34,6 @@ import org.sebbas.android.memegenerator.adapter.RecyclerFragmentAdapter;
 import org.sebbas.android.memegenerator.Utils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
@@ -102,12 +101,11 @@ public abstract class RecyclerFragment extends BaseFragment implements
         //mSwipeRefreshLayout.setProgressViewOffset(true, offset,offset + tabHeight);
 
         // Bring activity ui elements to front
-        getActivity().findViewById(R.id.header).bringToFront();
+        ((MainActivity) getActivity()).bringMainNavigationToFront();
 
         setupRecyclerView();
         updatePlaceholder();
         setupSwipeRefreshLayout();
-        //restoreRecylerViewState();
         setupFastScroller(view);
 
         super.onFragmentComplete(this);
@@ -129,18 +127,6 @@ public abstract class RecyclerFragment extends BaseFragment implements
         super.onPause();
         //saveRecyclerViewState();
     }
-
-    /*private void restoreRecylerViewState() {
-        if (mRecyclerState != null) {
-            mRecyclerView.onRestoreInstanceState(mRecyclerState);
-        }
-    }
-
-    private void saveRecyclerViewState() {
-        if (mRecyclerState != null) {
-            mRecyclerView.onSaveInstanceState();
-        }
-    }*/
 
     @Override
     public void onRefresh() {
@@ -194,7 +180,6 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     @Override
     public void onFilterComplete() {
-        Log.d(TAG, "onFilterComplete");
         this.updateLineItems();
         this.refreshAdapter();
     }
@@ -400,7 +385,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
     @Override
     public boolean onQueryTextChange(String s) {
         this.filterDataWith(s);
-        //this.recyclerViewMoveUp();
+        this.recyclerViewMoveUp();
 
         return true;
     }
@@ -424,6 +409,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
         }
 
+        // Show and hide fast scroll bar in x direction
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             if (dy < 0) {
                 animateView(mFastScroller, 30, 100);

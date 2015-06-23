@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
@@ -103,6 +104,9 @@ public abstract class BaseActivity extends ActionBarActivity {
                     case R.id.menu_video:
                         //toolbarCallback.onRefreshClicked();
                         break;
+                    default:
+                        Toast.makeText(BaseActivity.this, "Pressed Back", Toast.LENGTH_SHORT).show();
+                        onBackPressed();
                 }
                 return true;
             }
