@@ -133,12 +133,11 @@ public class MainActivity extends BaseActivity implements
             getSupportFragmentManager().popBackStack();
 
             // Show sliding tabs at top
-            //setupSlidingTabsAt(mViewPager.getCurrentItem(), null);
+            setupSlidingTabsAt(mViewPager.getCurrentItem(), null);
 
             // Setup toolbar title
             setupFragmentToolbarAt(mViewPager.getCurrentItem());
 
-            bringNavigationToFront();
         } else {
             this.finish();
         }
@@ -225,6 +224,9 @@ public class MainActivity extends BaseActivity implements
 
     private void registerFragmentToolbarCallbacks(Fragment fragment) {
         if (fragment instanceof RecyclerFragment) {
+            super.registerToolbarCallback(fragment);
+
+        } else if (fragment instanceof EditorFragment) {
             super.registerToolbarCallback(fragment);
 
         } else if (fragment instanceof SlidingTabsFragment) {
@@ -481,20 +483,20 @@ public class MainActivity extends BaseActivity implements
         fragmentTransaction.add(R.id.main_container, editorFragment, EditorFragment.class.getName());
         fragmentTransaction.addToBackStack(EditorFragment.class.getName());
         fragmentTransaction.commit();
-        bringContentToFront();
+
+        // Hide main view tabs
+        hideMainTabs();
+
+        // Hide sliding tabs at top, -1 and null because this is not a viewpager position
+        setupSlidingTabsAt(-1, null);
+
+        // Make sure toolbar new fragment can receive toolbar callbacks
+        registerFragmentToolbarCallbacks(editorFragment);
 
     }
 
-    public void bringNavigationToFront() {
+    public void bringMainNavigationToFront() {
         findViewById(R.id.header).bringToFront();
         findViewById(R.id.footer).bringToFront();
-    }
-
-    public void bringContentToFront() {
-        findViewById(R.id.main_container).bringToFront();
-    }
-
-    public void setTopPadding(int topPadding) {
-        findViewById(R.id.main_container).setPadding(0, topPadding, 0, 0);
     }
 }

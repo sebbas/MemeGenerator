@@ -109,12 +109,11 @@ public abstract class RecyclerFragment extends BaseFragment implements
         //mSwipeRefreshLayout.setProgressViewOffset(true, offset,offset + tabHeight);
 
         // Bring activity ui elements to front
-        ((MainActivity) getActivity()).bringNavigationToFront();
+        ((MainActivity) getActivity()).bringMainNavigationToFront();
 
         setupRecyclerView();
         updatePlaceholder();
         setupSwipeRefreshLayout();
-        //restoreRecylerViewState();
         setupFastScroller(view);
 
         super.onFragmentComplete(this);
@@ -131,7 +130,6 @@ public abstract class RecyclerFragment extends BaseFragment implements
         parentActivity.unregisterToolbarCallback();
     }
 
-    @Override
     public void onRefresh() {
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -183,7 +181,6 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     @Override
     public void onFilterComplete() {
-        Log.d(TAG, "onFilterComplete");
         this.updateLineItems();
         this.refreshAdapter();
     }
@@ -382,7 +379,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
     @Override
     public boolean onQueryTextChange(String s) {
         this.filterDataWith(s);
-        //this.recyclerViewMoveUp();
+        this.recyclerViewMoveUp();
 
         return true;
     }

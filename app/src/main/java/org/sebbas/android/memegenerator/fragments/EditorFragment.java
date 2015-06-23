@@ -1,6 +1,5 @@
 package org.sebbas.android.memegenerator.fragments;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -12,13 +11,16 @@ import com.squareup.picasso.Picasso;
 import org.sebbas.android.memegenerator.CardPagerAdapter;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.activities.MainActivity;
+
+import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
 import java.util.ArrayList;
 
-public class EditorFragment extends BaseFragment {
+public class EditorFragment extends BaseFragment implements ToolbarCallback {
 
     private static final String TAG = "EditorFragment";
+    private static final String START_POSITION = "startPosition";
+    private static final String LINE_ITEMS = "lineItems";
 
     private Picasso mPicasso;
     private int mStartPosition;
@@ -28,8 +30,8 @@ public class EditorFragment extends BaseFragment {
     public static EditorFragment newInstance(int clickPosition, ArrayList<LineItem> lineItems) {
         EditorFragment editorFragment = new EditorFragment();
         Bundle args = new Bundle();
-        args.putInt("startPosition", clickPosition);
-        args.putParcelableArrayList("lineItems", lineItems);
+        args.putInt(START_POSITION, clickPosition);
+        args.putParcelableArrayList(LINE_ITEMS, lineItems);
         editorFragment.setArguments(args);
         return editorFragment;
     }
@@ -38,8 +40,8 @@ public class EditorFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mStartPosition = getArguments().getInt("startPosition");
-        mLineItems = getArguments().getParcelableArrayList("lineItems");
+        mStartPosition = getArguments().getInt(START_POSITION);
+        mLineItems = getArguments().getParcelableArrayList(LINE_ITEMS);
     }
 
     @Override
@@ -48,7 +50,7 @@ public class EditorFragment extends BaseFragment {
 
         View view = inflater.inflate(R.layout.fragment_editor, container, false);
         mCardPager = (ViewPager) view.findViewById(R.id.card_pager);
-
+        setToolbarTitle(mStartPosition);
         return view;
     }
 
@@ -64,14 +66,19 @@ public class EditorFragment extends BaseFragment {
 
             @Override
             public void onPageSelected(int position) {
-                // Get title of current item
-                LineItem item = mLineItems.get(position);
-                String title = item.getTitle();
+                setToolbarTitle(position);
 
-                // Callback to setup current title in toolbar
-                EditorFragment.super.onFragmentChangeToolbar(title);
             }
         });
+    }
+
+    private void setToolbarTitle(int position) {
+        // Get title of current item
+        LineItem item = mLineItems.get(position);
+        String title = item.getTitle();
+
+        // Callback to setup current title in toolbar
+        EditorFragment.super.onFragmentChangeToolbar(title);
     }
 
     private ArrayList<String> getImageUrls() {
@@ -86,6 +93,21 @@ public class EditorFragment extends BaseFragment {
     @Override
     public String getFragmentTag() {
         return TAG;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        return false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        getActivity().onBackPressed();
     }
 
     private class DepthPageTransformer implements ViewPager.PageTransformer {
