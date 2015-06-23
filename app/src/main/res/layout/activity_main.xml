@@ -56,8 +56,6 @@
                 android:layout_height="wrap_content" />
     </FrameLayout>
 
-
-
     <LinearLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"

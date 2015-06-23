@@ -2,6 +2,7 @@ package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +23,7 @@ import java.util.ArrayList;
 
 public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
 
-    private static final int VIEW_TYPE_FILLER = 0;
-    private static final int VIEW_TYPE_HEADER = 1;
-    private static final int VIEW_TYPE_CONTENT = 2;
+    private static final String TAG = "SuperSlimRecyclerAdapter";
     private static final int CORNER_RADIUS = 250;
 
     private Context mContext;
@@ -36,14 +35,17 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0) {
-            return VIEW_TYPE_FILLER;
-        } else {
-            if (super.mLineItems.get(position).isHeaderItem()) {
-                return VIEW_TYPE_HEADER;
-            } else {
-                return VIEW_TYPE_CONTENT;
-            }
+        switch (position) {
+            case 0:
+                return VIEW_TYPE_FILLER_TOOLBAR;
+            case 1:
+                return VIEW_TYPE_FILLER_TABS;
+            default:
+                if (super.mLineItems.get(position).isHeaderItem()) {
+                    return VIEW_TYPE_HEADER;
+                } else {
+                    return VIEW_TYPE_CONTENT;
+                }
         }
     }
 
@@ -69,8 +71,16 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
         LayoutInflater inflater = LayoutInflater.from(mContext);
 
         switch (viewType) {
-            case VIEW_TYPE_FILLER:
-                view = inflater.inflate(R.layout.recycler_padding, parent, false);
+            case VIEW_TYPE_FILLER_TOOLBAR:
+                view = inflater.inflate(R.layout.padding_toolbar, parent, false);
+                break;
+            case VIEW_TYPE_FILLER_TABS:
+                // Show tabs only if super class says so and device is in portrait mode
+                if (super.mWithTabOffset && Utils.isPortraitMode(mContext)) {
+                    view = inflater.inflate(R.layout.padding_tabs, parent, false);
+                } else {
+                    view = inflater.inflate(R.layout.no_padding, parent, false);
+                }
                 break;
             case VIEW_TYPE_CONTENT:
                 view = inflater.inflate(R.layout.list_item, parent, false);

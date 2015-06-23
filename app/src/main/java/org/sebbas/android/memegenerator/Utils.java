@@ -2,6 +2,8 @@ package org.sebbas.android.memegenerator;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
@@ -171,6 +173,10 @@ public class Utils {
             String viewPlural = context.getResources().getString(R.string.view_plural);
             return count + " " + viewPlural;
         }
+    }
+
+    public static boolean isPortraitMode(Context context) {
+        return context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
     }
 
     public static ArrayList<String> getListString(Context context, String fragmentType, String key) {

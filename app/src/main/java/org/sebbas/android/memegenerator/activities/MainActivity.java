@@ -132,14 +132,13 @@ public class MainActivity extends BaseActivity implements
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
 
-            // Make sure main view tabs are shown
-            showMainTabs();
-
             // Show sliding tabs at top
-            setupSlidingTabsAt(mViewPager.getCurrentItem(), null);
+            //setupSlidingTabsAt(mViewPager.getCurrentItem(), null);
 
             // Setup toolbar title
             setupFragmentToolbarAt(mViewPager.getCurrentItem());
+
+            bringNavigationToFront();
         } else {
             this.finish();
         }
@@ -382,7 +381,6 @@ public class MainActivity extends BaseActivity implements
             return;
         }
 
-
         if (isShown) {
             // Scroll up
             if (fragment.getFirstVisibleItemPosition() == 1) {
@@ -483,14 +481,20 @@ public class MainActivity extends BaseActivity implements
         fragmentTransaction.add(R.id.main_container, editorFragment, EditorFragment.class.getName());
         fragmentTransaction.addToBackStack(EditorFragment.class.getName());
         fragmentTransaction.commit();
+        bringContentToFront();
 
-        // Make sure that toolbar is visible
-        showToolbar();
+    }
 
-        // Hide main view tabs
-        hideMainTabs();
-        
-        // Hide sliding tabs at top, -1 and null because this is not a viewpager position
-        setupSlidingTabsAt(-1, null);
+    public void bringNavigationToFront() {
+        findViewById(R.id.header).bringToFront();
+        findViewById(R.id.footer).bringToFront();
+    }
+
+    public void bringContentToFront() {
+        findViewById(R.id.main_container).bringToFront();
+    }
+
+    public void setTopPadding(int topPadding) {
+        findViewById(R.id.main_container).setPadding(0, topPadding, 0, 0);
     }
 }

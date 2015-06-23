@@ -27,6 +27,7 @@ import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
+import org.sebbas.android.memegenerator.fragments.SlidingTabsFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,15 +38,25 @@ public abstract class RecyclerFragmentAdapter extends
 
     private static final String TAG = "RecyclerFragmentAdapter";
 
+    protected static final int VIEW_TYPE_FILLER_TOOLBAR = 0;
+    protected static final int VIEW_TYPE_FILLER_TABS = 1;
+    protected static final int VIEW_TYPE_HEADER = 2;
+    protected static final int VIEW_TYPE_CONTENT = 3;
+
     protected ArrayList<LineItem> mLineItems;
     protected List<Character> mSectionItems;
     private RecyclerFragment mFragment;
+    protected boolean mWithTabOffset;
 
     public RecyclerFragmentAdapter(BaseFragment fragment, ArrayList<LineItem> lineItems) {
         mFragment = (RecyclerFragment) fragment;
         mLineItems = lineItems;
         mSectionItems = new ArrayList<>();
         mSectionItems = getSectionItems();
+
+        if (mFragment.getParentFragment() instanceof SlidingTabsFragment) {
+            mWithTabOffset = true;
+        }
     }
 
     abstract static class MainViewHolder extends RecyclerView.ViewHolder {
@@ -77,7 +88,7 @@ public abstract class RecyclerFragmentAdapter extends
     }
 
     public int getLineItemCount() {
-        return  mLineItems.size();
+        return mLineItems.size();
     }
 
     public ArrayList<Character> getSectionItems() {

@@ -66,7 +66,6 @@ public class DataLoader implements Filterable {
     }
 
     public void filter(String constraint) {
-        Log.d(TAG, "filtering with " + constraint);
         this.getFilter().filter(constraint);
     }
 
@@ -78,26 +77,27 @@ public class DataLoader implements Filterable {
         ArrayList<LineItem> resultItems = new ArrayList<>();
 
         int tmp = 0;
-        for (int i = 0; i < getItemCount() + 1; i++) {
-            if (i == 0) {
+        int offset = 2;
+        for (int i = 0; i < getItemCount() + offset; i++) {
+            if (i < offset) {
                 // Insert new header view and update section data.
                 sectionManager = (sectionManager + 1) % 2;
                 sectionFirstPosition = tmp + headerCount;
                 headerCount += 1;
                 resultItems.add(LineItem.newSuperSlimHeaderInstance(
-                        "#", false, sectionManager, sectionFirstPosition));
+                        "x", false, sectionManager, sectionFirstPosition));
             } else {
-                boolean isAllowedPosition = isAllowedPosition(i - 1);
+                boolean isAllowedPosition = isAllowedPosition(i - offset);
                 if (isAllowedPosition) {
-                    String title = getTitleAt(i - 1);
-                    String imageUrl = getImageUrlAt(i - 1);
+                    String title = getTitleAt(i - offset);
+                    String imageUrl = getImageUrlAt(i - offset);
                     Log.d(TAG, imageUrl);
-                    String imageId = getImageIdAt(i - 1);
-                    String viewCount = getViewCountAt(i - 1);
-                    String timeStamp = getTimeStampAt(i - 1);
-                    int imageWidth = getImageWidthAt(i - 1);
-                    int imageHeight = getImageHeightAt(i - 1);
-                    String header = String.valueOf(Utils.getTitleLetter(getTitleAt(i - 1)));
+                    String imageId = getImageIdAt(i - offset);
+                    String viewCount = getViewCountAt(i - offset);
+                    String timeStamp = getTimeStampAt(i - offset);
+                    int imageWidth = getImageWidthAt(i - offset);
+                    int imageHeight = getImageHeightAt(i - offset);
+                    String header = String.valueOf(Utils.getTitleLetter(getTitleAt(i - offset)));
 
                     if (!TextUtils.equals(lastHeader, header)) {
                         // Insert new header view and update section data.
@@ -121,19 +121,20 @@ public class DataLoader implements Filterable {
     public ArrayList<LineItem> getLineItems() {
         ArrayList<LineItem> resultItems = new ArrayList<>();
 
-        for (int i = 0; i < getItemCount() + 1; i++) {
-            if (i == 0) {
-                resultItems.add(LineItem.newHeaderInstance("#"));
+        int offset = 2;
+        for (int i = 0; i < getItemCount() + offset; i++) {
+            if (i < offset) {
+                resultItems.add(LineItem.newHeaderInstance(" "));
             } else {
-                boolean isAllowedPosition = isAllowedPosition(i - 1);
+                boolean isAllowedPosition = isAllowedPosition(i - offset);
                 if (isAllowedPosition) {
-                    String title = getTitleAt(i - 1);
-                    String imageUrl = getImageUrlAt(i - 1);
-                    String imageId = getImageIdAt(i - 1);
-                    String viewCount = getViewCountAt(i - 1);
-                    String timeStamp = getTimeStampAt(i - 1);
-                    int imageWidth = getImageWidthAt(i - 1);
-                    int imageHeight = getImageHeightAt(i - 1);
+                    String title = getTitleAt(i - offset);
+                    String imageUrl = getImageUrlAt(i - offset);
+                    String imageId = getImageIdAt(i - offset);
+                    String viewCount = getViewCountAt(i - offset);
+                    String timeStamp = getTimeStampAt(i - offset);
+                    int imageWidth = getImageWidthAt(i - offset);
+                    int imageHeight = getImageHeightAt(i - offset);
 
                     resultItems.add(LineItem.newInstance(
                             title, imageUrl, imageId, viewCount, timeStamp, imageWidth, imageHeight));

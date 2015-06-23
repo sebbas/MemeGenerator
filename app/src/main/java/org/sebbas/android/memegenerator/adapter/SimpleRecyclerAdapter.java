@@ -18,9 +18,6 @@ import java.util.ArrayList;
 
 public class SimpleRecyclerAdapter extends RecyclerFragmentAdapter {
 
-    private static final int VIEW_TYPE_FILLER = 0;
-    private static final int VIEW_TYPE_CONTENT = 1;
-
     private Context mContext;
 
     public SimpleRecyclerAdapter(RecyclerFragment fragment, ArrayList<LineItem> lineItems) {
@@ -35,7 +32,14 @@ public class SimpleRecyclerAdapter extends RecyclerFragmentAdapter {
 
     @Override
     public int getItemViewType(int position) {
-        return (position == 0) ? VIEW_TYPE_FILLER : VIEW_TYPE_CONTENT;
+        switch (position) {
+            case 0:
+                return VIEW_TYPE_FILLER_TOOLBAR;
+            case 1:
+                return VIEW_TYPE_FILLER_TABS;
+            default:
+                return VIEW_TYPE_CONTENT;
+        }
     }
 
     @Override
@@ -52,15 +56,24 @@ public class SimpleRecyclerAdapter extends RecyclerFragmentAdapter {
             }
         };
 
-        View view;
+        View view = null;
         LayoutInflater inflater = LayoutInflater.from(mContext);
 
-        if (viewType == VIEW_TYPE_FILLER) {
-            view = inflater.inflate(R.layout.recycler_padding, parent, false);
-        } else {
-            view = inflater.inflate(R.layout.squared_item, parent, false);
+        switch (viewType) {
+            case VIEW_TYPE_FILLER_TOOLBAR:
+                view = inflater.inflate(R.layout.padding_toolbar, parent, false);
+                break;
+            case VIEW_TYPE_FILLER_TABS:
+                // Show tabs only if super class says so and device is in portrait mode
+                if (super.mWithTabOffset && Utils.isPortraitMode(mContext)) {
+                    view = inflater.inflate(R.layout.padding_tabs, parent, false);
+                } else {
+                    view = inflater.inflate(R.layout.no_padding, parent, false);
+                }
+                break;
+            case VIEW_TYPE_CONTENT:
+                view = inflater.inflate(R.layout.squared_item, parent, false);
         }
-
         return new SquareViewHolder(view, viewHolderCallback);
     }
 

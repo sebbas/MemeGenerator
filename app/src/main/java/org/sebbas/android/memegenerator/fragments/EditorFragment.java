@@ -1,5 +1,6 @@
 package org.sebbas.android.memegenerator.fragments;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import com.squareup.picasso.Picasso;
 import org.sebbas.android.memegenerator.CardPagerAdapter;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.activities.MainActivity;
 
 import java.util.ArrayList;
 

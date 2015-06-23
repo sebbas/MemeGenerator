@@ -34,7 +34,6 @@ import org.sebbas.android.memegenerator.adapter.RecyclerFragmentAdapter;
 import org.sebbas.android.memegenerator.Utils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
@@ -43,6 +42,8 @@ public abstract class RecyclerFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener, ToolbarCallback {
 
     private static final String TAG = "RecyclerFragment";
+
+    private static final int NUM_TOP_PADDING_ITEMS = 2;
 
     // Keys for values in bundle
     protected static final String ARG_FRAGMENT_TYPE = "ARG_FRAGMENT_TYPE";
@@ -73,6 +74,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
     private int mPositionInParent;
     private boolean mIsVisibleToUser;
     private VerticalRecyclerViewFastScroller mFastScroller;
+    private boolean mWithTabOffset;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,6 +87,11 @@ public abstract class RecyclerFragment extends BaseFragment implements
             mPositionInParent = args.getInt(ARG_POSITION_IN_PARENT, 0);
         }
         mDataLoader = new DataLoader(this);
+
+        // Check if parent uses tabs
+        if (this.getParentFragment() instanceof SlidingTabsFragment) {
+            mWithTabOffset = true;
+        }
     }
 
     public void init(View view) {
@@ -102,7 +109,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
         //mSwipeRefreshLayout.setProgressViewOffset(true, offset,offset + tabHeight);
 
         // Bring activity ui elements to front
-        getActivity().findViewById(R.id.header).bringToFront();
+        ((MainActivity) getActivity()).bringNavigationToFront();
 
         setupRecyclerView();
         updatePlaceholder();
@@ -123,24 +130,6 @@ public abstract class RecyclerFragment extends BaseFragment implements
         BaseActivity parentActivity = (BaseActivity) getActivity();
         parentActivity.unregisterToolbarCallback();
     }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        //saveRecyclerViewState();
-    }
-
-    /*private void restoreRecylerViewState() {
-        if (mRecyclerState != null) {
-            mRecyclerView.onRestoreInstanceState(mRecyclerState);
-        }
-    }
-
-    private void saveRecyclerViewState() {
-        if (mRecyclerState != null) {
-            mRecyclerView.onSaveInstanceState();
-        }
-    }*/
 
     @Override
     public void onRefresh() {
@@ -261,7 +250,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
                 manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                     @Override
                     public int getSpanSize(int position) {
-                        return (position == 0) ? manager.getSpanCount() : 1;
+                        return (position < 2) ? manager.getSpanCount() : 1;
                     }
                 });
                 mRecyclerView.setLayoutManager(manager);
@@ -291,7 +280,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
     private void setupSwipeRefreshLayout() {
         mSwipeRefreshLayout.setColorSchemeResources(R.color.primary, R.color.accent);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setSwipeableChildren(R.id.scroll);
+        mSwipeRefreshLayout.setSwipeableChildren(R.id.container);
     }
 
     private void setupFastScroller(View view) {
@@ -308,7 +297,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
         // Connect the section indicator to the scroller
         ScrollBarSectionIndicator sectionTitleIndicator = (ScrollBarSectionIndicator) view.findViewById(R.id.fast_scroller_section_title_indicator);
         mFastScroller.setSectionIndicator(sectionTitleIndicator);
-        mFastScroller.setScrollArea(1, mRecyclerFragmentAdapter.getLineItemCount());
+        mFastScroller.setScrollArea(NUM_TOP_PADDING_ITEMS, mRecyclerFragmentAdapter.getLineItemCount());
 
         // Make sure that fast scroller is not visible when view is first created
         mFastScroller.setVisibility(View.GONE);
@@ -333,18 +322,6 @@ public abstract class RecyclerFragment extends BaseFragment implements
     }
 
     public ArrayList<LineItem> getLineItems() {
-        switch (mLayoutMode) {
-            case GRID_LAYOUT:
-            case LIST_LAYOUT:
-                return mDataLoader.getLineItems();
-            case SUPER_SLIM_LAYOUT:
-                return mDataLoader.getSuperSlimLineItems();
-            default:
-                return mDataLoader.getLineItems();
-        }
-    }
-
-    private void updateLineItems() {
         ArrayList<LineItem> lineItems;
         switch (mLayoutMode) {
             case GRID_LAYOUT:
@@ -357,6 +334,11 @@ public abstract class RecyclerFragment extends BaseFragment implements
             default:
                 lineItems = mDataLoader.getLineItems();
         }
+        return lineItems;
+    }
+
+    private void updateLineItems() {
+        ArrayList<LineItem> lineItems = getLineItems();
         mRecyclerFragmentAdapter.setLineItems(lineItems);
     }
 
@@ -424,6 +406,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
         }
 
+        // Animate fastscroller in and out in x direction
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             if (dy < 0) {
                 animateView(mFastScroller, 30, 100);

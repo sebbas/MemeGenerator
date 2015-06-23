@@ -14,6 +14,7 @@ import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.activities.MainActivity;
 import org.sebbas.android.memegenerator.adapter.SlidingTabsAdapter;
 import org.sebbas.android.memegenerator.dataloader.DataLoader;
 
@@ -55,10 +56,10 @@ public abstract class SlidingTabsFragment extends BaseFragment {
         mViewPager.setAdapter(mSlidingTabsAdapter);
 
         // Padding for tabs (only in portrait mode)
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+        /*if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
-            getActivity().findViewById(R.id.main_container).setPadding(0, tabHeight, 0, 0);
-        }
+            ((MainActivity) getActivity()).setTopPadding(tabHeight);
+        }*/
         super.onFragmentComplete(this);
     }
 
