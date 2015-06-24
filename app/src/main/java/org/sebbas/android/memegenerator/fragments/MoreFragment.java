@@ -6,20 +6,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.adapter.ScrollBoxRecyclerAdapter;
+import org.sebbas.android.memegenerator.adapter.PreferencesAdapter;
 
-public class ExploreFragment extends RecyclerFragment {
+public class MoreFragment extends RecyclerFragment {
 
-    private static final String TAG = "ExploreFragment";
+    public static final String TAG = "MoreFragment";
 
-    private ScrollBoxRecyclerAdapter mScrollBoxRecyclerAdapter;
+    private PreferencesAdapter mPreferencesAdapter;
 
-    public static ExploreFragment newInstance(int layoutMode, boolean isRefreshable) {
-        ExploreFragment fragment = new ExploreFragment();
+    public static MoreFragment newInstance(int position) {
+        MoreFragment fragment = new MoreFragment();
         Bundle args = new Bundle();
-        args.putString("fragment_type", TAG);
-        args.putInt("layout_mode", layoutMode);
-        args.putBoolean("refreshable", isRefreshable);
+        args.putString(ARG_FRAGMENT_TYPE, TAG);
+        args.putInt(ARG_LAYOUT_MODE, RecyclerFragment.LIST_LAYOUT);
+        args.putBoolean(ARG_IS_REFRESHABLE, false);
+        args.putInt(ARG_POSITION_IN_PARENT, position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -28,7 +29,7 @@ public class ExploreFragment extends RecyclerFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mScrollBoxRecyclerAdapter = new ScrollBoxRecyclerAdapter(this);
+        mPreferencesAdapter = new PreferencesAdapter(this);
     }
 
     @Override
@@ -36,8 +37,8 @@ public class ExploreFragment extends RecyclerFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
 
+        super.with(mPreferencesAdapter);
         super.init(view);
-        super.with(mScrollBoxRecyclerAdapter);
 
         return view;
     }

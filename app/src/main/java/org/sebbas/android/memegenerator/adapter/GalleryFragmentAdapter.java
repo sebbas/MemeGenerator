@@ -5,7 +5,9 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import org.sebbas.android.memegenerator.fragments.GifChildFragment;
+import org.sebbas.android.memegenerator.fragments.GalleryChildFragmentOne;
+import org.sebbas.android.memegenerator.fragments.GalleryChildFragmentThree;
+import org.sebbas.android.memegenerator.fragments.GalleryChildFragmentTwo;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 
 public class GalleryFragmentAdapter extends SlidingTabsAdapter {
@@ -20,19 +22,16 @@ public class GalleryFragmentAdapter extends SlidingTabsAdapter {
 
         switch (position) {
             case 0:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.LIST_LAYOUT, true, position);
+                fragment = GalleryChildFragmentOne.newInstance(RecyclerFragment.LIST_LAYOUT, true, position);
                 break;
             case 1:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.LIST_LAYOUT, true, position);
+                fragment = GalleryChildFragmentTwo.newInstance(RecyclerFragment.LIST_LAYOUT, true, position);
                 break;
             case 2:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.LIST_LAYOUT, true, position);
-                break;
-            case 3:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.LIST_LAYOUT, true, position);
+                fragment = GalleryChildFragmentThree.newInstance(RecyclerFragment.LIST_LAYOUT, true, position);
                 break;
             default:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.LIST_LAYOUT, true, position);
+                fragment = GalleryChildFragmentOne.newInstance(RecyclerFragment.LIST_LAYOUT, true, position);
         }
         return fragment;
     }

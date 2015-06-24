@@ -11,14 +11,13 @@ import com.squareup.picasso.Picasso;
 import org.sebbas.android.memegenerator.CardPagerAdapter;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.activities.MainActivity;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
 import java.util.ArrayList;
 
 public class EditorFragment extends BaseFragment implements ToolbarCallback {
 
-    private static final String TAG = "EditorFragment";
+    public static final String TAG = "EditorFragment";
     private static final String START_POSITION = "startPosition";
     private static final String LINE_ITEMS = "lineItems";
 
@@ -48,7 +47,7 @@ public class EditorFragment extends BaseFragment implements ToolbarCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View view = inflater.inflate(R.layout.fragment_editor, container, false);
+        View view = inflater.inflate(R.layout.fragment_explore, container, false);
         mCardPager = (ViewPager) view.findViewById(R.id.card_pager);
         setToolbarTitle(mStartPosition);
         return view;
@@ -78,7 +77,7 @@ public class EditorFragment extends BaseFragment implements ToolbarCallback {
         String title = item.getTitle();
 
         // Callback to setup current title in toolbar
-        EditorFragment.super.onFragmentChangeToolbar(title);
+        super.onFragmentChangeToolbar(TAG, title);
     }
 
     private ArrayList<String> getImageUrls() {

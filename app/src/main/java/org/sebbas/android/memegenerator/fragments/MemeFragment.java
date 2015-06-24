@@ -13,7 +13,7 @@ import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
 public class MemeFragment extends SlidingTabsFragment {
 
-    private static final String TAG = "MemeFragment";
+    public static final String TAG = "MemeFragment";
     private static final int OFF_SCREEN_LIMIT = 3;
     private static int[] TAB_TITLES = {
             R.string.all_items,

@@ -5,7 +5,9 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import org.sebbas.android.memegenerator.fragments.GifChildFragment;
+import org.sebbas.android.memegenerator.fragments.GifChildFragmentOne;
+import org.sebbas.android.memegenerator.fragments.GifChildFragmentThree;
+import org.sebbas.android.memegenerator.fragments.GifChildFragmentTwo;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 
 public class GifFragmentAdapter extends SlidingTabsAdapter {
@@ -22,16 +24,16 @@ public class GifFragmentAdapter extends SlidingTabsAdapter {
 
         switch (position) {
             case 0:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.GRID_LAYOUT, false, position);
+                fragment = GifChildFragmentOne.newInstance(RecyclerFragment.GRID_LAYOUT, false, position);
                 break;
             case 1:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.GRID_LAYOUT, false, position);
+                fragment = GifChildFragmentTwo.newInstance(RecyclerFragment.GRID_LAYOUT, false, position);
                 break;
             case 2:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.GRID_LAYOUT, false, position);
+                fragment = GifChildFragmentThree.newInstance(RecyclerFragment.GRID_LAYOUT, false, position);
                 break;
             default:
-                fragment = GifChildFragment.newInstance(RecyclerFragment.GRID_LAYOUT, false, position);
+                fragment = GifChildFragmentOne.newInstance(RecyclerFragment.GRID_LAYOUT, false, position);
         }
         return fragment;
     }

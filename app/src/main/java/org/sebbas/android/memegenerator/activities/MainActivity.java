@@ -21,6 +21,19 @@ import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.adapter.MainActivityAdapter;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.fragments.EditorFragment;
+import org.sebbas.android.memegenerator.fragments.GalleryChildFragmentOne;
+import org.sebbas.android.memegenerator.fragments.GalleryChildFragmentThree;
+import org.sebbas.android.memegenerator.fragments.GalleryChildFragmentTwo;
+import org.sebbas.android.memegenerator.fragments.GalleryFragment;
+import org.sebbas.android.memegenerator.fragments.GifChildFragmentOne;
+import org.sebbas.android.memegenerator.fragments.GifChildFragmentThree;
+import org.sebbas.android.memegenerator.fragments.GifChildFragmentTwo;
+import org.sebbas.android.memegenerator.fragments.GifFragment;
+import org.sebbas.android.memegenerator.fragments.MemeChildFragmentOne;
+import org.sebbas.android.memegenerator.fragments.MemeChildFragmentThree;
+import org.sebbas.android.memegenerator.fragments.MemeChildFragmentTwo;
+import org.sebbas.android.memegenerator.fragments.MemeFragment;
+import org.sebbas.android.memegenerator.fragments.MoreFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.fragments.SlidingTabsFragment;
 import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
@@ -36,13 +49,18 @@ public class MainActivity extends BaseActivity implements
     private static final boolean IS_SMOOTH_SCROLL = false;
     private static final int ANIMATION_SPEED = 200;
 
+    // Position 0 is for main pager, position 1 is for embedded sliding tabs view pager
     private static final int[] LAST_FRAGMENT_POSITIONS = new int[2];
     private static final int[] TAB_TITLES = {
             R.string.memes,
             R.string.gifs,
             R.string.editor,
             R.string.gallery,
-            R.string.preferences};
+            R.string.more};
+
+    // Setup default first fragment tag
+    private String mLastFragmentTag = MemeChildFragmentOne.TAG;
+    private String mToolbarTitle = "";
 
     private ToggleSwipeViewPager mViewPager;
     private MainActivityAdapter mMainActivityAdapter;
@@ -84,9 +102,12 @@ public class MainActivity extends BaseActivity implements
             @Override
             public void onPageSelected(int position) {
                 LAST_FRAGMENT_POSITIONS[0] = position;
-                setupFragmentToolbarAt(position);
-                setupSlidingTabsAt(position, getFragmentAt(position));
-                registerFragmentToolbarCallbacks(position);
+
+                String currentFragmentTag = getFragmentAt(position).getFragmentTag();
+                setupToolbar(currentFragmentTag);
+
+                setupSlidingTabs(getFragmentAt(position));
+                registerFragmentToolbarCallbacks(getFragmentAt(position));
 
                 // Make sure that toolbar is shown when other page is selected
                 showToolbar();
@@ -124,7 +145,7 @@ public class MainActivity extends BaseActivity implements
         });
 
         // Setup toolbar for initial fragment in viewpager
-        setupFragmentToolbarAt(getCurrentPosition());
+        setupToolbar(mLastFragmentTag);
     }
 
     @Override
@@ -132,83 +153,100 @@ public class MainActivity extends BaseActivity implements
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
 
+            clearToolbarTitle();
+
             // Make sure main view tabs are shown
             showMainTabs();
 
-            // Show sliding tabs at top
-            setupSlidingTabsAt(mViewPager.getCurrentItem(), null);
-
             // Setup toolbar title
-            setupFragmentToolbarAt(mViewPager.getCurrentItem());
+            setupToolbar(getCurrentFragment().getFragmentTag());
+
+            // Show sliding tabs at top
+            setupSlidingTabs(getCurrentFragment());
+
+
+            registerFragmentToolbarCallbacks(LAST_FRAGMENT_POSITIONS[1]);
+
         } else {
             this.finish();
         }
     }
 
-    private void setupFragmentToolbarAt(int position) {
+    private void setupToolbar(String fragmentTag) {
         int titleResource = 0;
         int menuResource = 0;
+        boolean upEnabled = false;
 
-        switch(position) {
-            case 0:
+        switch (fragmentTag) {
+            case MemeFragment.TAG:
+            case MemeChildFragmentOne.TAG:
+            case MemeChildFragmentTwo.TAG:
+            case MemeChildFragmentThree.TAG:
                 titleResource = R.string.memes;
                 menuResource = R.menu.menu_memes;
                 break;
-            case 1:
+            case GifFragment.TAG:
+            case GifChildFragmentOne.TAG:
+            case GifChildFragmentTwo.TAG:
+            case GifChildFragmentThree.TAG:
                 titleResource = R.string.gifs;
                 menuResource = R.menu.menu_gifs;
                 break;
-            case 2:
-                titleResource = R.string.editor;
-                break;
-            case 3:
+            case GalleryFragment.TAG:
+            case GalleryChildFragmentOne.TAG:
+            case GalleryChildFragmentTwo.TAG:
+            case GalleryChildFragmentThree.TAG:
                 titleResource = R.string.gallery;
                 menuResource = R.menu.menu_gallery;
                 break;
-            case 4:
-                titleResource = R.string.preferences;
+            case MoreFragment.TAG:
+                titleResource = R.string.more;
+                break;
+            case EditorFragment.TAG:
+                upEnabled = true;
                 break;
             default:
                 titleResource = R.string.app_name;
                 menuResource = R.menu.menu_memes;
                 break;
         }
-        setupToolbar(titleResource, menuResource, false);
+
+        mLastFragmentTag = fragmentTag;
+        if (!mToolbarTitle.equals("")) {
+            super.setupToolbar(mToolbarTitle, menuResource, upEnabled);
+        } else {
+            super.setupToolbar(titleResource, menuResource, upEnabled);
+        }
     }
 
-    private void setupFragmentToolbarWith(String title, boolean upEnabled) {
-        int menuResource = 0;
-        setupToolbar(title, menuResource, upEnabled);
-    }
-
-    private void setupSlidingTabsAt(int position, Fragment fragment) {
+    private void setupSlidingTabs(BaseFragment baseFragment) {
         SlidingTabLayout slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+        String fragmentTag = baseFragment.getFragmentTag();
 
         // Setup visibility of tabs layout
-        switch(position) {
-            case 0:
+        switch(fragmentTag) {
+            case MemeFragment.TAG:
                 slidingTabLayout.setVisibility(View.VISIBLE);
                 break;
-            case 1:
+            case GifFragment.TAG:
                 slidingTabLayout.setVisibility(View.VISIBLE);
                 break;
-            case 2:
+            case GalleryFragment.TAG:
+                slidingTabLayout.setVisibility(View.VISIBLE);
+                break;
+            case MoreFragment.TAG:
                 slidingTabLayout.setVisibility(View.GONE);
                 break;
-            case 3:
-                slidingTabLayout.setVisibility(View.VISIBLE);
-                break;
-            case 4:
+            case EditorFragment.TAG:
                 slidingTabLayout.setVisibility(View.GONE);
                 break;
             default:
-                slidingTabLayout.setVisibility(View.GONE);
-                break;
+                slidingTabLayout.setVisibility(View.VISIBLE);
         }
 
         // Setup viewpager for tabs layout
-        if (fragment != null && fragment instanceof SlidingTabsFragment) {
-            SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) fragment;
+        if (baseFragment != null && baseFragment instanceof SlidingTabsFragment) {
+            SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) baseFragment;
 
             // Set the pager
             ViewPager pager = slidingTabsFragment.getViewPager();
@@ -238,8 +276,8 @@ public class MainActivity extends BaseActivity implements
         }
     }
 
-    private Fragment getFragmentAt(int position) {
-        return  mMainActivityAdapter.getRegisteredFragment(position); //(BaseFragment) mMainActivityAdapter.instantiateItem(mViewPager, position);
+    private BaseFragment getFragmentAt(int position) {
+        return  (BaseFragment) mMainActivityAdapter.getRegisteredFragment(position);
     }
 
     @Override
@@ -342,11 +380,11 @@ public class MainActivity extends BaseActivity implements
         }
     }
 
-    private Fragment getCurrentFragment() {
-        return mMainActivityAdapter.getRegisteredFragment(getCurrentPosition());
+    private BaseFragment getCurrentFragment() {
+        return (BaseFragment) mMainActivityAdapter.getRegisteredFragment(getCurrentMainPosition());
     }
 
-    private int getCurrentPosition() {
+    private int getCurrentMainPosition() {
         return mViewPager.getCurrentItem();
     }
 
@@ -452,7 +490,7 @@ public class MainActivity extends BaseActivity implements
             int lastPosition = LAST_FRAGMENT_POSITIONS[0];
             int fragmentPosition = slidingTabsFragment.getPositionInParent();
             if (lastPosition == fragmentPosition) {
-                setupSlidingTabsAt(fragmentPosition, baseFragment);
+                setupSlidingTabs(baseFragment);
             }
         }
 
@@ -471,8 +509,9 @@ public class MainActivity extends BaseActivity implements
     }
 
     @Override
-    public void onFragmentChangeToolbar(String title) {
-        setupFragmentToolbarWith(title, true);
+    public void onFragmentChangeToolbar(String fragmentTag, String toolbarTitle) {
+        mToolbarTitle = toolbarTitle;
+        setupToolbar(fragmentTag);
     }
 
     @Override
@@ -493,7 +532,7 @@ public class MainActivity extends BaseActivity implements
         hideMainTabs();
         
         // Hide sliding tabs at top, -1 and null because this is not a viewpager position
-        setupSlidingTabsAt(-1, null);
+        setupSlidingTabs(editorFragment);
 
         // Make sure toolbar new fragment can receive toolbar callbacks
         registerFragmentToolbarCallbacks(editorFragment);
@@ -502,5 +541,9 @@ public class MainActivity extends BaseActivity implements
     public void bringMainNavigationToFront() {
         findViewById(R.id.header).bringToFront();
         findViewById(R.id.footer).bringToFront();
+    }
+
+    private void clearToolbarTitle() {
+        mToolbarTitle = "";
     }
 }

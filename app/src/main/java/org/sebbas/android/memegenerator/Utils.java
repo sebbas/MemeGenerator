@@ -6,12 +6,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 
-import com.koushikdutta.async.util.FileUtility;
-
-import org.sebbas.android.memegenerator.fragments.MemeChildFragment;
-import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
-import org.sebbas.android.memegenerator.fragments.GifChildFragment;
-import org.sebbas.android.memegenerator.fragments.MemeFragment;
+import org.sebbas.android.memegenerator.fragments.GifChildFragmentOne;
+import org.sebbas.android.memegenerator.fragments.GifChildFragmentThree;
+import org.sebbas.android.memegenerator.fragments.GifChildFragmentTwo;
+import org.sebbas.android.memegenerator.fragments.MemeChildFragmentOne;
+import org.sebbas.android.memegenerator.fragments.MemeChildFragmentThree;
+import org.sebbas.android.memegenerator.fragments.MemeChildFragmentTwo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,30 +19,16 @@ import java.util.List;
 
 public class Utils {
 
-    public static final int DEFAULT_MAX_BITMAP_DIMENSION = 2048;
-
     public static final String IMAGE_SMALL = "b";
     public static final String IMAGE_MEDIUM = "m";
     public static final String IMAGE_LARGE = "l";
 
-
-    private static final String BASE_IMAGE = "https://i.imgur.com/";
-    private static final String BASE_VIRAL = "https://api.imgur.com/3/gallery/hot/viral/";
-    private static final String BASE_TOP = "https://api.imgur.com/3/gallery/top/";
-    private static final String BASE_TIME = "https://api.imgur.com/3/gallery/hot/time/";
-
-    private static final String BASE_MEMES = "https://api.imgur.com/3/g/memes/time/";
-    private static final String BASE_TEMPLATES = "https://api.imgur.com/3/memegen/defaults";
-    private static final String BASE_SEARCH = "https://api.imgur.com/3/gallery/search";
     private static final String MEMES = "https://api.imgur.com/3/album/dPXBy/images";
     private static final String GIFS = "https://api.imgur.com/3/album/zQK3s/images";
-
-    private static final String JPG = ".jpg";
 
     public static final int REFRESH_ICON_TIME_SHOWN = 3000;
     public static final short NO_CONNECTION_HINT_TIME = 4000;
     public static final short TIMEOUT_HINT_TIME = 4000;
-    public static final String GIF_EXTENSION = ".gif";
     private static final String NUMBERS_HEADER_LETTER = "#";
 
     private Utils() {
@@ -60,21 +46,22 @@ public class Utils {
         return imageUrl.replaceAll(id, id + size);
     }
 
-    public static String getBaseImgurImageUrl(String imageId) {
-        return BASE_IMAGE + imageId + JPG;
-    }
+    public static final String getUrlForData(String fragmentTag) {
+        String url;
 
-    public static final String getUrlForQuery(int pageIndex, String query) {
-        return BASE_SEARCH + "?q=" + query.replace(" ", "+");
-    }
-
-    public static final String getUrlForData(int pageIndex, RecyclerFragment fragment) {
-        String url = "";
-        if (fragment instanceof MemeChildFragment) {
-            url = MEMES;
-        }
-        if (fragment instanceof GifChildFragment) {
-            url = GIFS;
+        switch (fragmentTag) {
+            case MemeChildFragmentOne.TAG:
+            case MemeChildFragmentTwo.TAG:
+            case MemeChildFragmentThree.TAG:
+                url = MEMES;
+                break;
+            case GifChildFragmentOne.TAG:
+            case GifChildFragmentTwo.TAG:
+            case GifChildFragmentThree.TAG:
+                url = GIFS;
+                break;
+            default:
+                url = MEMES;
         }
         return url;
     }

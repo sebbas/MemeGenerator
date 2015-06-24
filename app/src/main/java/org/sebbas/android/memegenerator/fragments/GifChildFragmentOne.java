@@ -1,5 +1,6 @@
 package org.sebbas.android.memegenerator.fragments;
 
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +14,12 @@ import org.sebbas.android.memegenerator.dataloader.DataLoader;
 
 import java.util.ArrayList;
 
-public class GifChildFragment extends RecyclerFragment {
+public class GifChildFragmentOne extends RecyclerFragment {
 
     public static final String TAG = "GifChildFragment";
 
-    public static GifChildFragment newInstance(int layoutMode, boolean isRefreshable, int position) {
-        GifChildFragment fragment = new GifChildFragment();
+    public static GifChildFragmentOne newInstance(int layoutMode, boolean isRefreshable, int position) {
+        GifChildFragmentOne fragment = new GifChildFragmentOne();
         Bundle args = new Bundle();
         args.putString(ARG_FRAGMENT_TYPE, TAG);
         args.putInt(ARG_LAYOUT_MODE, layoutMode);
@@ -33,7 +34,7 @@ public class GifChildFragment extends RecyclerFragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         // Get url for content
-        String url = Utils.getUrlForData(0, this);
+        String url = Utils.getUrlForData(TAG);
         super.load(url, DataLoader.INTERNET);
 
         // Setup adapter

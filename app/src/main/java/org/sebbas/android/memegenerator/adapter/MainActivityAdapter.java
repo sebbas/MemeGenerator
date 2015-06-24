@@ -9,11 +9,10 @@ import android.text.SpannableString;
 import android.text.style.ImageSpan;
 
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.fragments.EditorFragment;
 import org.sebbas.android.memegenerator.fragments.GalleryFragment;
 import org.sebbas.android.memegenerator.fragments.GifFragment;
-import org.sebbas.android.memegenerator.fragments.SimplePreferenceFragment;
 import org.sebbas.android.memegenerator.fragments.MemeFragment;
+import org.sebbas.android.memegenerator.fragments.MoreFragment;
 
 public class MainActivityAdapter extends SlidingTabsAdapter {
 
@@ -51,7 +50,7 @@ public class MainActivityAdapter extends SlidingTabsAdapter {
                 fragment = GalleryFragment.newInstance(position);
                 break;
             case 4:
-                fragment = SimplePreferenceFragment.newInstance(position);
+                fragment = MoreFragment.newInstance(position);
                 break;
             default:
                 fragment = MemeFragment.newInstance(position);

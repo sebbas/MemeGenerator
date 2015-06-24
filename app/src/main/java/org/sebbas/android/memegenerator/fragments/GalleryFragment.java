@@ -12,9 +12,8 @@ import org.sebbas.android.memegenerator.R;
 
 public class GalleryFragment extends SlidingTabsFragment {
 
+    public static final String TAG = "GalleryFragment";
     private static final int OFF_SCREEN_LIMIT = 3;
-    private static final String TAG = "GalleryFragment";
-
     private static int[] TAB_TITLES = {
             R.string.my_memes,
             R.string.favorites,

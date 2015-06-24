@@ -12,7 +12,7 @@ import org.sebbas.android.memegenerator.R;
 
 public class GifFragment extends SlidingTabsFragment {
 
-    private static final String TAG = "GifFragment";
+    public static final String TAG = "GifFragment";
     private static final int OFF_SCREEN_LIMIT = 3;
     private static int[] TAB_TITLES = {
             R.string.all_items,

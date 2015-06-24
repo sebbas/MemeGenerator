@@ -8,17 +8,18 @@ import android.view.ViewGroup;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
-import org.sebbas.android.memegenerator.adapter.SuperSlimRecyclerAdapter;
+import org.sebbas.android.memegenerator.adapter.SimpleRecyclerAdapter;
 import org.sebbas.android.memegenerator.dataloader.DataLoader;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class MemeChildFragment extends RecyclerFragment {
+public class GalleryChildFragmentOne extends RecyclerFragment {
 
-    public static final String TAG = "MemeChildFragment";
+    public static final String TAG = "GalleryChildFragmentOne";
 
-    public static MemeChildFragment newInstance(int layoutMode, boolean isRefreshable, int position) {
-        MemeChildFragment fragment = new MemeChildFragment();
+    public static GalleryChildFragmentOne newInstance(int layoutMode, boolean isRefreshable, int position) {
+        GalleryChildFragmentOne fragment = new GalleryChildFragmentOne();
         Bundle args = new Bundle();
         args.putString(ARG_FRAGMENT_TYPE, TAG);
         args.putInt(ARG_LAYOUT_MODE, layoutMode);
@@ -33,16 +34,16 @@ public class MemeChildFragment extends RecyclerFragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         // Get url for content
-        String url = Utils.getUrlForData(0, this);
+        String url = Utils.getUrlForData(TAG);
         super.load(url, DataLoader.INTERNET);
 
         // Setup adapter
         ArrayList<LineItem> lineItems = super.getLineItems();
-        SuperSlimRecyclerAdapter superSlimRecyclerAdapter = new SuperSlimRecyclerAdapter(this, lineItems);
+        SimpleRecyclerAdapter simpleRecyclerAdapter = new SimpleRecyclerAdapter(this, lineItems);
 
         // Create the view
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
-        super.with(superSlimRecyclerAdapter);
+        super.with(simpleRecyclerAdapter);
         super.init(view);
 
         return view;

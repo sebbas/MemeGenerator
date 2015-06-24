@@ -12,14 +12,13 @@ import org.sebbas.android.memegenerator.adapter.SimpleRecyclerAdapter;
 import org.sebbas.android.memegenerator.dataloader.DataLoader;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class GalleryChildFragment extends RecyclerFragment {
+public class GifChildFragmentTwo extends RecyclerFragment {
 
-    public static final String TAG = "GalleryChildFragment";
+    public static final String TAG = "GifChildFragmentTwo";
 
-    public static GalleryChildFragment newInstance(int layoutMode, boolean isRefreshable, int position) {
-        GalleryChildFragment fragment = new GalleryChildFragment();
+    public static GifChildFragmentTwo newInstance(int layoutMode, boolean isRefreshable, int position) {
+        GifChildFragmentTwo fragment = new GifChildFragmentTwo();
         Bundle args = new Bundle();
         args.putString(ARG_FRAGMENT_TYPE, TAG);
         args.putInt(ARG_LAYOUT_MODE, layoutMode);
@@ -34,7 +33,7 @@ public class GalleryChildFragment extends RecyclerFragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         // Get url for content
-        String url = Utils.getUrlForData(0, this);
+        String url = Utils.getUrlForData(TAG);
         super.load(url, DataLoader.INTERNET);
 
         // Setup adapter

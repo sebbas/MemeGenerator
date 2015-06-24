@@ -301,7 +301,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     private void recyclerViewMoveUp() {
         if (mRecyclerView.getChildCount() > 0) {
-            mRecyclerView.smoothScrollToPosition(0);
+            mRecyclerView.scrollToPosition(0);
         }
     }
 
