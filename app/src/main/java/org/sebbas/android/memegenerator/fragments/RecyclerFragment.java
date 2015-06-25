@@ -9,7 +9,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -88,7 +87,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     public void init(View view) {
 
-        mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.recycler_container);
+        mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.recycler_swipe_refresh);
         mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
         mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
 

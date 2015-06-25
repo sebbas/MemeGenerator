@@ -82,7 +82,7 @@ public class MainActivity extends BaseActivity implements
         mToolbarView = findViewById(R.id.toolbar);
         mMainActivityAdapter = new MainActivityAdapter(this, getSupportFragmentManager(), TAB_TITLES);
 
-        mViewPager = (ToggleSwipeViewPager) findViewById(R.id.toogle_swipe_viewpager);
+        mViewPager = (ToggleSwipeViewPager) findViewById(R.id.main_viewpager);
         mViewPager.setPagingEnabled(IS_SWIPEABLE);
         mViewPager.setSmoothScrollEnabled(IS_SMOOTH_SCROLL);
         mViewPager.setAdapter(mMainActivityAdapter);

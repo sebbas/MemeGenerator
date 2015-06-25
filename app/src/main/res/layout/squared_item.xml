@@ -2,6 +2,7 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:cardview="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/squared_item_wrapper"
     android:layout_width="@dimen/squared_item_card_width"
     android:layout_height="wrap_content"
     cardview:cardElevation="@dimen/margin_extra_short"

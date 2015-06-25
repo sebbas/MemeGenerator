@@ -31,7 +31,7 @@ public class CardPagerAdapter extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, int position) {
 
         View itemView = mLayoutInflater.inflate(R.layout.card_item, container, false);
-        ImageView imageView = (ImageView) itemView.findViewById(R.id.item_image);
+        ImageView imageView = (ImageView) itemView.findViewById(R.id.item_image_card);
 
         String imageUrl = mImageUrls.get(position);
         Ion.with(imageView).load(imageUrl);

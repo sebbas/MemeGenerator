@@ -18,6 +18,7 @@
 
         <!-- This linear layout is needed for background color -->
         <LinearLayout
+            android:id="@+id/header_wrapper"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -39,9 +40,9 @@
         <!-- This view is used to create the elevation effect at the
         top of the bottom sliding tabs bar -->
         <View
-            android:layout_width="match_parent"
-            android:layout_height="6dp"
             android:id="@+id/toolbar_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/shadow_height"
             android:background="@drawable/toolbar_shadow"/>
     </LinearLayout>
 
@@ -51,12 +52,10 @@
         android:layout_height="match_parent">
 
         <org.sebbas.android.memegenerator.ToggleSwipeViewPager
-                android:id="@+id/toogle_swipe_viewpager"
+                android:id="@+id/main_viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
     </FrameLayout>
-
-
 
     <LinearLayout
         android:id="@+id/footer"
@@ -68,11 +67,11 @@
         <!-- This view is used to create the elevation effect at the
         top of the bottom sliding tabs bar -->
         <View
-            android:layout_width="match_parent"
-            android:layout_height="6dp"
             android:id="@+id/footer_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/shadow_height"
             android:background="@drawable/footer_shadow"
-            android:layout_above="@+id/sliding_tabs_main_navigation"/>
+            android:layout_above="@+id/sliding_tabs_main_navigation" />
 
         <com.google.samples.apps.iosched.ui.widget.SlidingTabLayout
             android:id="@+id/sliding_tabs_main_navigation"

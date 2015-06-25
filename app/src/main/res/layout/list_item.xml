@@ -1,44 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:paddingLeft="@dimen/google_cards_padding"
-    android:paddingRight="@dimen/google_cards_padding"
-    android:paddingTop="@dimen/google_cards_padding_short"
-    android:paddingBottom="@dimen/google_cards_padding_short">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/margin_short"
+    android:paddingTop="@dimen/margin_short"
+    android:paddingRight="@dimen/margin_standard"
+    android:paddingBottom="@dimen/margin_short"
+    android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <com.makeramen.roundedimageview.RoundedImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/item_image"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@color/primary"
+        app:riv_corner_radius="250dp"
+        app:riv_mutate_background="true"
+        app:riv_oval="false" />
+
+    <TextView
+        style="@android:style/TextAppearance.DeviceDefault.Medium.Inverse"
+        android:id="@+id/item_title"
+        android:text="No title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/margin_short"
-        android:orientation="horizontal">
-
-        <com.makeramen.roundedimageview.RoundedImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:id="@+id/item_image"
-            android:src="@color/primary"
-            app:riv_corner_radius="250dp"
-            app:riv_mutate_background="true"
-            app:riv_oval="false" />
-
-        <TextView
-            android:id="@+id/item_title"
-            style="@android:style/TextAppearance.DeviceDefault.Medium.Inverse"
-            android:text="No title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="sans-serif-light"
-            android:ellipsize="marquee"
-            android:singleLine="false"
-            android:minLines="1"
-            android:textStyle="bold"
-            android:paddingLeft="@dimen/margin_short"
-            android:layout_gravity="center_vertical"
-            android:textColor="?android:attr/textColorPrimary"/>
-    </LinearLayout>
+        android:fontFamily="sans-serif-light"
+        android:ellipsize="marquee"
+        android:singleLine="false"
+        android:minLines="1"
+        android:textStyle="bold"
+        android:paddingLeft="@dimen/margin_short"
+        android:layout_gravity="center_vertical"
+        android:textColor="?android:attr/textColorPrimary"/>
 </LinearLayout>

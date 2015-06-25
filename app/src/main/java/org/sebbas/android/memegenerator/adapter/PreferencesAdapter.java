@@ -1,5 +1,6 @@
 package org.sebbas.android.memegenerator.adapter;
 
+import android.content.Context;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +19,11 @@ public class PreferencesAdapter extends RecyclerFragmentAdapter {
     private static final int VIEW_TYPE_FILLER = 0;
     private static final int VIEW_TYPE_CONTENT = 1;
 
-    private BaseFragment mFragment;
+    private Context mContext;
 
-    public PreferencesAdapter(BaseFragment fragment) {
-        super(fragment, new ArrayList<LineItem>());
-        mFragment = fragment;
+    public PreferencesAdapter(Context context) {
+        super(new ArrayList<LineItem>());
+        mContext = context;
     }
 
     @Override
@@ -38,7 +39,7 @@ public class PreferencesAdapter extends RecyclerFragmentAdapter {
     @Override
     public MainViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-        LayoutInflater inflater = LayoutInflater.from(mFragment.getActivity());
+        LayoutInflater inflater = LayoutInflater.from(mContext);
 
         if (viewType == VIEW_TYPE_FILLER) {
             view = inflater.inflate(R.layout.recycler_padding, parent, false);
@@ -53,12 +54,12 @@ public class PreferencesAdapter extends RecyclerFragmentAdapter {
     public void onBindViewHolder(MainViewHolder viewHolder, int position) {
         if (getItemViewType(position) == VIEW_TYPE_CONTENT) {
 
-            PreferencesFragment preferencesFragment = PreferencesFragment.newInstance();
+            /*PreferencesFragment preferencesFragment = PreferencesFragment.newInstance();
             int id = ((PreferencesViewHolder) viewHolder).preferencesContainer.getId();
 
             FragmentTransaction fragmentTransaction = mFragment.getFragmentManager().beginTransaction();
             fragmentTransaction.replace(id, preferencesFragment);
-            fragmentTransaction.commit();
+            fragmentTransaction.commit();*/
         }
     }
 

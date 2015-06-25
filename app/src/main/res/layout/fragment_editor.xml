@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:colorBackground"
+    android:orientation="vertical"
+    android:paddingTop="@dimen/tab_height">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/edit_text_holder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="@dimen/margin_short"
+            app:cardElevation="@dimen/margin_extra_short"
+            app:cardUseCompatPadding="true"
+            app:cardCornerRadius="@dimen/google_cards_corner_radius">
+
+            <LinearLayout
+                android:id="@+id/input_text_wrapper"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/margin_short">
+
+                <EditText
+                    style="@android:style/TextAppearance.DeviceDefault.Small"
+                    android:id="@+id/edit_top_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-light"
+                    android:layout_gravity="center_horizontal"
+                    android:hint="@string/editor_top_text" />
+
+                <EditText
+                    style="@android:style/TextAppearance.DeviceDefault.Small"
+                    android:id="@+id/edit_bottom_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-light"
+                    android:layout_gravity="center_horizontal"
+                    android:hint="@string/editor_bottom_text" />
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <org.sebbas.android.memegenerator.WrapContentHeightViewPager
+            android:id="@+id/card_pager"
+            android:layout_width="match_parent"
+            android:layout_height="400dp" />
+
+    </LinearLayout>
+</ScrollView>

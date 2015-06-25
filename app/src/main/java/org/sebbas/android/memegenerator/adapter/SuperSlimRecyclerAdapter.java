@@ -2,6 +2,7 @@ package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,11 @@ import com.tonicartos.superslim.GridSLM;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
+import org.sebbas.android.memegenerator.activities.MainActivity;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
@@ -30,9 +33,9 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
 
     private Context mContext;
 
-    public SuperSlimRecyclerAdapter(RecyclerFragment fragment, ArrayList<LineItem> lineItems) {
-        super(fragment, lineItems);
-        mContext = fragment.getActivity();
+    public SuperSlimRecyclerAdapter(Context context, ArrayList<LineItem> lineItems) {
+        super(lineItems);
+        mContext = context;
     }
 
     @Override
@@ -112,7 +115,7 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
                                         .error(android.R.color.holo_red_dark)
                                         .crossfade(true)
                                         .centerCrop()
-                                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_SMALL));
+                                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM));
                             }
                         });
 
@@ -141,7 +144,7 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
 
         @Override
         public void onClick(View v) {
-            mViewHolderCallback.onItemClick(getPosition());
+            super.mViewHolderCallback.onItemClick(getPosition());
         }
     }
 }

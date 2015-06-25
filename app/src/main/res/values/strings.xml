@@ -42,6 +42,11 @@
     <string name="category_downloads">Downloads</string>
     <string name="preference_download_favorites">Download favorite memes</string>
 
+    <!-- Editor strings -->
+    <string name="editor_top_text">Top text</string>
+    <string name="editor_bottom_text">Bottom text</string>
+
+
     <!-- Google card strings -->
     <!-- Time format for unix timestamps -->
     <string-array name="time_formats_singular">

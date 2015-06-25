@@ -25,7 +25,6 @@ import android.widget.TextView;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
-import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 
 import java.util.ArrayList;
@@ -41,8 +40,7 @@ public abstract class RecyclerFragmentAdapter extends
     protected List<Character> mSectionItems;
     private RecyclerFragment mFragment;
 
-    public RecyclerFragmentAdapter(BaseFragment fragment, ArrayList<LineItem> lineItems) {
-        mFragment = (RecyclerFragment) fragment;
+    public RecyclerFragmentAdapter(ArrayList<LineItem> lineItems) {
         mLineItems = lineItems;
         mSectionItems = new ArrayList<>();
         mSectionItems = getSectionItems();

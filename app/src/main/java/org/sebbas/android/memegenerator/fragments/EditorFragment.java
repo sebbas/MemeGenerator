@@ -47,7 +47,7 @@ public class EditorFragment extends BaseFragment implements ToolbarCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View view = inflater.inflate(R.layout.fragment_explore, container, false);
+        View view = inflater.inflate(R.layout.fragment_editor, container, false);
         mCardPager = (ViewPager) view.findViewById(R.id.card_pager);
         setToolbarTitle(mStartPosition);
         return view;

@@ -37,7 +37,7 @@ public abstract class SlidingTabsFragment extends BaseFragment {
     }
     public void init(View view, boolean isSwipeable, int offScreenLimit) {
 
-        mViewPager = (ToggleSwipeViewPager) view.findViewById(R.id.toogle_swipe_viewpager);
+        mViewPager = (ToggleSwipeViewPager) view.findViewById(R.id.sliding_tabs_viewpager);
         mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
@@ -53,7 +53,7 @@ public abstract class SlidingTabsFragment extends BaseFragment {
         // Padding for tabs (only in portrait mode)
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
-            view.findViewById(R.id.pager_wrapper).setPadding(0, tabHeight, 0, 0);
+            view.findViewById(R.id.sliding_tabs_pager_wrapper).setPadding(0, tabHeight, 0, 0);
         }
         super.onFragmentComplete(this);
     }

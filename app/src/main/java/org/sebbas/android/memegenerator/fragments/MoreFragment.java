@@ -29,7 +29,7 @@ public class MoreFragment extends RecyclerFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mPreferencesAdapter = new PreferencesAdapter(this);
+        mPreferencesAdapter = new PreferencesAdapter(getActivity());
     }
 
     @Override

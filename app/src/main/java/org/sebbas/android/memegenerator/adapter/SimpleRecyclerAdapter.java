@@ -23,14 +23,14 @@ public class SimpleRecyclerAdapter extends RecyclerFragmentAdapter {
 
     private Context mContext;
 
-    public SimpleRecyclerAdapter(RecyclerFragment fragment, ArrayList<LineItem> lineItems) {
-        super(fragment, lineItems);
-        mContext = fragment.getActivity();
+    public SimpleRecyclerAdapter(Context context, ArrayList<LineItem> lineItems) {
+        super(lineItems);
+        mContext = context;
     }
 
     @Override
     public int getItemCount() {
-        return 1000;//return super.mLineItems.size();
+        return super.mLineItems.size();
     }
 
     @Override

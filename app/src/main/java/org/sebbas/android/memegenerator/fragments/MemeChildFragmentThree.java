@@ -38,7 +38,7 @@ public class MemeChildFragmentThree extends RecyclerFragment {
 
         // Setup adapter
         ArrayList<LineItem> lineItems = super.getLineItems();
-        SuperSlimRecyclerAdapter superSlimRecyclerAdapter = new SuperSlimRecyclerAdapter(this, lineItems);
+        SuperSlimRecyclerAdapter superSlimRecyclerAdapter = new SuperSlimRecyclerAdapter(getActivity(), lineItems);
 
         // Create the view
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);

@@ -38,7 +38,7 @@ public class GalleryChildFragmentThree extends RecyclerFragment {
 
         // Setup adapter
         ArrayList<LineItem> lineItems = super.getLineItems();
-        SimpleRecyclerAdapter simpleRecyclerAdapter = new SimpleRecyclerAdapter(this, lineItems);
+        SimpleRecyclerAdapter simpleRecyclerAdapter = new SimpleRecyclerAdapter(getActivity(), lineItems);
 
         // Create the view
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
