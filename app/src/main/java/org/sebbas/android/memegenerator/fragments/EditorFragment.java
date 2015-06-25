@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.squareup.picasso.Picasso;
 
-import org.sebbas.android.memegenerator.CardPagerAdapter;
+import org.sebbas.android.memegenerator.adapter.CardPagerAdapter;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;

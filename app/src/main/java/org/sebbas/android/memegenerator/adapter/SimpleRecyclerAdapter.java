@@ -30,7 +30,7 @@ public class SimpleRecyclerAdapter extends RecyclerFragmentAdapter {
 
     @Override
     public int getItemCount() {
-        return super.mLineItems.size();
+        return 1000;//return super.mLineItems.size();
     }
 
     @Override

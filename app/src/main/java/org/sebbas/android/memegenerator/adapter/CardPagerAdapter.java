@@ -1,4 +1,4 @@
-package org.sebbas.android.memegenerator;
+package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.koushikdutta.ion.Ion;
+
+import org.sebbas.android.memegenerator.R;
 
 import java.util.ArrayList;
 

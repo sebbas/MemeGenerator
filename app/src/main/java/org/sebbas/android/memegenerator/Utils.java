@@ -19,6 +19,7 @@ import java.util.List;
 
 public class Utils {
 
+    public static final String IMAGE_TINY = "s";
     public static final String IMAGE_SMALL = "b";
     public static final String IMAGE_MEDIUM = "m";
     public static final String IMAGE_LARGE = "l";

@@ -446,34 +446,38 @@ public class MainActivity extends BaseActivity implements
     }
 
     private void showToolbar() {
-        float headerTranslationY = ViewHelper.getTranslationY(mHeaderView);
+        View headerView = findViewById(R.id.header);
+        float headerTranslationY = ViewHelper.getTranslationY(headerView);
         if (headerTranslationY != 0) {
-            animateView(mHeaderView, 0, ANIMATION_SPEED);
+            animateView(headerView, 0, ANIMATION_SPEED);
         }
         propagateToolbarState(true);
     }
 
     private void hideToolbar() {
-        float headerTranslationY = ViewHelper.getTranslationY(mHeaderView);
+        View headerView = findViewById(R.id.header);
+        float headerTranslationY = ViewHelper.getTranslationY(headerView);
         int toolbarHeight = mToolbarView.getHeight();
         if (headerTranslationY != -toolbarHeight) {
-            animateView(mHeaderView, -toolbarHeight, ANIMATION_SPEED);
+            animateView(headerView, -toolbarHeight, ANIMATION_SPEED);
         }
         propagateToolbarState(false);
     }
 
     private void showMainTabs() {
-        float headerTranslationY = ViewHelper.getTranslationY(mFooterView);
+        View footerView = findViewById(R.id.footer);
+        float headerTranslationY = ViewHelper.getTranslationY(footerView);
         if (headerTranslationY != 0) {
-            animateView(mFooterView, 0, ANIMATION_SPEED);
+            animateView(footerView, 0, ANIMATION_SPEED);
         }
     }
 
     private void hideMainTabs() {
-        float headerTranslationY = ViewHelper.getTranslationY(mFooterView);
+        View footerView = findViewById(R.id.footer);
+        float headerTranslationY = ViewHelper.getTranslationY(footerView);
         int slidingTabLayoutHeight = mFooterView.getHeight();
         if (headerTranslationY != -slidingTabLayoutHeight) {
-            animateView(mFooterView, slidingTabLayoutHeight, ANIMATION_SPEED);
+            animateView(footerView, slidingTabLayoutHeight, ANIMATION_SPEED);
         }
     }
 

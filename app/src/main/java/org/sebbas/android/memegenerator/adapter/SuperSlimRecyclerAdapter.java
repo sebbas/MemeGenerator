@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.koushikdutta.ion.bitmap.Transform;
 import com.makeramen.roundedimageview.RoundedDrawable;
@@ -99,38 +100,22 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
 
             if (getItemViewType(position) == VIEW_TYPE_CONTENT) {
 
-                Transform trans = new Transform() {
-                    boolean isOval = false;
-                    @Override
-                    public Bitmap transform(Bitmap bitmap) {
-                        Bitmap scaled = Bitmap.createScaledBitmap(bitmap, CORNER_RADIUS, CORNER_RADIUS, false);
-                        Bitmap transformed = RoundedDrawable
-                                .fromBitmap(scaled)
-                                .setScaleType(ImageView.ScaleType.CENTER_CROP)
-                                .setCornerRadius(CORNER_RADIUS)
-                                .setOval(isOval)
-                                .toBitmap();
-                        if (!bitmap.equals(scaled)) bitmap.recycle();
-                        if (!scaled.equals(transformed)) bitmap.recycle();
-
-                        return transformed;
-                    }
-
-                    @Override
-                    public String key() {
-                        return "rounded_radius_" + CORNER_RADIUS + "_oval_" + isOval;
-                    }
-                };
-
                 Ion.with(listViewHolder.imageView)
-                        .placeholder(R.color.invisible)
                         .error(android.R.color.holo_red_dark)
                         .resize(CORNER_RADIUS, CORNER_RADIUS)
                         .centerCrop()
-                        .crossfade(true)
-                        .transform(trans)
-                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(),
-                                Utils.IMAGE_SMALL));
+                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_TINY))
+                        .setCallback(new FutureCallback<ImageView>() {
+                            @Override
+                            public void onCompleted(Exception e, ImageView result) {
+                                Ion.with(listViewHolder.imageView)
+                                        .error(android.R.color.holo_red_dark)
+                                        .crossfade(true)
+                                        .centerCrop()
+                                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_SMALL));
+                            }
+                        });
+
                 /*PicassoCache.getPicassoInstance(mContext)
                         .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), UIOptions.THUMBNAIL_SIZE_LIST))
                         .placeholder(R.color.invisible)
