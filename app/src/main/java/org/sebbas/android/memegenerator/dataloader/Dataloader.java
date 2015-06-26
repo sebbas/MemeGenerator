@@ -35,6 +35,7 @@ public class DataLoader implements Filterable {
     private DataLoaderCallback mDataLoaderCallback;
     private String mFragmentType;
     private List<Integer> mExcludedLineItemPositions;
+    private ArrayList<Integer> mNonContentPositions;
 
     private List<String> mViewCounts;
     private List<String> mImageUrls;
@@ -48,6 +49,7 @@ public class DataLoader implements Filterable {
         mContext = fragment.getActivity();
         mDataLoaderCallback = fragment;
         mFragmentType = fragment.getFragmentType();
+        mNonContentPositions = new ArrayList<>();
         mExcludedLineItemPositions = new ArrayList<>();
 
         // Restore array lists from previous session or if restore not possible (on startup)
@@ -84,8 +86,9 @@ public class DataLoader implements Filterable {
                 sectionManager = (sectionManager + 1) % 2;
                 sectionFirstPosition = tmp + headerCount;
                 headerCount += 1;
-                resultItems.add(LineItem.newSuperSlimHeaderInstance(
-                        "#", false, sectionManager, sectionFirstPosition));
+                resultItems.add(LineItem.newInstance(
+                        " ", null, null, null, null, 0, 0, true, sectionManager,
+                        sectionFirstPosition, headerCount));
             } else {
                 boolean isAllowedPosition = isAllowedPosition(i - 1);
                 if (isAllowedPosition) {
@@ -105,14 +108,16 @@ public class DataLoader implements Filterable {
                         sectionFirstPosition = tmp + headerCount;
                         lastHeader = header;
                         headerCount += 1;
-                        resultItems.add(LineItem.newSuperSlimHeaderInstance(
-                                header, true, sectionManager, sectionFirstPosition));
+                        resultItems.add(LineItem.newInstance(
+                                header, null, null, null, null, 0, 0, true, sectionManager,
+                                sectionFirstPosition, headerCount));
                     }
-                    resultItems.add(LineItem.newSuperSlimInstance(
+
+                    resultItems.add(LineItem.newInstance(
                             title, imageUrl, imageId, viewCount, timeStamp, imageWidth, imageHeight,
-                            false, sectionManager, sectionFirstPosition));
-                    tmp++;
+                            false, sectionManager, sectionFirstPosition, headerCount));
                 }
+                tmp++;
             }
         }
         return resultItems;
@@ -121,9 +126,11 @@ public class DataLoader implements Filterable {
     public ArrayList<LineItem> getLineItems() {
         ArrayList<LineItem> resultItems = new ArrayList<>();
 
+        int headerCount = 1;
         for (int i = 0; i < getItemCount() + 1; i++) {
             if (i == 0) {
-                resultItems.add(LineItem.newHeaderInstance("#"));
+                resultItems.add(LineItem.newInstance(
+                        " ", null, null, null, null, 0, 0, true, 0, 0, headerCount));
             } else {
                 boolean isAllowedPosition = isAllowedPosition(i - 1);
                 if (isAllowedPosition) {
@@ -136,11 +143,16 @@ public class DataLoader implements Filterable {
                     int imageHeight = getImageHeightAt(i - 1);
 
                     resultItems.add(LineItem.newInstance(
-                            title, imageUrl, imageId, viewCount, timeStamp, imageWidth, imageHeight));
+                            title, imageUrl, imageId, viewCount, timeStamp, imageWidth, imageHeight,
+                            false, 0, 0, headerCount));
                 }
             }
         }
         return resultItems;
+    }
+
+    public ArrayList<Integer> getNonContentPositions() {
+        return mNonContentPositions;
     }
 
     private boolean isAllowedPosition(int i) {

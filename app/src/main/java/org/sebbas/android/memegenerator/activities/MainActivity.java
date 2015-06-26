@@ -504,7 +504,14 @@ public class MainActivity extends BaseActivity implements
     @Override
     public void onItemClick(int clickPosition, ArrayList<LineItem> lineItems) {
 
-        EditorFragment editorFragment = EditorFragment.newInstance(clickPosition, lineItems);
+        ArrayList<LineItem> contentItems = new ArrayList<>();
+        for (LineItem lineItem : lineItems) {
+            if (!lineItem.isHeaderItem()) {
+                contentItems.add(lineItem);
+            }
+        }
+
+        EditorFragment editorFragment = EditorFragment.newInstance(clickPosition, contentItems);
 
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

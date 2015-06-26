@@ -41,7 +41,6 @@ public abstract class RecyclerFragmentAdapter extends
 
     public RecyclerFragmentAdapter(ArrayList<LineItem> lineItems) {
         mLineItems = lineItems;
-        mSectionItems = new ArrayList<>();
         mSectionItems = getSectionItems();
     }
 

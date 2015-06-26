@@ -2,14 +2,17 @@ package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.koushikdutta.ion.Ion;
+import com.bumptech.glide.Glide;
 
+import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.Utils;
 
 import java.util.ArrayList;
 
@@ -17,13 +20,13 @@ public class CardPagerAdapter extends PagerAdapter {
 
     private static final String TAG = "CardPagerAdapter";
 
-    private ArrayList<String> mImageUrls;
+    private ArrayList<LineItem> mLineItems;
     private LayoutInflater mLayoutInflater;
     private Context mContext;
 
-    public CardPagerAdapter(Context context, ArrayList<String> imageUrls) {
+    public CardPagerAdapter(Context context, ArrayList<LineItem> lineItems) {
         mContext = context;
-        mImageUrls = imageUrls;
+        mLineItems = lineItems;
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -33,8 +36,16 @@ public class CardPagerAdapter extends PagerAdapter {
         View itemView = mLayoutInflater.inflate(R.layout.card_item, container, false);
         ImageView imageView = (ImageView) itemView.findViewById(R.id.item_image_card);
 
-        String imageUrl = mImageUrls.get(position);
-        Ion.with(imageView).load(imageUrl);
+        LineItem item = mLineItems.get(position);
+
+        String formattedImageUrl = Utils.imageUrlToThumbnailUrl(item.getImageUrl(),
+                item.getImageId(), Utils.IMAGE_MEDIUM);
+
+        Glide.with(mContext)
+                .load(item.getImageUrl())
+                .override(item.getImageWidth(), item.getImageHeight())
+                .centerCrop()
+                .into(imageView);
 
         container.addView(itemView);
 
@@ -43,7 +54,7 @@ public class CardPagerAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return mImageUrls.size();
+        return mLineItems.size();
     }
 
     @Override

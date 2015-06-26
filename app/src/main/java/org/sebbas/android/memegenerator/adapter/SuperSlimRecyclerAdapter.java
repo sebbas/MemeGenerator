@@ -1,27 +1,19 @@
 package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
-import com.koushikdutta.async.future.FutureCallback;
-import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.bitmap.Transform;
-import com.makeramen.roundedimageview.RoundedDrawable;
+import com.bumptech.glide.Glide;
+import com.makeramen.roundedimageview.RoundedImageView;
 import com.tonicartos.superslim.GridSLM;
 
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
-import org.sebbas.android.memegenerator.activities.MainActivity;
-import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
@@ -29,7 +21,6 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
     private static final int VIEW_TYPE_FILLER = 0;
     private static final int VIEW_TYPE_HEADER = 1;
     private static final int VIEW_TYPE_CONTENT = 2;
-    private static final int CORNER_RADIUS = 250;
 
     private Context mContext;
 
@@ -64,7 +55,8 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
             public void onItemClick(int position) {
                 // Only trigger click event for content items
                 if (getItemViewType(position) == VIEW_TYPE_CONTENT) {
-                    ((FragmentCallback) mContext).onItemClick(position, SuperSlimRecyclerAdapter.super.mLineItems);
+                    ((FragmentCallback) mContext).onItemClick(getContentPosition(position),
+                            SuperSlimRecyclerAdapter.super.mLineItems);
                 }
             }
         };
@@ -103,48 +95,31 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
 
             if (getItemViewType(position) == VIEW_TYPE_CONTENT) {
 
-                Ion.with(listViewHolder.imageView)
-                        .error(android.R.color.holo_red_dark)
-                        .resize(CORNER_RADIUS, CORNER_RADIUS)
+                Glide.with(mContext)
+                        .load(item.getImageUrl()) //.load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
                         .centerCrop()
-                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_TINY))
-                        .setCallback(new FutureCallback<ImageView>() {
-                            @Override
-                            public void onCompleted(Exception e, ImageView result) {
-                                Ion.with(listViewHolder.imageView)
-                                        .error(android.R.color.holo_red_dark)
-                                        .crossfade(true)
-                                        .centerCrop()
-                                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM));
-                            }
-                        });
-
-                /*PicassoCache.getPicassoInstance(mContext)
-                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), UIOptions.THUMBNAIL_SIZE_LIST))
-                        .placeholder(R.color.invisible)
-                        .error(android.R.color.holo_red_dark)
-                        .fit()
-                        .transform(trans)
-                        .centerCrop()
-                        .tag(mContext)
-                        .into(listViewHolder.imageView);*/
+                        .into(listViewHolder.imageView);
             }
         }
     }
 
     static class ListViewHolder extends MainViewHolder implements View.OnClickListener {
-        ImageView imageView;
+        RoundedImageView imageView;
 
         public ListViewHolder(View view, ViewHolderCallback viewHolderCallback) {
             super(view, viewHolderCallback);
             view.setOnClickListener(this);
 
-            imageView = (ImageView) view.findViewById(R.id.item_image);
+            imageView = (RoundedImageView) view.findViewById(R.id.item_image);
         }
 
         @Override
         public void onClick(View v) {
             super.mViewHolderCallback.onItemClick(getPosition());
         }
+    }
+
+    private int getContentPosition(int position) {
+        return position - mLineItems.get(position).getHeaderCount();
     }
 }

@@ -19,6 +19,7 @@ import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
+import com.koushikdutta.ion.Ion;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.tonicartos.superslim.LayoutManager;
 
@@ -146,16 +147,18 @@ public class RecyclerFragment extends BaseFragment implements
     }
 
     private void setupAdapter() {
-        switch (mLayoutMode) {
-            case GRID_LAYOUT:
-            case LIST_LAYOUT:
-                mRecyclerFragmentAdapter = new SimpleRecyclerAdapter(getActivity(), mLineItems);
-                break;
-            case SUPER_SLIM_LAYOUT:
-                mRecyclerFragmentAdapter = new SuperSlimRecyclerAdapter(getActivity(), mLineItems);
-                break;
-            default:
-                mRecyclerFragmentAdapter = new SimpleRecyclerAdapter(getActivity(), mLineItems);
+        if (mRecyclerFragmentAdapter == null){
+            switch (mLayoutMode) {
+                case GRID_LAYOUT:
+                case LIST_LAYOUT:
+                    mRecyclerFragmentAdapter = new SimpleRecyclerAdapter(getActivity(), mLineItems);
+                    break;
+                case SUPER_SLIM_LAYOUT:
+                    mRecyclerFragmentAdapter = new SuperSlimRecyclerAdapter(getActivity(), mLineItems);
+                    break;
+                default:
+                    mRecyclerFragmentAdapter = new SimpleRecyclerAdapter(getActivity(), mLineItems);
+            }
         }
     }
 

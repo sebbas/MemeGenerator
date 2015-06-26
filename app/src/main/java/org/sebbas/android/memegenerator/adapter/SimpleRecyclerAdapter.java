@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.koushikdutta.ion.Ion;
 
 import org.sebbas.android.memegenerator.LineItem;
@@ -71,12 +72,10 @@ public class SimpleRecyclerAdapter extends RecyclerFragmentAdapter {
 
             final SquareViewHolder squareViewHolder = (SquareViewHolder) viewHolder;
 
-            Ion.with(squareViewHolder.imageView)
-                    .placeholder(android.R.color.holo_blue_bright)
-                    .error(android.R.color.holo_red_dark)
+            Glide.with(mContext)
+                    .load(item.getImageUrl()) //Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
                     .centerCrop()
-                    .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(),
-                            Utils.IMAGE_SMALL));
+                    .into(squareViewHolder.imageView);
         }
     }
 

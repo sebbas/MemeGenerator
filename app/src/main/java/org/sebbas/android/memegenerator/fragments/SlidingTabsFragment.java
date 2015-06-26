@@ -7,6 +7,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
+import com.koushikdutta.ion.Ion;
+
 import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.R;
@@ -32,6 +34,7 @@ public abstract class SlidingTabsFragment extends BaseFragment {
             mPositionInParent = args.getInt(ARG_POSITION_IN_PARENT, 0);
         }
     }
+
     public void init(View view, boolean isSwipeable, int offScreenLimit) {
 
         if (mViewPager == null) {

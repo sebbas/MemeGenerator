@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.koushikdutta.ion.Ion;
+
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.adapter.MemeFragmentAdapter;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;

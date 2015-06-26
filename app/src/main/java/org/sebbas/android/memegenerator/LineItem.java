@@ -24,73 +24,47 @@ public class LineItem implements Parcelable {
     private String mTimeStamp;
     private int mImageWidth;
     private int mImageHeight;
+    private int mHeaderCount;
 
-    // Regular line items
-    public static LineItem newInstance(String title, String imageUrl, String imageId,
-                                       String viewCount, String timeStamp, int imageWidth,
-                                       int imageHeight) {
-
-        return new LineItem(title, imageUrl, imageId, viewCount, timeStamp, imageWidth, imageHeight);
-    }
-
-    public static LineItem newHeaderInstance(String title) {
-
-        return new LineItem(title);
-    }
-
-    // SuperSlim line items
-    public static LineItem newSuperSlimInstance(String title, String imageUrl, String imageId,
-                                       String viewCount, String timeStamp, int imageWidth,
-                                       int imageHeight, boolean isHeader,
-                                       int sectionManager, int sectionFirstPosition) {
+    public static LineItem newInstance(String title,
+                                       String imageUrl,
+                                       String imageId,
+                                       String viewCount,
+                                       String timeStamp,
+                                       int imageWidth,
+                                       int imageHeight,
+                                       boolean isHeader,
+                                       int sectionManager,
+                                       int sectionFirstPosition,
+                                       int headerCount) {
 
         return new LineItem(title, imageUrl, imageId, viewCount, timeStamp, imageWidth, imageHeight,
-                isHeader, sectionManager, sectionFirstPosition);
+                isHeader, sectionManager, sectionFirstPosition, headerCount);
     }
 
-    public static LineItem newSuperSlimHeaderInstance(String title, boolean isHeader, int sectionManager,
-                                         int sectionFirstPosition) {
+    private LineItem(String title,
+                     String imageUrl,
+                     String imageId,
+                     String viewCount,
+                     String timeStamp,
+                     int imageWidth,
+                     int imageHeight,
+                     boolean isHeader,
+                     int sectionManager,
+                     int sectionFirstPosition,
+                     int headerCount) {
 
-        return new LineItem(title, isHeader, sectionManager, sectionFirstPosition);
-    }
-
-    // Constructor for header items
-    private LineItem(String title) {
         mTitle = title;
-    }
-
-    // Constructor for items
-    private LineItem(String title, String imageUrl, String imageId, String viewCount,
-                     String timeStamp, int imageWidth, int imageHeight) {
-        this(title);
-        mImageUrl = imageUrl;
-        mImageId = imageId;
-        mViewCount = viewCount;
-        mTimeStamp = timeStamp;
-        mImageWidth = imageWidth;
-        mImageHeight = imageHeight;
-    }
-
-    // Constructor for superslim header items
-    private LineItem(String title, boolean isHeader, int sectionManager,
-                    int sectionFirstPosition) {
-        this(title);
         mIsHeader = isHeader;
         mSectionManager = sectionManager;
         mSectionFirstPosition = sectionFirstPosition;
-    }
-
-    // Constructor for superslim items
-    private LineItem(String title, String imageUrl, String imageId, String viewCount,
-                    String timeStamp, int imageWidth, int imageHeight, boolean isHeader, int sectionManager,
-                    int sectionFirstPosition) {
-        this(title, isHeader, sectionManager, sectionFirstPosition);
         mImageUrl = imageUrl;
         mImageId = imageId;
         mViewCount = viewCount;
         mTimeStamp = timeStamp;
         mImageWidth = imageWidth;
         mImageHeight = imageHeight;
+        mHeaderCount = headerCount;
     }
 
     public boolean isHeaderItem() {
@@ -127,6 +101,10 @@ public class LineItem implements Parcelable {
 
     public int getImageHeight() {
         return mImageHeight;
+    }
+
+    public int getHeaderCount() {
+        return mHeaderCount;
     }
 
     @Override

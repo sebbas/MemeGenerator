@@ -59,7 +59,7 @@ public class EditorFragment extends BaseFragment implements ToolbarCallback {
         super.onViewCreated(view, savedInstanceState);
 
         if (mCardPagerAdapter == null) {
-            mCardPagerAdapter = new CardPagerAdapter(this.getActivity(), getImageUrls());
+            mCardPagerAdapter = new CardPagerAdapter(getActivity(), mLineItems);
         }
 
         if (mCardPager == null) {
