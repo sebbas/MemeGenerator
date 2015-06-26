@@ -41,6 +41,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener, ToolbarCallback {
 
     private static final String TAG = "RecyclerFragment";
+    private static final String LINE_ITEMS = "lineItems";
 
     // Keys for values in bundle
     protected static final String ARG_FRAGMENT_TYPE = "ARG_FRAGMENT_TYPE";
@@ -67,10 +68,10 @@ public abstract class RecyclerFragment extends BaseFragment implements
     private boolean mIsRefreshable;
     private RecyclerView.AdapterDataObserver mAdapterObserver;
     private DataLoader mDataLoader;
-    //private Parcelable mRecyclerState;
     private int mPositionInParent;
-    private boolean mIsVisibleToUser;
     private VerticalRecyclerViewFastScroller mFastScroller;
+
+    protected ArrayList<LineItem> mLineItems;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -85,27 +86,46 @@ public abstract class RecyclerFragment extends BaseFragment implements
         mDataLoader = new DataLoader(this);
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(LINE_ITEMS, mLineItems);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            mLineItems = savedInstanceState.getParcelableArrayList(LINE_ITEMS);
+        } else {
+            mLineItems = getLineItems();
+        }
+    }
+
     public void init(View view) {
 
-        mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.recycler_swipe_refresh);
-        mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
-        mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
+        if (mSwipeRefreshLayout == null || mCircularProgressView == null || mRecyclerView == null) {
+            mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.recycler_swipe_refresh);
+            mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
+            mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
 
-        // Depending on arguments, enable or disable swipe refresh
-        mSwipeRefreshLayout.setEnabled(mIsRefreshable);
+            // Depending on arguments, enable or disable swipe refresh
+            mSwipeRefreshLayout.setEnabled(mIsRefreshable);
 
-        // Set custom progress icon position because of toolbar and sliding tabs layout
-        //int tabHeight = getResources().getDimensionPixelOffset(R.dimen.tab_height);
-        //int offset = getActionBarSize() + tabHeight;
-        //mSwipeRefreshLayout.setProgressViewOffset(true, offset,offset + tabHeight);
+            // Set custom progress icon position because of toolbar and sliding tabs layout
+            //int tabHeight = getResources().getDimensionPixelOffset(R.dimen.tab_height);
+            //int offset = getActionBarSize() + tabHeight;
+            //mSwipeRefreshLayout.setProgressViewOffset(true, offset,offset + tabHeight);
 
-        // Bring activity ui elements to front
-        ((MainActivity) getActivity()).bringMainNavigationToFront();
+            // Bring activity ui elements to front
+            ((MainActivity) getActivity()).bringMainNavigationToFront();
 
-        setupRecyclerView();
-        updatePlaceholder();
-        setupSwipeRefreshLayout();
-        setupFastScroller(view);
+            setupRecyclerView();
+            updatePlaceholder();
+            setupSwipeRefreshLayout();
+            setupFastScroller(view);
+        }
 
         super.onFragmentComplete(this);
     }
@@ -119,12 +139,6 @@ public abstract class RecyclerFragment extends BaseFragment implements
         super.onDestroyView();
         BaseActivity parentActivity = (BaseActivity) getActivity();
         parentActivity.unregisterToolbarCallback();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        //saveRecyclerViewState();
     }
 
     @Override
@@ -260,14 +274,6 @@ public abstract class RecyclerFragment extends BaseFragment implements
                 break;
             default:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
-            /*case UIOptions.CARD_LAYOUT:
-                int scrollDuration = getResources().getInteger(R.integer.scroll_duration);
-                mRecyclerView.setLayoutManager(new ScrollingLinearLayoutManager(
-                        getActivity(),
-                        LinearLayoutManager.VERTICAL,
-                        false,
-                        scrollDuration));
-                break;*/
         }
         mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) getActivity());
     }
@@ -391,16 +397,6 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     @Override
     public void onBackPressed() {
-    }
-
-    public boolean isIsVisibleToUser() {
-        return mIsVisibleToUser;
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        mIsVisibleToUser = isVisibleToUser;
     }
 
     private class MyScrollListener extends RecyclerView.OnScrollListener {

@@ -24,6 +24,7 @@ public class EditorFragment extends BaseFragment implements ToolbarCallback {
     private Picasso mPicasso;
     private int mStartPosition;
     private ViewPager mCardPager;
+    private CardPagerAdapter mCardPagerAdapter;
     private ArrayList<LineItem> mLineItems;
 
     public static EditorFragment newInstance(int clickPosition, ArrayList<LineItem> lineItems) {
@@ -48,7 +49,7 @@ public class EditorFragment extends BaseFragment implements ToolbarCallback {
         super.onCreateView(inflater, container, savedInstanceState);
 
         View view = inflater.inflate(R.layout.fragment_editor, container, false);
-        mCardPager = (ViewPager) view.findViewById(R.id.card_pager);
+
         setToolbarTitle(mStartPosition);
         return view;
     }
@@ -57,18 +58,24 @@ public class EditorFragment extends BaseFragment implements ToolbarCallback {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        CardPagerAdapter cardPagerAdapter = new CardPagerAdapter(this.getActivity(), getImageUrls());
-        mCardPager.setAdapter(cardPagerAdapter);
-        mCardPager.setCurrentItem(mStartPosition);
-        mCardPager.setPageTransformer(true, new DepthPageTransformer());
-        mCardPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+        if (mCardPagerAdapter == null) {
+            mCardPagerAdapter = new CardPagerAdapter(this.getActivity(), getImageUrls());
+        }
 
-            @Override
-            public void onPageSelected(int position) {
-                setToolbarTitle(position);
+        if (mCardPager == null) {
+            mCardPager = (ViewPager) view.findViewById(R.id.card_pager);
+            mCardPager.setAdapter(mCardPagerAdapter);
+            mCardPager.setCurrentItem(mStartPosition);
+            mCardPager.setPageTransformer(true, new DepthPageTransformer());
+            mCardPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
 
-            }
-        });
+                @Override
+                public void onPageSelected(int position) {
+                    setToolbarTitle(position);
+
+                }
+            });
+        }
     }
 
     private void setToolbarTitle(int position) {

@@ -1,6 +1,7 @@
 package org.sebbas.android.memegenerator.fragments;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,14 +10,16 @@ import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.adapter.SimpleRecyclerAdapter;
+import org.sebbas.android.memegenerator.adapter.SuperSlimRecyclerAdapter;
 import org.sebbas.android.memegenerator.dataloader.DataLoader;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class GalleryChildFragmentOne extends RecyclerFragment {
 
     public static final String TAG = "GalleryChildFragmentOne";
+
+    private SimpleRecyclerAdapter mSimpleRecyclerAdapter;
 
     public static GalleryChildFragmentOne newInstance(int layoutMode, boolean isRefreshable, int position) {
         GalleryChildFragmentOne fragment = new GalleryChildFragmentOne();
@@ -30,20 +33,26 @@ public class GalleryChildFragmentOne extends RecyclerFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         // Get url for content
         String url = Utils.getUrlForData(TAG);
         super.load(url, DataLoader.INTERNET);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
 
         // Setup adapter
-        ArrayList<LineItem> lineItems = super.getLineItems();
-        SimpleRecyclerAdapter simpleRecyclerAdapter = new SimpleRecyclerAdapter(getActivity(), lineItems);
+        if (mSimpleRecyclerAdapter == null) {
+            mSimpleRecyclerAdapter = new SimpleRecyclerAdapter(getActivity(), mLineItems);
+        }
 
         // Create the view
         View view = inflater.inflate(R.layout.fragment_recyclerview, container, false);
-        super.with(simpleRecyclerAdapter);
+        super.with(mSimpleRecyclerAdapter);
         super.init(view);
 
         return view;

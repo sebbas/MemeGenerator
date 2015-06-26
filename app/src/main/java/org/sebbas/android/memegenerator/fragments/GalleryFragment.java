@@ -32,8 +32,10 @@ public class GalleryFragment extends SlidingTabsFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FragmentManager fragmentManager = super.getRetainedChildFragmentManager();
-        mGalleryFragmentAdapter = new GalleryFragmentAdapter(getActivity(), fragmentManager, TAB_TITLES);
+
+        if (mGalleryFragmentAdapter == null) {
+            mGalleryFragmentAdapter = new GalleryFragmentAdapter(getActivity(), getChildFragmentManager(), TAB_TITLES);
+        }
     }
 
     @Override

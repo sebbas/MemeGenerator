@@ -1,6 +1,5 @@
 package org.sebbas.android.memegenerator.fragments;
 
-import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,8 +11,6 @@ import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.adapter.SlidingTabsAdapter;
-
-import java.lang.reflect.Field;
 
 
 public abstract class SlidingTabsFragment extends BaseFragment {
@@ -37,23 +34,25 @@ public abstract class SlidingTabsFragment extends BaseFragment {
     }
     public void init(View view, boolean isSwipeable, int offScreenLimit) {
 
-        mViewPager = (ToggleSwipeViewPager) view.findViewById(R.id.sliding_tabs_viewpager);
-        mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                mLastPage = position;
+        if (mViewPager == null) {
+            mViewPager = (ToggleSwipeViewPager) view.findViewById(R.id.sliding_tabs_viewpager);
+            mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                @Override
+                public void onPageSelected(int position) {
+                    super.onPageSelected(position);
+                    mLastPage = position;
+                }
+            });
+
+            mViewPager.setPagingEnabled(isSwipeable);
+            mViewPager.setOffscreenPageLimit(offScreenLimit);
+            mViewPager.setAdapter(mSlidingTabsAdapter);
+
+            // Padding for tabs (only in portrait mode)
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
+                view.findViewById(R.id.sliding_tabs_pager_wrapper).setPadding(0, tabHeight, 0, 0);
             }
-        });
-
-        mViewPager.setPagingEnabled(isSwipeable);
-        mViewPager.setOffscreenPageLimit(offScreenLimit);
-        mViewPager.setAdapter(mSlidingTabsAdapter);
-
-        // Padding for tabs (only in portrait mode)
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
-            view.findViewById(R.id.sliding_tabs_pager_wrapper).setPadding(0, tabHeight, 0, 0);
         }
         super.onFragmentComplete(this);
     }
@@ -66,7 +65,7 @@ public abstract class SlidingTabsFragment extends BaseFragment {
         return mViewPager;
     }
 
-    public FragmentManager getRetainedChildFragmentManager() {
+    /*public FragmentManager getRetainedChildFragmentManager() {
         if (mRetainedChildFragmentManager == null) {
             mRetainedChildFragmentManager = getChildFragmentManager();
         }
@@ -90,7 +89,7 @@ public abstract class SlidingTabsFragment extends BaseFragment {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
     @Override
     public void onDestroyView() {
