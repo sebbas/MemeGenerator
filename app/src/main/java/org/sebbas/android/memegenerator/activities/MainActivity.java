@@ -21,17 +21,8 @@ import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.adapter.MainActivityAdapter;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.fragments.EditorFragment;
-import org.sebbas.android.memegenerator.fragments.GalleryChildFragmentOne;
-import org.sebbas.android.memegenerator.fragments.GalleryChildFragmentThree;
-import org.sebbas.android.memegenerator.fragments.GalleryChildFragmentTwo;
 import org.sebbas.android.memegenerator.fragments.GalleryFragment;
-import org.sebbas.android.memegenerator.fragments.GifChildFragmentOne;
-import org.sebbas.android.memegenerator.fragments.GifChildFragmentThree;
-import org.sebbas.android.memegenerator.fragments.GifChildFragmentTwo;
 import org.sebbas.android.memegenerator.fragments.GifFragment;
-import org.sebbas.android.memegenerator.fragments.MemeChildFragmentOne;
-import org.sebbas.android.memegenerator.fragments.MemeChildFragmentThree;
-import org.sebbas.android.memegenerator.fragments.MemeChildFragmentTwo;
 import org.sebbas.android.memegenerator.fragments.MemeFragment;
 import org.sebbas.android.memegenerator.fragments.MoreFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
@@ -59,7 +50,7 @@ public class MainActivity extends BaseActivity implements
             R.string.more};
 
     // Setup default first fragment tag
-    private String mLastFragmentTag = MemeChildFragmentOne.TAG;
+    private String mLastFragmentTag = RecyclerFragment.MEME_FRAGMENT_ONE;
     private String mToolbarTitle = "";
 
     private ToggleSwipeViewPager mViewPager;
@@ -136,7 +127,7 @@ public class MainActivity extends BaseActivity implements
                 MainActivity.super.closeSearchView();
 
                 // Make sure that child fragments in slidingtabsfragment register toolbarcallback
-                registerFragmentToolbarCallbacks(mViewPager.getCurrentItem());
+                registerFragmentToolbarCallbacks(getCurrentMainPosition());
             }
 
             @Override
@@ -179,23 +170,14 @@ public class MainActivity extends BaseActivity implements
 
         switch (fragmentTag) {
             case MemeFragment.TAG:
-            case MemeChildFragmentOne.TAG:
-            case MemeChildFragmentTwo.TAG:
-            case MemeChildFragmentThree.TAG:
                 titleResource = R.string.memes;
                 menuResource = R.menu.menu_memes;
                 break;
             case GifFragment.TAG:
-            case GifChildFragmentOne.TAG:
-            case GifChildFragmentTwo.TAG:
-            case GifChildFragmentThree.TAG:
                 titleResource = R.string.gifs;
                 menuResource = R.menu.menu_gifs;
                 break;
             case GalleryFragment.TAG:
-            case GalleryChildFragmentOne.TAG:
-            case GalleryChildFragmentTwo.TAG:
-            case GalleryChildFragmentThree.TAG:
                 titleResource = R.string.gallery;
                 menuResource = R.menu.menu_gallery;
                 break;
@@ -492,8 +474,9 @@ public class MainActivity extends BaseActivity implements
         if (baseFragment instanceof SlidingTabsFragment) {
             SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) baseFragment;
             int lastPosition = LAST_FRAGMENT_POSITIONS[0];
-            int fragmentPosition = slidingTabsFragment.getPositionInParent();
-            if (lastPosition == fragmentPosition) {
+            int currentPosition = slidingTabsFragment.getPositionInParent();
+
+            if (lastPosition == currentPosition) {
                 setupSlidingTabs(baseFragment);
             }
         }
@@ -501,12 +484,12 @@ public class MainActivity extends BaseActivity implements
         if (baseFragment instanceof RecyclerFragment) {
             RecyclerFragment recyclerFragment = (RecyclerFragment) baseFragment;
             int lastParentPosition = LAST_FRAGMENT_POSITIONS[0];
-            int fragmentParentPosition = recyclerFragment.getParentPosition();
+            int currentParentPosition = recyclerFragment.getParentPosition();
 
             int lastPosition = LAST_FRAGMENT_POSITIONS[1];
-            int fragmentPosition = recyclerFragment.getPositionInParent();
+            int currentPosition = recyclerFragment.getPositionInParent();
 
-            if (lastParentPosition == fragmentParentPosition && lastPosition == fragmentPosition) {
+            if (lastParentPosition == currentParentPosition && lastPosition == currentPosition) {
                 registerToolbarCallback(recyclerFragment);
             }
         }

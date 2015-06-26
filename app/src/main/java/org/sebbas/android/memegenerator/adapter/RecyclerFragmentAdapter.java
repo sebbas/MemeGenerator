@@ -38,7 +38,6 @@ public abstract class RecyclerFragmentAdapter extends
 
     protected ArrayList<LineItem> mLineItems;
     protected List<Character> mSectionItems;
-    private RecyclerFragment mFragment;
 
     public RecyclerFragmentAdapter(ArrayList<LineItem> lineItems) {
         mLineItems = lineItems;

@@ -6,12 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 
-import org.sebbas.android.memegenerator.fragments.GifChildFragmentOne;
-import org.sebbas.android.memegenerator.fragments.GifChildFragmentThree;
-import org.sebbas.android.memegenerator.fragments.GifChildFragmentTwo;
-import org.sebbas.android.memegenerator.fragments.MemeChildFragmentOne;
-import org.sebbas.android.memegenerator.fragments.MemeChildFragmentThree;
-import org.sebbas.android.memegenerator.fragments.MemeChildFragmentTwo;
+import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,14 +46,14 @@ public class Utils {
         String url;
 
         switch (fragmentTag) {
-            case MemeChildFragmentOne.TAG:
-            case MemeChildFragmentTwo.TAG:
-            case MemeChildFragmentThree.TAG:
+            case RecyclerFragment.MEME_FRAGMENT_ONE:
+            case RecyclerFragment.MEME_FRAGMENT_TWO:
+            case RecyclerFragment.MEME_FRAGMENT_THREE:
                 url = MEMES;
                 break;
-            case GifChildFragmentOne.TAG:
-            case GifChildFragmentTwo.TAG:
-            case GifChildFragmentThree.TAG:
+            case RecyclerFragment.GIF_FRAGMENT_ONE:
+            case RecyclerFragment.GIF_FRAGMENT_TWO:
+            case RecyclerFragment.GIF_FRAGMENT_THREE:
                 url = GIFS;
                 break;
             default:

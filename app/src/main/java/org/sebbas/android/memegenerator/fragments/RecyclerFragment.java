@@ -9,6 +9,8 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -24,6 +26,8 @@ import org.sebbas.android.memegenerator.GridSpacingItemDecoration;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.ScrollBarSectionIndicator;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
+import org.sebbas.android.memegenerator.adapter.SimpleRecyclerAdapter;
+import org.sebbas.android.memegenerator.adapter.SuperSlimRecyclerAdapter;
 import org.sebbas.android.memegenerator.dataloader.DataLoader;
 import org.sebbas.android.memegenerator.interfaces.DataLoaderCallback;
 import org.sebbas.android.memegenerator.activities.MainActivity;
@@ -37,17 +41,29 @@ import java.util.ArrayList;
 import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 
-public abstract class RecyclerFragment extends BaseFragment implements
+public class RecyclerFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener, ToolbarCallback {
 
     private static final String TAG = "RecyclerFragment";
     private static final String LINE_ITEMS = "lineItems";
 
     // Keys for values in bundle
-    protected static final String ARG_FRAGMENT_TYPE = "ARG_FRAGMENT_TYPE";
-    protected static final String ARG_LAYOUT_MODE = "ARG_LAYOUT_MODE";
-    protected static final String ARG_IS_REFRESHABLE = "ARG_IS_REFRESHABLE";
-    protected static final String ARG_POSITION_IN_PARENT = "ARG_POSITION_IN_PARENT";
+    private static final String ARG_FRAGMENT_TYPE = "ARG_FRAGMENT_TYPE";
+    private static final String ARG_LAYOUT_MODE = "ARG_LAYOUT_MODE";
+    private static final String ARG_IS_REFRESHABLE = "ARG_IS_REFRESHABLE";
+    private static final String ARG_POSITION_IN_PARENT = "ARG_POSITION_IN_PARENT";
+
+    // Fragment type options
+    public static final String MEME_FRAGMENT_ONE = "MemeFragmentOne";
+    public static final String MEME_FRAGMENT_TWO = "MemeFragmentTwo";
+    public static final String MEME_FRAGMENT_THREE = "MemeFragmentThree";
+    public static final String GIF_FRAGMENT_ONE = "GifFragmentOne";
+    public static final String GIF_FRAGMENT_TWO = "GifFragmentTwo";
+    public static final String GIF_FRAGMENT_THREE = "GifFragmentThree";
+    public static final String GALLERY_FRAGMENT_ONE = "GalleryFragmentOne";
+    public static final String GALLERY_FRAGMENT_TWO = "GalleryFragmentTwo";
+    public static final String GALLERY_FRAGMENT_THREE = "GalleryFragmentThree";
+    public static final String MORE_FRAGMENT = "MoreFragment";
 
     // Layout options
     public static final int GRID_LAYOUT = 0;
@@ -63,27 +79,50 @@ public abstract class RecyclerFragment extends BaseFragment implements
     private RecyclerFragmentAdapter mRecyclerFragmentAdapter;
     private CircularProgressView mCircularProgressView;
     private ObservableRecyclerView mRecyclerView;
-    private String mFragmentType;
+    private String mFragmentTag;
     private int mLayoutMode;
     private boolean mIsRefreshable;
     private RecyclerView.AdapterDataObserver mAdapterObserver;
     private DataLoader mDataLoader;
     private int mPositionInParent;
     private VerticalRecyclerViewFastScroller mFastScroller;
+    private View mRootView;
 
     protected ArrayList<LineItem> mLineItems;
+
+    public static RecyclerFragment newInstance(String tag, int layoutMode, boolean isRefreshable, int position) {
+        RecyclerFragment fragment = new RecyclerFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_FRAGMENT_TYPE, tag);
+        args.putInt(ARG_LAYOUT_MODE, layoutMode);
+        args.putBoolean(ARG_IS_REFRESHABLE, isRefreshable);
+        args.putInt(ARG_POSITION_IN_PARENT, position);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            mFragmentType = args.getString(ARG_FRAGMENT_TYPE);
+            mFragmentTag = args.getString(ARG_FRAGMENT_TYPE);
             mLayoutMode = args.getInt(ARG_LAYOUT_MODE);
             mIsRefreshable = args.getBoolean(ARG_IS_REFRESHABLE, false);
             mPositionInParent = args.getInt(ARG_POSITION_IN_PARENT, 0);
         }
         mDataLoader = new DataLoader(this);
+
+        String url = Utils.getUrlForData(mFragmentTag);
+        load(url, DataLoader.INTERNET);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        mRootView = inflater.inflate(R.layout.fragment_recyclerview, container, false);
+
+        return mRootView;
     }
 
     @Override
@@ -100,6 +139,23 @@ public abstract class RecyclerFragment extends BaseFragment implements
             mLineItems = savedInstanceState.getParcelableArrayList(LINE_ITEMS);
         } else {
             mLineItems = getLineItems();
+        }
+
+        setupAdapter();
+        init(mRootView);
+    }
+
+    private void setupAdapter() {
+        switch (mLayoutMode) {
+            case GRID_LAYOUT:
+            case LIST_LAYOUT:
+                mRecyclerFragmentAdapter = new SimpleRecyclerAdapter(getActivity(), mLineItems);
+                break;
+            case SUPER_SLIM_LAYOUT:
+                mRecyclerFragmentAdapter = new SuperSlimRecyclerAdapter(getActivity(), mLineItems);
+                break;
+            default:
+                mRecyclerFragmentAdapter = new SimpleRecyclerAdapter(getActivity(), mLineItems);
         }
     }
 
@@ -311,7 +367,7 @@ public abstract class RecyclerFragment extends BaseFragment implements
     }
 
     public String getFragmentType() {
-        return mFragmentType;
+        return mFragmentTag;
     }
 
     public void filterDataWith(String s) {
@@ -397,6 +453,11 @@ public abstract class RecyclerFragment extends BaseFragment implements
 
     @Override
     public void onBackPressed() {
+    }
+
+    @Override
+    public String getFragmentTag() {
+        return mFragmentTag;
     }
 
     private class MyScrollListener extends RecyclerView.OnScrollListener {
