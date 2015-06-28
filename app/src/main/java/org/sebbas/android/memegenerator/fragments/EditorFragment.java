@@ -15,15 +15,15 @@ import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
 import java.util.ArrayList;
 
-public class EditorFragment extends BaseFragment implements ToolbarCallback {
+public class EditorFragment extends SlidingTabsFragment implements ToolbarCallback {
 
     public static final String TAG = "EditorFragment";
     private static final String START_POSITION = "startPosition";
     private static final String LINE_ITEMS = "lineItems";
+    private static final int OFF_SCREEN_LIMIT = 3;
 
-    private Picasso mPicasso;
     private int mStartPosition;
-    private ViewPager mCardPager;
+    private String[] mTabTitles;
     private CardPagerAdapter mCardPagerAdapter;
     private ArrayList<LineItem> mLineItems;
 
@@ -42,6 +42,18 @@ public class EditorFragment extends BaseFragment implements ToolbarCallback {
 
         mStartPosition = getArguments().getInt(START_POSITION);
         mLineItems = getArguments().getParcelableArrayList(LINE_ITEMS);
+
+        // Get all item titles and plug them into array
+        mTabTitles = new String[mLineItems.size()];
+        for (int i = 0; i < mLineItems.size(); i++) {
+            String itemTitle = mLineItems.get(i).getTitle();
+            mTabTitles[i] = itemTitle;
+        }
+
+        if (mCardPagerAdapter == null) {
+            mCardPagerAdapter = new CardPagerAdapter(this, getChildFragmentManager(), mTabTitles);
+        }
+
     }
 
     @Override
@@ -50,50 +62,10 @@ public class EditorFragment extends BaseFragment implements ToolbarCallback {
 
         View view = inflater.inflate(R.layout.fragment_editor, container, false);
 
-        setToolbarTitle(mStartPosition);
+        super.with(mCardPagerAdapter);
+        super.init(view, true, OFF_SCREEN_LIMIT, mStartPosition);
+
         return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        if (mCardPagerAdapter == null) {
-            mCardPagerAdapter = new CardPagerAdapter(getActivity(), mLineItems);
-        }
-
-        if (mCardPager == null) {
-            mCardPager = (ViewPager) view.findViewById(R.id.card_pager);
-            mCardPager.setAdapter(mCardPagerAdapter);
-            mCardPager.setCurrentItem(mStartPosition);
-            mCardPager.setPageTransformer(true, new DepthPageTransformer());
-            mCardPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-
-                @Override
-                public void onPageSelected(int position) {
-                    setToolbarTitle(position);
-
-                }
-            });
-        }
-    }
-
-    private void setToolbarTitle(int position) {
-        // Get title of current item
-        LineItem item = mLineItems.get(position);
-        String title = item.getTitle();
-
-        // Callback to setup current title in toolbar
-        super.onFragmentChangeToolbar(TAG, title);
-    }
-
-    private ArrayList<String> getImageUrls() {
-        ArrayList<String> imageUrls = new ArrayList<>();
-        for (LineItem lineItem : mLineItems) {
-            String imageUrl = lineItem.getImageUrl();
-            imageUrls.add(imageUrl);
-        }
-        return imageUrls;
     }
 
     @Override
@@ -114,6 +86,10 @@ public class EditorFragment extends BaseFragment implements ToolbarCallback {
     @Override
     public void onBackPressed() {
         getActivity().onBackPressed();
+    }
+
+    public LineItem getLineItemAt(int position) {
+        return mLineItems.get(position);
     }
 
     private class DepthPageTransformer implements ViewPager.PageTransformer {

@@ -80,7 +80,7 @@ public class MainActivity extends BaseActivity implements
         mViewPager.setOffscreenPageLimit(OFF_SCREEN_LIMIT);
 
         SlidingTabLayout slidingTabLayoutMain = (SlidingTabLayout) findViewById(R.id.sliding_tabs_main_navigation);
-        slidingTabLayoutMain.setCustomTabView(R.layout.tab_main, 0);
+        slidingTabLayoutMain.setCustomTabView(R.layout.tab_main, R.id.tabsText);
         slidingTabLayoutMain.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
         slidingTabLayoutMain.setDistributeEvenly(true);
         slidingTabLayoutMain.setViewPager(mViewPager);
@@ -144,8 +144,6 @@ public class MainActivity extends BaseActivity implements
         if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
             getSupportFragmentManager().popBackStack();
 
-            clearToolbarTitle();
-
             // Make sure main view tabs are shown
             showMainTabs();
 
@@ -186,6 +184,7 @@ public class MainActivity extends BaseActivity implements
                 break;
             case EditorFragment.TAG:
                 upEnabled = true;
+                titleResource = R.string.editor;
                 break;
             default:
                 titleResource = R.string.app_name;
@@ -207,19 +206,7 @@ public class MainActivity extends BaseActivity implements
 
         // Setup visibility of tabs layout
         switch(fragmentTag) {
-            case MemeFragment.TAG:
-                slidingTabLayout.setVisibility(View.VISIBLE);
-                break;
-            case GifFragment.TAG:
-                slidingTabLayout.setVisibility(View.VISIBLE);
-                break;
-            case GalleryFragment.TAG:
-                slidingTabLayout.setVisibility(View.VISIBLE);
-                break;
             case MoreFragment.TAG:
-                slidingTabLayout.setVisibility(View.GONE);
-                break;
-            case EditorFragment.TAG:
                 slidingTabLayout.setVisibility(View.GONE);
                 break;
             default:
@@ -524,6 +511,9 @@ public class MainActivity extends BaseActivity implements
 
         // Hide main view tabs
         hideMainTabs();
+
+        // Setup toolbar title
+        setupToolbar(editorFragment.getFragmentTag());
         
         // Hide sliding tabs at top, -1 and null because this is not a viewpager position
         setupSlidingTabs(editorFragment);
@@ -535,9 +525,5 @@ public class MainActivity extends BaseActivity implements
     public void bringMainNavigationToFront() {
         findViewById(R.id.header).bringToFront();
         findViewById(R.id.footer).bringToFront();
-    }
-
-    private void clearToolbarTitle() {
-        mToolbarTitle = "";
     }
 }

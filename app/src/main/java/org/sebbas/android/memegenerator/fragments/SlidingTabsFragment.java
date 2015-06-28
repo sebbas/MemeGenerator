@@ -7,8 +7,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
-import com.koushikdutta.ion.Ion;
-
 import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.R;
@@ -35,10 +33,10 @@ public abstract class SlidingTabsFragment extends BaseFragment {
         }
     }
 
-    public void init(View view, boolean isSwipeable, int offScreenLimit) {
+    public void init(View view, boolean isSwipeable, int offScreenLimit, int startPosition) {
 
         if (mViewPager == null) {
-            mViewPager = (ToggleSwipeViewPager) view.findViewById(R.id.sliding_tabs_viewpager);
+            mViewPager = (ToggleSwipeViewPager) view.findViewById(R.id.tabs_viewpager);
             mViewPager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
                 @Override
                 public void onPageSelected(int position) {
@@ -50,11 +48,12 @@ public abstract class SlidingTabsFragment extends BaseFragment {
             mViewPager.setPagingEnabled(isSwipeable);
             mViewPager.setOffscreenPageLimit(offScreenLimit);
             mViewPager.setAdapter(mSlidingTabsAdapter);
+            mViewPager.setCurrentItem(startPosition);
 
             // Padding for tabs (only in portrait mode)
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 int tabHeight = getResources().getDimensionPixelSize(R.dimen.tab_height);
-                view.findViewById(R.id.sliding_tabs_pager_wrapper).setPadding(0, tabHeight, 0, 0);
+                view.findViewById(R.id.wrapper).setPadding(0, tabHeight, 0, 0);
             }
         }
         super.onFragmentComplete(this);

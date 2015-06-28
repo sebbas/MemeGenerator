@@ -119,4 +119,9 @@ public abstract class RecyclerFragmentAdapter extends
 
         return letterPosition;
     }
+
+    // Returns position of item not regarding any padding or header items in line item list
+    protected int getContentPosition(int position) {
+        return position - mLineItems.get(position).getSectionFirstPosition();
+    }
 }

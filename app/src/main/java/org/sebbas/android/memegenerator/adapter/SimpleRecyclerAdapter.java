@@ -6,13 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
-import com.koushikdutta.ion.Ion;
 
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.SquaredImageView;
-import org.sebbas.android.memegenerator.Utils;
-import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 
 import java.util.ArrayList;
@@ -47,7 +44,8 @@ public class SimpleRecyclerAdapter extends RecyclerFragmentAdapter {
             public void onItemClick(int position) {
                 // Only trigger click event for content items
                 if (getItemViewType(position) == VIEW_TYPE_CONTENT) {
-                    ((FragmentCallback) mContext).onItemClick(position,
+                    ((FragmentCallback) mContext).onItemClick(
+                            SimpleRecyclerAdapter.super.getContentPosition(position),
                             SimpleRecyclerAdapter.super.mLineItems);
                 }
             }
@@ -57,7 +55,7 @@ public class SimpleRecyclerAdapter extends RecyclerFragmentAdapter {
         LayoutInflater inflater = LayoutInflater.from(mContext);
 
         if (viewType == VIEW_TYPE_FILLER) {
-            view = inflater.inflate(R.layout.recycler_padding, parent, false);
+            view = inflater.inflate(R.layout.toolbar_padding, parent, false);
         } else {
             view = inflater.inflate(R.layout.squared_item, parent, false);
         }

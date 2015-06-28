@@ -13,7 +13,9 @@ import org.sebbas.android.memegenerator.R;
 public class GalleryFragment extends SlidingTabsFragment {
 
     public static final String TAG = "GalleryFragment";
-    private static final int OFF_SCREEN_LIMIT = 3;
+    private static final boolean PAGER_SWIPEABLE = true;
+    private static final int PAGER_OFF_SCREEN_LIMIT = 3;
+    private static final int PAGER_START_POSITION = 0;
     private static int[] TAB_TITLES = {
             R.string.my_memes,
             R.string.favorites,
@@ -44,7 +46,7 @@ public class GalleryFragment extends SlidingTabsFragment {
         View view = inflater.inflate(R.layout.fragment_slidingtabs, container, false);
 
         super.with(mGalleryFragmentAdapter);
-        super.init(view, true, OFF_SCREEN_LIMIT);
+        super.init(view, PAGER_SWIPEABLE, PAGER_OFF_SCREEN_LIMIT, PAGER_START_POSITION);
 
         return view;
     }

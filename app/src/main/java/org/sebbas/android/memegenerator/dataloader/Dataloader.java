@@ -116,8 +116,8 @@ public class DataLoader implements Filterable {
                     resultItems.add(LineItem.newInstance(
                             title, imageUrl, imageId, viewCount, timeStamp, imageWidth, imageHeight,
                             false, sectionManager, sectionFirstPosition, headerCount));
+                    tmp++;
                 }
-                tmp++;
             }
         }
         return resultItems;

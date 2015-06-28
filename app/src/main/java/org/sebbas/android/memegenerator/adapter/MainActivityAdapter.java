@@ -33,7 +33,7 @@ public class MainActivityAdapter extends SlidingTabsAdapter {
     }
 
     @Override
-    protected Fragment createItem(int position) {
+    public Fragment getItem(int position) {
         Fragment fragment;
 
         switch (position) {

@@ -1,22 +1,19 @@
 package org.sebbas.android.memegenerator.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.koushikdutta.ion.Ion;
-
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.adapter.MemeFragmentAdapter;
-import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
 public class MemeFragment extends SlidingTabsFragment {
 
     public static final String TAG = "MemeFragment";
-    private static final int OFF_SCREEN_LIMIT = 3;
+    private static final boolean PAGER_SWIPEABLE = true;
+    private static final int PAGER_OFF_SCREEN_LIMIT = 3;
+    private static final int PAGER_START_POSITION = 0;
     private static int[] TAB_TITLES = {
             R.string.all_items,
             R.string.popular_items,
@@ -47,7 +44,7 @@ public class MemeFragment extends SlidingTabsFragment {
         View view = inflater.inflate(R.layout.fragment_slidingtabs, container, false);
 
         super.with(mMemeFragmentAdapter);
-        super.init(view, true, OFF_SCREEN_LIMIT);
+        super.init(view, PAGER_SWIPEABLE, PAGER_OFF_SCREEN_LIMIT, PAGER_START_POSITION);
 
         return view;
     }

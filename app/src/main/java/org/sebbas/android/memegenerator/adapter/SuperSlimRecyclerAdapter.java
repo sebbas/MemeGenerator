@@ -11,7 +11,6 @@ import com.tonicartos.superslim.GridSLM;
 
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 
 import java.util.ArrayList;
@@ -55,7 +54,8 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
             public void onItemClick(int position) {
                 // Only trigger click event for content items
                 if (getItemViewType(position) == VIEW_TYPE_CONTENT) {
-                    ((FragmentCallback) mContext).onItemClick(getContentPosition(position),
+                    ((FragmentCallback) mContext).onItemClick(
+                            SuperSlimRecyclerAdapter.super.getContentPosition(position),
                             SuperSlimRecyclerAdapter.super.mLineItems);
                 }
             }
@@ -66,7 +66,7 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
 
         switch (viewType) {
             case VIEW_TYPE_FILLER:
-                view = inflater.inflate(R.layout.recycler_padding, parent, false);
+                view = inflater.inflate(R.layout.toolbar_padding, parent, false);
                 break;
             case VIEW_TYPE_CONTENT:
                 view = inflater.inflate(R.layout.list_item, parent, false);
@@ -117,9 +117,5 @@ public class SuperSlimRecyclerAdapter extends RecyclerFragmentAdapter {
         public void onClick(View v) {
             super.mViewHolderCallback.onItemClick(getPosition());
         }
-    }
-
-    private int getContentPosition(int position) {
-        return position - mLineItems.get(position).getHeaderCount();
     }
 }

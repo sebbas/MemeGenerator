@@ -15,25 +15,32 @@ import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.fragments.SlidingTabsFragment;
 
 
-public abstract class SlidingTabsAdapter extends CacheFragmentStatePagerAdapter {
+public abstract class SlidingTabsAdapter extends FragmentStatePagerAdapter {
 
     private static final String TAG = "SlidingTabsFragmentAdapter";
 
-    private Context mContext;
-    private int[] mTitleResources;
+    private String[] mTitles;
     private SparseArray<Fragment> mRegisteredFragments;
 
-
-    public SlidingTabsAdapter(Context context, FragmentManager fragmentManager,
-                              int[] titleResources) {
+    private SlidingTabsAdapter(FragmentManager fragmentManager, int titleSize) {
         super(fragmentManager);
-
-        mContext = context;
-        mTitleResources = titleResources;
+        mTitles = new String[titleSize];
 
         if (mRegisteredFragments == null) {
             mRegisteredFragments = new SparseArray<>();
         }
+    }
+
+    public SlidingTabsAdapter(Context context, FragmentManager fragmentManager,
+                              int[] titleResources) {
+        this(fragmentManager, titleResources.length);
+        mTitles = Utils.resourceArrayToStringArray(context, titleResources);;
+    }
+
+    public SlidingTabsAdapter(FragmentManager fragmentManager, String[] titles) {
+        this(fragmentManager, titles.length);
+
+        mTitles = titles;
     }
 
     @Override
@@ -47,7 +54,7 @@ public abstract class SlidingTabsAdapter extends CacheFragmentStatePagerAdapter 
     }
 
     private String[] getTitles() {
-        return Utils.resourceArrayToStringArray(mContext, mTitleResources);
+        return mTitles;
     }
 
     public Fragment getRegisteredFragment(int position) {

@@ -1,7 +1,6 @@
 package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +8,6 @@ import android.widget.FrameLayout;
 
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.fragments.BaseFragment;
-import org.sebbas.android.memegenerator.fragments.PreferencesFragment;
 
 import java.util.ArrayList;
 
@@ -42,7 +39,7 @@ public class PreferencesAdapter extends RecyclerFragmentAdapter {
         LayoutInflater inflater = LayoutInflater.from(mContext);
 
         if (viewType == VIEW_TYPE_FILLER) {
-            view = inflater.inflate(R.layout.recycler_padding, parent, false);
+            view = inflater.inflate(R.layout.toolbar_padding, parent, false);
         } else {
             view = inflater.inflate(R.layout.fragment_preferences, parent, false);
         }
