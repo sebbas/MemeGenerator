@@ -122,6 +122,6 @@ public abstract class RecyclerFragmentAdapter extends
 
     // Returns position of item not regarding any padding or header items in line item list
     protected int getContentPosition(int position) {
-        return position - mLineItems.get(position).getSectionFirstPosition();
+        return position - mLineItems.get(position).getHeaderCount();
     }
 }

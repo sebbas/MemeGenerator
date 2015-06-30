@@ -11,8 +11,9 @@ import com.bumptech.glide.Glide;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
+import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
-public class CardFragment extends BaseFragment {
+public class CardFragment extends BaseFragment implements ToolbarCallback {
 
     public static final String TAG = "CardFragment";
     private static final String ARG_LINE_ITEM = "lineItem";
@@ -55,5 +56,20 @@ public class CardFragment extends BaseFragment {
     @Override
     public String getFragmentTag() {
         return TAG;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String s) {
+        return false;
+    }
+
+    @Override
+    public void onToolbarBackPressed() {
+
     }
 }

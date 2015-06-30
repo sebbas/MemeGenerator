@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.SquaredImageView;
+import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 
 import java.util.ArrayList;
@@ -71,7 +72,8 @@ public class SimpleRecyclerAdapter extends RecyclerFragmentAdapter {
             final SquareViewHolder squareViewHolder = (SquareViewHolder) viewHolder;
 
             Glide.with(mContext)
-                    .load(item.getImageUrl()) //Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
+                    .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
+                    .asBitmap()
                     .centerCrop()
                     .into(squareViewHolder.imageView);
         }

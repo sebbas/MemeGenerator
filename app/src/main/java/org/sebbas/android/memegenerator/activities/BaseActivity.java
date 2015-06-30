@@ -6,6 +6,7 @@ import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
@@ -15,9 +16,14 @@ import android.widget.Toast;
 
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
+import org.sebbas.android.memegenerator.fragments.CardFragment;
+import org.sebbas.android.memegenerator.fragments.GalleryFragment;
+import org.sebbas.android.memegenerator.fragments.GifFragment;
+import org.sebbas.android.memegenerator.fragments.MemeFragment;
+import org.sebbas.android.memegenerator.fragments.MoreFragment;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
-public abstract class BaseActivity extends ActionBarActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     private MenuItem mSearchMenuItem;
 
@@ -43,51 +49,51 @@ public abstract class BaseActivity extends ActionBarActivity {
         }
     }
 
-    public void setupToolbar(int titleResource, int menuResource, boolean isUpEnabled) {
+    public void setupToolbar(String fragmentTag) {
+        int titleResource = 0;
+        int menuResource = 0;
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        switch (fragmentTag) {
+            case MemeFragment.TAG:
+                titleResource = R.string.memes;
+                menuResource = R.menu.menu_memes;
+                break;
+            case GifFragment.TAG:
+                titleResource = R.string.gifs;
+                menuResource = R.menu.menu_gifs;
+                break;
+            case GalleryFragment.TAG:
+                titleResource = R.string.gallery;
+                menuResource = R.menu.menu_gallery;
+                break;
+            case MoreFragment.TAG:
+                titleResource = R.string.more;
+                break;
+            case EditorActivity.TAG:
+                titleResource = R.string.editor;
+                menuResource = R.menu.menu_editor;
+                toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
+                break;
+            default:
+                titleResource = R.string.app_name;
+                menuResource = R.menu.menu_memes;
+                break;
+        }
 
         // Make sure that toolbar is clear
         toolbar.getMenu().clear();
 
         // Setup toolbar title
-        String title = getResources().getString(titleResource);
-        toolbar.setTitle(title);
+        toolbar.setTitle(titleResource);
 
         // Setup toolbar menu
         if (menuResource != 0) {
             toolbar.inflateMenu(menuResource);
         }
-
-        if (isUpEnabled) {
-            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        } else {
-            toolbar.setNavigationIcon(null);
-        }
     }
 
-    public void setupToolbar(String title, int menuResource, boolean isUpEnabled) {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-        // Make sure that toolbar is clear
-        toolbar.getMenu().clear();
-
-        // Setup toolbar title
-        toolbar.setTitle(title);
-
-        // Setup toolbar menu
-        if (menuResource != 0) {
-            toolbar.inflateMenu(menuResource);
-        }
-
-        if (isUpEnabled) {
-            toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
-        } else {
-            toolbar.setNavigationIcon(null);
-        }
-    }
-
-    public void registerToolbarCallback(Fragment fragment) {
-        final ToolbarCallback toolbarCallback = (ToolbarCallback) fragment;
+    public void registerToolbarCallback(final ToolbarCallback toolbarCallback) {
         Toolbar toolbar = (Toolbar) this.findViewById(R.id.toolbar);
 
         // Setup toolbar actions
@@ -99,14 +105,9 @@ public abstract class BaseActivity extends ActionBarActivity {
                         setupSearchView(menuItem, toolbarCallback);
                         break;
                     case R.id.menu_image:
-                        //toolbarCallback.onRefreshClicked();
                         break;
                     case R.id.menu_video:
-                        //toolbarCallback.onRefreshClicked();
                         break;
-                    default:
-                        Toast.makeText(BaseActivity.this, "Pressed Back", Toast.LENGTH_SHORT).show();
-                        onBackPressed();
                 }
                 return true;
             }
@@ -115,7 +116,7 @@ public abstract class BaseActivity extends ActionBarActivity {
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toolbarCallback.onBackPressed();
+                toolbarCallback.onToolbarBackPressed();
             }
         });
     }

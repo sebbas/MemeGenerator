@@ -455,7 +455,8 @@ public class RecyclerFragment extends BaseFragment implements
     }
 
     @Override
-    public void onBackPressed() {
+    public void onToolbarBackPressed() {
+
     }
 
     @Override

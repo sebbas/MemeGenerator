@@ -153,8 +153,18 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
         mViewPager = viewPager;
         if (viewPager != null) {
-            viewPager.setOnPageChangeListener(new InternalViewPagerListener());
+            viewPager.addOnPageChangeListener(new InternalViewPagerListener());
             populateTabStrip();
+        }
+    }
+
+    public void setViewPager(ViewPager viewPager, int fromPosition, int toPosition) {
+        mTabStrip.removeAllViews();
+
+        mViewPager = viewPager;
+        if (viewPager != null) {
+            viewPager.addOnPageChangeListener(new InternalViewPagerListener());
+            populateTabStrip(fromPosition, toPosition);
         }
     }
 
@@ -187,43 +197,62 @@ public class SlidingTabLayout extends HorizontalScrollView {
         final OnClickListener tabClickListener = new TabClickListener();
 
         for (int i = 0; i < adapter.getCount(); i++) {
-            View tabView = null;
-            TextView tabTitleView = null;
-
-            if (mTabViewLayoutId != 0) {
-                // If there is a custom tab view layout id set, try and inflate it
-                tabView = LayoutInflater.from(getContext()).inflate(mTabViewLayoutId, mTabStrip,
-                        false);
-                tabTitleView = (TextView) tabView.findViewById(mTabViewTextViewId);
-            }
-
-            if (tabView == null) {
-                tabView = createDefaultTabView(getContext());
-            }
-
-            if (tabTitleView == null && TextView.class.isInstance(tabView)) {
-                tabTitleView = (TextView) tabView;
-            }
-
-            if (mDistributeEvenly) {
-                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) tabView.getLayoutParams();
-                lp.width = 0;
-                lp.weight = 1;
-            }
-
-            tabTitleView.setText(adapter.getPageTitle(i));
-            tabTitleView.setTypeface(null, Typeface.BOLD);
-            tabView.setOnClickListener(tabClickListener);
-            String desc = mContentDescriptions.get(i, null);
-            if (desc != null) {
-                tabView.setContentDescription(desc);
-            }
+            View tabView = getTabView(adapter, tabClickListener, i);
 
             mTabStrip.addView(tabView);
             if (i == mViewPager.getCurrentItem()) {
                 tabView.setSelected(true);
             }
         }
+    }
+
+    private void populateTabStrip(int fromPosition, int toPosition) {
+        final PagerAdapter adapter = mViewPager.getAdapter();
+        final OnClickListener tabClickListener = new TabClickListener();
+
+        for (int i = fromPosition; i < toPosition; i++) {
+            View tabView = getTabView(adapter, tabClickListener, i);
+
+            mTabStrip.addView(tabView);
+            if (i == mViewPager.getCurrentItem()) {
+                tabView.setSelected(true);
+            }
+        }
+    }
+
+    private View getTabView(PagerAdapter adapter, OnClickListener tabClickListener, int i) {
+        View tabView = null;
+        TextView tabTitleView = null;
+
+        if (mTabViewLayoutId != 0) {
+            // If there is a custom tab view layout id set, try and inflate it
+            tabView = LayoutInflater.from(getContext()).inflate(mTabViewLayoutId, mTabStrip,
+                    false);
+            tabTitleView = (TextView) tabView.findViewById(mTabViewTextViewId);
+        }
+
+        if (tabView == null) {
+            tabView = createDefaultTabView(getContext());
+        }
+
+        if (tabTitleView == null && TextView.class.isInstance(tabView)) {
+            tabTitleView = (TextView) tabView;
+        }
+
+        if (mDistributeEvenly) {
+            LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) tabView.getLayoutParams();
+            lp.width = 0;
+            lp.weight = 1;
+        }
+
+        tabTitleView.setText(adapter.getPageTitle(i));
+        tabTitleView.setTypeface(null, Typeface.BOLD);
+        tabView.setOnClickListener(tabClickListener);
+        String desc = mContentDescriptions.get(i, null);
+        if (desc != null) {
+            tabView.setContentDescription(desc);
+        }
+        return tabView;
     }
 
     public void setContentDescription(int i, String desc) {

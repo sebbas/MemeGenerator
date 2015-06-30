@@ -20,7 +20,6 @@ public abstract class SlidingTabsFragment extends BaseFragment {
 
     private SlidingTabsAdapter mSlidingTabsAdapter;
     private ToggleSwipeViewPager mViewPager;
-    private FragmentManager mRetainedChildFragmentManager;
     private int mLastPage;
     private int mPositionInParent;
 
@@ -66,32 +65,6 @@ public abstract class SlidingTabsFragment extends BaseFragment {
     public ViewPager getViewPager() {
         return mViewPager;
     }
-
-    /*public FragmentManager getRetainedChildFragmentManager() {
-        if (mRetainedChildFragmentManager == null) {
-            mRetainedChildFragmentManager = getChildFragmentManager();
-        }
-        return mRetainedChildFragmentManager;
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        if (mRetainedChildFragmentManager != null) {
-            //restore the last retained child fragment manager to the new
-            //created fragment
-            try {
-                Field childFMField = Fragment.class.getDeclaredField("mChildFragmentManager");
-                childFMField.setAccessible(true);
-                childFMField.set(this, mRetainedChildFragmentManager);
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-    }*/
 
     @Override
     public void onDestroyView() {
