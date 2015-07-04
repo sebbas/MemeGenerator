@@ -6,6 +6,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 
+import org.sebbas.android.memegenerator.dataloader.DataLoader;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 
 import java.util.ArrayList;
@@ -42,8 +43,8 @@ public class Utils {
         return imageUrl.replaceAll(id, id + size);
     }
 
-    public static final String getUrlForData(String fragmentTag) {
-        String url;
+    public static final String getDataUrl(String fragmentTag) {
+        String url = "";
 
         switch (fragmentTag) {
             case RecyclerFragment.MEME_FRAGMENT_ONE:
@@ -56,10 +57,39 @@ public class Utils {
             case RecyclerFragment.GIF_FRAGMENT_THREE:
                 url = GIFS;
                 break;
-            default:
-                url = MEMES;
+            case RecyclerFragment.GALLERY_FRAGMENT_ONE:
+            case RecyclerFragment.GALLERY_FRAGMENT_TWO:
+            case RecyclerFragment.GALLERY_FRAGMENT_THREE:
+                url = GIFS;
+                break;
+            case RecyclerFragment.EXPLORE_FRAGMENT:
+                break;
         }
         return url;
+    }
+
+    public static int getLoadingLocation(String fragmentTag) {
+        int location;
+
+        switch (fragmentTag) {
+            case RecyclerFragment.MEME_FRAGMENT_ONE:
+            case RecyclerFragment.MEME_FRAGMENT_TWO:
+            case RecyclerFragment.MEME_FRAGMENT_THREE:
+            case RecyclerFragment.GIF_FRAGMENT_ONE:
+            case RecyclerFragment.GIF_FRAGMENT_TWO:
+            case RecyclerFragment.GIF_FRAGMENT_THREE:
+            case RecyclerFragment.GALLERY_FRAGMENT_ONE:
+            case RecyclerFragment.GALLERY_FRAGMENT_TWO:
+            case RecyclerFragment.GALLERY_FRAGMENT_THREE:
+                location = DataLoader.INTERNET;
+                break;
+            case RecyclerFragment.EXPLORE_FRAGMENT:
+                location = DataLoader.RESOURCE;
+                break;
+            default:
+                location = DataLoader.INTERNET;
+        }
+        return location;
     }
 
     /*

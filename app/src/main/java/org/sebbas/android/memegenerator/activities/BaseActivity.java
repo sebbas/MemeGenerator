@@ -3,24 +3,19 @@ package org.sebbas.android.memegenerator.activities;
 import android.app.ActivityManager;
 import android.content.res.TypedArray;
 import android.os.Build;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.fragments.BaseFragment;
-import org.sebbas.android.memegenerator.fragments.CardFragment;
 import org.sebbas.android.memegenerator.fragments.GalleryFragment;
 import org.sebbas.android.memegenerator.fragments.GifFragment;
 import org.sebbas.android.memegenerator.fragments.MemeFragment;
-import org.sebbas.android.memegenerator.fragments.MoreFragment;
+import org.sebbas.android.memegenerator.fragments.ChartFragment;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -67,7 +62,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 titleResource = R.string.gallery;
                 menuResource = R.menu.menu_gallery;
                 break;
-            case MoreFragment.TAG:
+            case ChartFragment.TAG:
                 titleResource = R.string.more;
                 break;
             case EditorActivity.TAG:

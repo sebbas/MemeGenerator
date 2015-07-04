@@ -19,7 +19,7 @@ public class PreferencesAdapter extends RecyclerFragmentAdapter {
     private Context mContext;
 
     public PreferencesAdapter(Context context) {
-        super(new ArrayList<LineItem>());
+        super(context, new ArrayList<LineItem>(), 0);
         mContext = context;
     }
 

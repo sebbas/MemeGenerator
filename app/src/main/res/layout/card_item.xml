@@ -17,7 +17,7 @@
         cardview:cardCornerRadius="@dimen/google_cards_corner_radius">
 
         <ImageView
-            android:id="@+id/item_image_card"
+            android:id="@+id/item_image"
             android:src="@color/primary"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

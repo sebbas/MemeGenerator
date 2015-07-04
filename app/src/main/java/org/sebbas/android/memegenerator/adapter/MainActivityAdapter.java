@@ -12,7 +12,7 @@ import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.fragments.GalleryFragment;
 import org.sebbas.android.memegenerator.fragments.GifFragment;
 import org.sebbas.android.memegenerator.fragments.MemeFragment;
-import org.sebbas.android.memegenerator.fragments.MoreFragment;
+import org.sebbas.android.memegenerator.fragments.ChartFragment;
 
 public class MainActivityAdapter extends SlidingTabsAdapter {
 
@@ -50,7 +50,7 @@ public class MainActivityAdapter extends SlidingTabsAdapter {
                 fragment = GalleryFragment.newInstance(position);
                 break;
             case 4:
-                fragment = MoreFragment.newInstance(position);
+                fragment = ChartFragment.newInstance(position);
                 break;
             default:
                 fragment = MemeFragment.newInstance(position);

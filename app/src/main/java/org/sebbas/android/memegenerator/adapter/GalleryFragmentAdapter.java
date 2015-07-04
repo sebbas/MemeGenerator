@@ -20,16 +20,32 @@ public class GalleryFragmentAdapter extends SlidingTabsAdapter {
 
         switch (position) {
             case 0:
-                fragment = RecyclerFragment.newInstance(RecyclerFragment.GALLERY_FRAGMENT_ONE, RecyclerFragment.LIST_LAYOUT, true, position);
+                fragment = RecyclerFragment.newInstance(
+                        RecyclerFragment.GALLERY_FRAGMENT_ONE,
+                        RecyclerFragment.LIST_LAYOUT,
+                        RecyclerFragment.CARD,
+                        false, position);
                 break;
             case 1:
-                fragment = RecyclerFragment.newInstance(RecyclerFragment.GALLERY_FRAGMENT_TWO, RecyclerFragment.LIST_LAYOUT, true, position);
+                fragment = RecyclerFragment.newInstance(
+                        RecyclerFragment.GALLERY_FRAGMENT_TWO,
+                        RecyclerFragment.LIST_LAYOUT,
+                        RecyclerFragment.CARD,
+                        false, position);
                 break;
             case 2:
-                fragment = RecyclerFragment.newInstance(RecyclerFragment.GALLERY_FRAGMENT_THREE, RecyclerFragment.LIST_LAYOUT, true, position);
+                fragment = RecyclerFragment.newInstance(
+                        RecyclerFragment.GALLERY_FRAGMENT_THREE,
+                        RecyclerFragment.LIST_LAYOUT,
+                        RecyclerFragment.CARD,
+                        false, position);
                 break;
             default:
-                fragment = RecyclerFragment.newInstance(RecyclerFragment.GALLERY_FRAGMENT_ONE, RecyclerFragment.LIST_LAYOUT, true, position);
+                fragment = RecyclerFragment.newInstance(
+                        RecyclerFragment.GALLERY_FRAGMENT_ONE,
+                        RecyclerFragment.LIST_LAYOUT,
+                        RecyclerFragment.CARD,
+                        false, position);
         }
         return fragment;
     }

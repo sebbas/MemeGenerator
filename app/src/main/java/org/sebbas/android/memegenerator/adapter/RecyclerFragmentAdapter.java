@@ -16,32 +16,200 @@
 
 package org.sebbas.android.memegenerator.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.makeramen.roundedimageview.RoundedImageView;
+import com.tonicartos.superslim.GridSLM;
 
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
+import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public abstract class RecyclerFragmentAdapter extends
+public class RecyclerFragmentAdapter extends
         RecyclerView.Adapter<RecyclerFragmentAdapter.MainViewHolder> implements SectionIndexer {
 
     private static final String TAG = "RecyclerFragmentAdapter";
+    private static final int VIEW_TYPE_FILLER = 0;
+    private static final int VIEW_TYPE_HEADER = 1;
+    private static final int VIEW_TYPE_CARD = 2;
+    private static final int VIEW_TYPE_SUPER_SLIM = 3;
+    private static final int VIEW_TYPE_PARALLAX = 4;
 
-    protected ArrayList<LineItem> mLineItems;
-    protected List<Character> mSectionItems;
+    private ArrayList<LineItem> mLineItems;
+    private List<Character> mSectionItems;
+    private Context mContext;
+    private int mItemType;
 
-    public RecyclerFragmentAdapter(ArrayList<LineItem> lineItems) {
+    public RecyclerFragmentAdapter(Context context, ArrayList<LineItem> lineItems, int itemType) {
+        mContext = context;
         mLineItems = lineItems;
         mSectionItems = getSectionItems();
+        mItemType = itemType;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position == 0) {
+            return VIEW_TYPE_FILLER;
+        }
+
+        if (mLineItems.get(position).isHeaderItem()) {
+            return VIEW_TYPE_HEADER;
+        }
+
+        switch (mItemType) {
+            case RecyclerFragment.CARD:
+                return VIEW_TYPE_CARD;
+            case RecyclerFragment.SUPER_SLIM:
+                return VIEW_TYPE_SUPER_SLIM;
+            case RecyclerFragment.PARALLAX:
+                return VIEW_TYPE_PARALLAX;
+            default:
+                return VIEW_TYPE_CARD;
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return mLineItems.size();
+    }
+
+    @Override
+    public RecyclerFragmentAdapter.MainViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+        MainViewHolder.ViewHolderCallback viewHolderCallback = new MainViewHolder.ViewHolderCallback() {
+            @Override
+            public void onItemClick(int position) {
+                // Only trigger click event for content items
+                if (getItemViewType(position) == VIEW_TYPE_CARD ||
+                        getItemViewType(position) == VIEW_TYPE_SUPER_SLIM ||
+                        getItemViewType(position) == VIEW_TYPE_PARALLAX) {
+
+                    ((FragmentCallback) mContext).onItemClick(
+                            getContentPosition(position),
+                            getContentItems(mLineItems));
+                }
+            }
+        };
+
+        View view;
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        MainViewHolder mainViewHolder;
+
+        switch (viewType) {
+            case VIEW_TYPE_FILLER:
+                view = inflater.inflate(R.layout.toolbar_padding, parent, false);
+                mainViewHolder = new SuperSlimViewHolder(view, viewHolderCallback);
+                break;
+            case VIEW_TYPE_HEADER:
+                view = inflater.inflate(R.layout.header_item, parent, false);
+                mainViewHolder = new SuperSlimViewHolder(view, viewHolderCallback);
+                break;
+            case VIEW_TYPE_CARD:
+                view = inflater.inflate(R.layout.squared_item, parent, false);
+                mainViewHolder = new CardViewHolder(view, viewHolderCallback);
+                break;
+            case VIEW_TYPE_SUPER_SLIM:
+                view = inflater.inflate(R.layout.list_item, parent, false);
+                mainViewHolder = new SuperSlimViewHolder(view, viewHolderCallback);
+                break;
+            case VIEW_TYPE_PARALLAX:
+                view = inflater.inflate(R.layout.list_item, parent, false);
+                mainViewHolder = new CardViewHolder(view, viewHolderCallback);
+                break;
+            default:
+                view = inflater.inflate(R.layout.toolbar_padding, parent, false);
+                mainViewHolder = new SuperSlimViewHolder(view, viewHolderCallback);
+                break;
+        }
+        return mainViewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(final RecyclerFragmentAdapter.MainViewHolder viewHolder, int position) {
+        LineItem item = mLineItems.get(position);
+        final View itemView = viewHolder.itemView;
+        final GridSLM.LayoutParams lp = new GridSLM.LayoutParams(itemView.getLayoutParams());
+
+        lp.setSlm(GridSLM.ID);
+        lp.setColumnWidth(mContext.getResources().getDimensionPixelSize(R.dimen.grid_column_width));
+        lp.setFirstPosition(item.getSectionFirstPosition());
+        itemView.setLayoutParams(lp);
+
+        switch (getItemViewType(position)) {
+            case VIEW_TYPE_HEADER:
+                // Set title letter for header items
+                viewHolder.textViewTitle.setText(item.getTitle());
+                break;
+            case VIEW_TYPE_CARD:
+                // Set text and image
+                CardViewHolder cardViewHolder = (CardViewHolder) viewHolder;
+                Glide.with(mContext)
+                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
+                        .asBitmap()
+                        .centerCrop()
+                        .into(cardViewHolder.imageView);
+                break;
+            case VIEW_TYPE_SUPER_SLIM:
+                // Set text and image
+                SuperSlimViewHolder superSlimViewHolder = (SuperSlimViewHolder) viewHolder;
+                superSlimViewHolder.textViewTitle.setText(item.getTitle());
+                Glide.with(mContext)
+                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
+                        .asBitmap()
+                        .centerCrop()
+                        .into(superSlimViewHolder.imageView);
+
+                break;
+            case VIEW_TYPE_PARALLAX:
+                break;
+        }
+    }
+
+    static class CardViewHolder extends RecyclerFragmentAdapter.MainViewHolder implements View.OnClickListener {
+        ImageView imageView;
+
+        public CardViewHolder(View view, ViewHolderCallback viewHolderCallback) {
+            super(view, viewHolderCallback);
+            view.setOnClickListener(this);
+
+            imageView = (ImageView) view.findViewById(R.id.item_image);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mViewHolderCallback.onItemClick(getLayoutPosition());
+        }
+    }
+
+    static class SuperSlimViewHolder extends RecyclerFragmentAdapter.MainViewHolder implements View.OnClickListener {
+        RoundedImageView imageView;
+
+        public SuperSlimViewHolder(View view, ViewHolderCallback viewHolderCallback) {
+            super(view, viewHolderCallback);
+            view.setOnClickListener(this);
+
+            imageView = (RoundedImageView) view.findViewById(R.id.item_image);
+        }
+
+        @Override
+        public void onClick(View v) {
+            super.mViewHolderCallback.onItemClick(getLayoutPosition());
+        }
     }
 
     abstract static class MainViewHolder extends RecyclerView.ViewHolder {
@@ -121,7 +289,17 @@ public abstract class RecyclerFragmentAdapter extends
     }
 
     // Returns position of item not regarding any padding or header items in line item list
-    protected int getContentPosition(int position) {
+    private int getContentPosition(int position) {
         return position - mLineItems.get(position).getHeaderCount();
+    }
+
+    private ArrayList<LineItem> getContentItems(ArrayList<LineItem> lineItems) {
+        ArrayList<LineItem> contentItems = new ArrayList<>();
+        for (LineItem lineItem : lineItems) {
+            if (!lineItem.isHeaderItem()) {
+                contentItems.add(lineItem);
+            }
+        }
+        return contentItems;
     }
 }

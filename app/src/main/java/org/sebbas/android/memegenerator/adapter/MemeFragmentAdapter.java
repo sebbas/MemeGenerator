@@ -20,16 +20,32 @@ public class MemeFragmentAdapter extends SlidingTabsAdapter {
 
         switch (position) {
             case 0:
-                fragment = RecyclerFragment.newInstance(RecyclerFragment.MEME_FRAGMENT_ONE, RecyclerFragment.SUPER_SLIM_LAYOUT, false, position);
+                fragment = RecyclerFragment.newInstance(
+                        RecyclerFragment.MEME_FRAGMENT_ONE,
+                        RecyclerFragment.GRID_LAYOUT,
+                        RecyclerFragment.SUPER_SLIM,
+                        false, position);
                 break;
             case 1:
-                fragment = RecyclerFragment.newInstance(RecyclerFragment.MEME_FRAGMENT_TWO, RecyclerFragment.SUPER_SLIM_LAYOUT, false, position);
+                fragment = RecyclerFragment.newInstance(
+                        RecyclerFragment.MEME_FRAGMENT_TWO,
+                        RecyclerFragment.GRID_LAYOUT,
+                        RecyclerFragment.SUPER_SLIM,
+                        false, position);
                 break;
             case 2:
-                fragment = RecyclerFragment.newInstance(RecyclerFragment.MEME_FRAGMENT_THREE, RecyclerFragment.SUPER_SLIM_LAYOUT, false, position);
+                fragment = RecyclerFragment.newInstance(
+                        RecyclerFragment.MEME_FRAGMENT_THREE,
+                        RecyclerFragment.GRID_LAYOUT,
+                        RecyclerFragment.SUPER_SLIM,
+                        false, position);
                 break;
             default:
-                fragment = RecyclerFragment.newInstance(RecyclerFragment.MEME_FRAGMENT_ONE, RecyclerFragment.SUPER_SLIM_LAYOUT, false, position);
+                fragment = RecyclerFragment.newInstance(
+                        RecyclerFragment.MEME_FRAGMENT_ONE,
+                        RecyclerFragment.GRID_LAYOUT,
+                        RecyclerFragment.SUPER_SLIM,
+                        false, position);
         }
         return fragment;
     }

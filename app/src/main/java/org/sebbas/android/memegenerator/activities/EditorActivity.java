@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -81,28 +82,16 @@ public class EditorActivity extends BaseActivity implements FragmentCallback, To
         mSlidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
         mSlidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
         mSlidingTabLayout.setDistributeEvenly(true);
-        mSlidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                int fromPosition = (position < 4) ? 0 : position - 4;
-                int toPosition = (position > mViewPager.getChildCount() - 4) ? mViewPager.getChildCount() - 1 : (position + 3);
-                mSlidingTabLayout.setViewPager(mViewPager, fromPosition, toPosition);
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
 
         // Setup toolbar title
         super.setupToolbar(TAG);
         super.registerToolbarCallback(this);
+
+        int TAB_TITLE_RANGE = 4;
+        int fromPosition = (mStartPosition < TAB_TITLE_RANGE) ? 0 : mStartPosition - TAB_TITLE_RANGE;
+        Log.d(TAG, "size is " + mViewPager.getChildCount());
+        int toPosition = (mStartPosition > mTabTitles.length - TAB_TITLE_RANGE) ? mTabTitles.length - 1 : (mStartPosition + TAB_TITLE_RANGE);
+        mSlidingTabLayout.setViewPager(mViewPager, fromPosition, toPosition);
     }
 
     @Override

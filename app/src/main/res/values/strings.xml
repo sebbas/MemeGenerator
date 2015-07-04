@@ -37,6 +37,19 @@
     <string name="layout_cards">Cards</string>
     <string name="layout_list">List</string>
 
+    <!-- More fragment strings -->
+    <string-array name="more_line_item_titles">
+        <item>General</item>
+        <item>View</item>
+        <item>Cache</item>
+        <item>About</item>
+    </string-array>
+    <string-array name="more_line_item_icons">
+        <item>@drawable/ic_launcher</item>
+        <item>@drawable/ic_launcher</item>
+        <item>@drawable/ic_launcher</item>
+        <item>@drawable/ic_launcher</item>
+    </string-array>
 
     <!-- Preferences strings -->
     <string name="category_downloads">Downloads</string>

@@ -1,6 +1,7 @@
 package org.sebbas.android.memegenerator.dataloader;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
@@ -29,13 +30,12 @@ public class DataLoader implements Filterable {
 
     private static final String TAG = "DataLoader";
     public static final int INTERNET = 0;
-    public static final int LOCAL = 1;
+    public static final int RESOURCE = 1;
 
     private Context mContext;
     private DataLoaderCallback mDataLoaderCallback;
     private String mFragmentType;
     private List<Integer> mExcludedLineItemPositions;
-    private ArrayList<Integer> mNonContentPositions;
 
     private List<String> mViewCounts;
     private List<String> mImageUrls;
@@ -49,7 +49,6 @@ public class DataLoader implements Filterable {
         mContext = fragment.getActivity();
         mDataLoaderCallback = fragment;
         mFragmentType = fragment.getFragmentType();
-        mNonContentPositions = new ArrayList<>();
         mExcludedLineItemPositions = new ArrayList<>();
 
         // Restore array lists from previous session or if restore not possible (on startup)
@@ -57,9 +56,9 @@ public class DataLoader implements Filterable {
         loadData();
     }
 
-    public void load(String url, int location) {
+    public void load(int location, String url) {
         AsyncLoader asyncLoader = new AsyncLoader();
-        asyncLoader.execute(url, location);
+        asyncLoader.execute(location, url);
     }
 
     public void update(String localPath) {
@@ -68,7 +67,6 @@ public class DataLoader implements Filterable {
     }
 
     public void filter(String constraint) {
-        Log.d(TAG, "filtering with " + constraint);
         this.getFilter().filter(constraint);
     }
 
@@ -94,7 +92,6 @@ public class DataLoader implements Filterable {
                 if (isAllowedPosition) {
                     String title = getTitleAt(i - 1);
                     String imageUrl = getImageUrlAt(i - 1);
-                    Log.d(TAG, imageUrl);
                     String imageId = getImageIdAt(i - 1);
                     String viewCount = getViewCountAt(i - 1);
                     String timeStamp = getTimeStampAt(i - 1);
@@ -151,10 +148,6 @@ public class DataLoader implements Filterable {
         return resultItems;
     }
 
-    public ArrayList<Integer> getNonContentPositions() {
-        return mNonContentPositions;
-    }
-
     private boolean isAllowedPosition(int i) {
         // List of excluded items is empty -> all items are allowed
         if (mExcludedLineItemPositions == null || mExcludedLineItemPositions.isEmpty()) {
@@ -183,24 +176,23 @@ public class DataLoader implements Filterable {
 
         @Override
         protected Integer doInBackground(Object... params) {
-            String url = (String) params[0];
-            int loadingLocation = (Integer) params[1];
+            int loadingLocation = (Integer) params[0];
+            String url = (String) params[1];
 
             if (!Utils.isNetworkAvailable(mContext)) {
                 return CONNECTION_UNAVAILABLE;
             }
 
             boolean loadSuccess = false;
+
             // Load data depending on location
             switch(loadingLocation) {
                 case INTERNET:
                     loadSuccess = loadFromInternet(url);
                     break;
-                case LOCAL:
+                case RESOURCE:
                     loadSuccess = loadFromStorage(url);
                     break;
-                default:
-                    loadSuccess = loadFromInternet(url);
             }
 
             if (loadSuccess) {
@@ -258,15 +250,22 @@ public class DataLoader implements Filterable {
         }
 
         boolean parsingSuccess = parseJson(json);
-        if (!parsingSuccess) {
-            return false;
+        if (parsingSuccess) {
+            return true;
         }
+        return false;
 
-        return true;
     }
 
     private boolean loadFromStorage(String url) {
-        // TODO
+        /*String[] lineItemTitles = mContext.getResources().getStringArray(resourceOne);
+        TypedArray lineItemIcons = mContext.getResources().obtainTypedArray(resourceTwo);
+        clearLists();
+
+        for (int i = 0; i < lineItemTitles.length; i++) {
+            mImageUrls.add(Integer.toString(lineItemIcons.getResourceId(i, -1)));
+            mTitles.add(lineItemTitles[i]);
+        }*/
         return true;
     }
 
@@ -309,13 +308,7 @@ public class DataLoader implements Filterable {
 
             JSONArray data = reader.getJSONArray("data");
 
-            mViewCounts.clear();
-            mImageUrls.clear();
-            mImageIds.clear();
-            mTitles.clear();
-            mTimeStamps.clear();
-            mImageWidths.clear();
-            mImageHeights.clear();
+            clearLists();
 
             for (int i = 0; i < data.length(); i++) {
                 JSONObject image = data.getJSONObject(i);
@@ -341,6 +334,16 @@ public class DataLoader implements Filterable {
             e.printStackTrace();
         }
         return false;
+    }
+
+    private void clearLists() {
+        mViewCounts.clear();
+        mImageUrls.clear();
+        mImageIds.clear();
+        mTitles.clear();
+        mTimeStamps.clear();
+        mImageWidths.clear();
+        mImageHeights.clear();
     }
 
 

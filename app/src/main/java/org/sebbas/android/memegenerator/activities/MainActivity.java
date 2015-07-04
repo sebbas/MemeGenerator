@@ -143,6 +143,9 @@ public class MainActivity extends BaseActivity implements
         if (baseFragment != null && baseFragment instanceof SlidingTabsFragment) {
             SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) baseFragment;
 
+            // Set visibility
+            slidingTabLayout.setVisibility(View.VISIBLE);
+
             // Set the pager
             ViewPager pager = slidingTabsFragment.getViewPager();
             slidingTabLayout.setViewPager(pager);
@@ -150,6 +153,11 @@ public class MainActivity extends BaseActivity implements
             // Set the tab strip to the last known position
             int currentTab = slidingTabsFragment.getLastPage();
             slidingTabLayout.refreshTabStrip(currentTab, 0);
+        }
+
+        if (baseFragment != null && baseFragment instanceof RecyclerFragment) {
+            // Set visibility
+            slidingTabLayout.setVisibility(View.GONE);
         }
     }
 
@@ -407,17 +415,9 @@ public class MainActivity extends BaseActivity implements
     }
 
     @Override
-    public void onItemClick(int clickPosition, ArrayList<LineItem> lineItems) {
-
-        ArrayList<LineItem> contentItems = new ArrayList<>();
-        for (LineItem lineItem : lineItems) {
-            if (!lineItem.isHeaderItem()) {
-                contentItems.add(lineItem);
-            }
-        }
-
+    public void onItemClick(int contentPosition, ArrayList<LineItem> contentItems) {
         Intent editorIntent = new Intent(this, EditorActivity.class);
-        editorIntent.putExtra(EditorActivity.START_POSITION, clickPosition);
+        editorIntent.putExtra(EditorActivity.START_POSITION, contentPosition);
         editorIntent.putExtra(EditorActivity.LINE_ITEMS, contentItems);
         startActivity(editorIntent);
     }

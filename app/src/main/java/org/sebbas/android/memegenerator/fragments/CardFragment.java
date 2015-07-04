@@ -38,14 +38,14 @@ public class CardFragment extends BaseFragment implements ToolbarCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.card_item, container, false);
-        ImageView imageView = (ImageView) view.findViewById(R.id.item_image_card);
+        ImageView imageView = (ImageView) view.findViewById(R.id.item_image);
 
         // Maybe use this for smaller images ?
         String formattedImageUrl = Utils.imageUrlToThumbnailUrl(mLineItem.getImageUrl(),
                 mLineItem.getImageId(), Utils.IMAGE_MEDIUM);
 
         Glide.with(getActivity())
-                .load(mLineItem.getImageUrl())
+                .load(Utils.imageUrlToThumbnailUrl(mLineItem.getImageUrl(), mLineItem.getImageId(), Utils.IMAGE_MEDIUM)) //mLineItem.getImageUrl())
                 .override(mLineItem.getImageWidth(), mLineItem.getImageHeight())
                 .centerCrop()
                 .into(imageView);

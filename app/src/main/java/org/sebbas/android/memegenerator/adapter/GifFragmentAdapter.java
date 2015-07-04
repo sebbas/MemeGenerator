@@ -20,16 +20,32 @@ public class GifFragmentAdapter extends SlidingTabsAdapter {
 
         switch (position) {
             case 0:
-                fragment = RecyclerFragment.newInstance(RecyclerFragment.GIF_FRAGMENT_ONE, RecyclerFragment.GRID_LAYOUT, false, position);
+                fragment = RecyclerFragment.newInstance(
+                        RecyclerFragment.GIF_FRAGMENT_ONE,
+                        RecyclerFragment.GRID_LAYOUT,
+                        RecyclerFragment.CARD,
+                        false, position);
                 break;
             case 1:
-                fragment = RecyclerFragment.newInstance(RecyclerFragment.GIF_FRAGMENT_TWO, RecyclerFragment.GRID_LAYOUT, false, position);
+                fragment = RecyclerFragment.newInstance(
+                        RecyclerFragment.GIF_FRAGMENT_TWO,
+                        RecyclerFragment.GRID_LAYOUT,
+                        RecyclerFragment.CARD,
+                        false, position);
                 break;
             case 2:
-                fragment = RecyclerFragment.newInstance(RecyclerFragment.GIF_FRAGMENT_THREE, RecyclerFragment.GRID_LAYOUT, false, position);
+                fragment = RecyclerFragment.newInstance(
+                        RecyclerFragment.GIF_FRAGMENT_THREE,
+                        RecyclerFragment.GRID_LAYOUT,
+                        RecyclerFragment.CARD,
+                        false, position);
                 break;
             default:
-                fragment = RecyclerFragment.newInstance(RecyclerFragment.GIF_FRAGMENT_ONE, RecyclerFragment.GRID_LAYOUT, false, position);
+                fragment = RecyclerFragment.newInstance(
+                        RecyclerFragment.GIF_FRAGMENT_ONE,
+                        RecyclerFragment.GRID_LAYOUT,
+                        RecyclerFragment.CARD,
+                        false, position);
         }
         return fragment;
     }

@@ -9,7 +9,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.mrengineer13.snackbar.SnackBar;
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
-import com.koushikdutta.ion.Ion;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.tonicartos.superslim.LayoutManager;
 
@@ -27,14 +25,12 @@ import org.sebbas.android.memegenerator.GridSpacingItemDecoration;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.ScrollBarSectionIndicator;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
-import org.sebbas.android.memegenerator.adapter.SimpleRecyclerAdapter;
-import org.sebbas.android.memegenerator.adapter.SuperSlimRecyclerAdapter;
+import org.sebbas.android.memegenerator.adapter.RecyclerFragmentAdapter;
 import org.sebbas.android.memegenerator.dataloader.DataLoader;
 import org.sebbas.android.memegenerator.interfaces.DataLoaderCallback;
 import org.sebbas.android.memegenerator.activities.MainActivity;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
-import org.sebbas.android.memegenerator.adapter.RecyclerFragmentAdapter;
 import org.sebbas.android.memegenerator.Utils;
 
 import java.util.ArrayList;
@@ -51,6 +47,7 @@ public class RecyclerFragment extends BaseFragment implements
     // Keys for values in bundle
     private static final String ARG_FRAGMENT_TYPE = "ARG_FRAGMENT_TYPE";
     private static final String ARG_LAYOUT_MODE = "ARG_LAYOUT_MODE";
+    private static final String ARG_ITEM_TYPE = "ARG_ITEM_TYPE";
     private static final String ARG_IS_REFRESHABLE = "ARG_IS_REFRESHABLE";
     private static final String ARG_POSITION_IN_PARENT = "ARG_POSITION_IN_PARENT";
 
@@ -64,12 +61,16 @@ public class RecyclerFragment extends BaseFragment implements
     public static final String GALLERY_FRAGMENT_ONE = "GalleryFragmentOne";
     public static final String GALLERY_FRAGMENT_TWO = "GalleryFragmentTwo";
     public static final String GALLERY_FRAGMENT_THREE = "GalleryFragmentThree";
-    public static final String MORE_FRAGMENT = "MoreFragment";
+    public static final String EXPLORE_FRAGMENT = "ExploreFragment";
 
-    // Layout options
+    // Layout mode
     public static final int GRID_LAYOUT = 0;
     public static final int LIST_LAYOUT = 1;
-    public static final int SUPER_SLIM_LAYOUT = 2;
+
+    // Item type
+    public static final int CARD = 2;
+    public static final int SUPER_SLIM = 3;
+    public static final int PARALLAX = 4;
 
     // Specific setup for grid layout
     private static final int GRID_COLUMN_COUNT = 3;
@@ -82,6 +83,7 @@ public class RecyclerFragment extends BaseFragment implements
     private ObservableRecyclerView mRecyclerView;
     private String mFragmentTag;
     private int mLayoutMode;
+    private int mItemType;
     private boolean mIsRefreshable;
     private RecyclerView.AdapterDataObserver mAdapterObserver;
     private DataLoader mDataLoader;
@@ -91,11 +93,12 @@ public class RecyclerFragment extends BaseFragment implements
 
     protected ArrayList<LineItem> mLineItems;
 
-    public static RecyclerFragment newInstance(String tag, int layoutMode, boolean isRefreshable, int position) {
+    public static RecyclerFragment newInstance(String tag, int layoutMode, int itemType, boolean isRefreshable, int position) {
         RecyclerFragment fragment = new RecyclerFragment();
         Bundle args = new Bundle();
         args.putString(ARG_FRAGMENT_TYPE, tag);
         args.putInt(ARG_LAYOUT_MODE, layoutMode);
+        args.putInt(ARG_ITEM_TYPE, itemType);
         args.putBoolean(ARG_IS_REFRESHABLE, isRefreshable);
         args.putInt(ARG_POSITION_IN_PARENT, position);
         fragment.setArguments(args);
@@ -109,13 +112,15 @@ public class RecyclerFragment extends BaseFragment implements
         if (args != null) {
             mFragmentTag = args.getString(ARG_FRAGMENT_TYPE);
             mLayoutMode = args.getInt(ARG_LAYOUT_MODE);
+            mItemType = args.getInt(ARG_ITEM_TYPE);
             mIsRefreshable = args.getBoolean(ARG_IS_REFRESHABLE, false);
             mPositionInParent = args.getInt(ARG_POSITION_IN_PARENT, 0);
         }
         mDataLoader = new DataLoader(this);
 
-        String url = Utils.getUrlForData(mFragmentTag);
-        load(url, DataLoader.INTERNET);
+        int location = Utils.getLoadingLocation(mFragmentTag);
+        String url = Utils.getDataUrl(mFragmentTag);
+        load(location, url);
     }
 
     @Override
@@ -148,21 +153,21 @@ public class RecyclerFragment extends BaseFragment implements
 
     private void setupAdapter() {
         if (mRecyclerFragmentAdapter == null){
-            switch (mLayoutMode) {
-                case GRID_LAYOUT:
-                case LIST_LAYOUT:
+            /*switch (mItemType) {
+                case CARD:
                     mRecyclerFragmentAdapter = new SimpleRecyclerAdapter(getActivity(), mLineItems);
                     break;
-                case SUPER_SLIM_LAYOUT:
+                case SUPER_SLIM:
                     mRecyclerFragmentAdapter = new SuperSlimRecyclerAdapter(getActivity(), mLineItems);
                     break;
                 default:
                     mRecyclerFragmentAdapter = new SimpleRecyclerAdapter(getActivity(), mLineItems);
-            }
+            }*/
+            mRecyclerFragmentAdapter = new RecyclerFragmentAdapter(getActivity(), mLineItems, mItemType);
         }
     }
 
-    public void init(View view) {
+    private void init(View view) {
 
         if (mSwipeRefreshLayout == null || mCircularProgressView == null || mRecyclerView == null) {
             mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.recycler_swipe_refresh);
@@ -187,10 +192,6 @@ public class RecyclerFragment extends BaseFragment implements
         }
 
         super.onFragmentComplete(this);
-    }
-
-    public void with(RecyclerFragmentAdapter recyclerFragmentAdapter) {
-        mRecyclerFragmentAdapter = recyclerFragmentAdapter;
     }
 
     @Override
@@ -311,8 +312,8 @@ public class RecyclerFragment extends BaseFragment implements
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.main_container));
 
-        switch (mLayoutMode) {
-            case GRID_LAYOUT:
+        switch (mLayoutMode + "|" + mItemType) {
+            case GRID_LAYOUT + "|" + CARD:
                 final GridLayoutManager manager = new GridLayoutManager(parentActivity,
                         GRID_COLUMN_COUNT, GridLayoutManager.VERTICAL, false);
                 manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
@@ -325,11 +326,14 @@ public class RecyclerFragment extends BaseFragment implements
                 mRecyclerView.setItemAnimator(new DefaultItemAnimator());
                 mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(GRID_COLUMN_COUNT, GRID_SPACING, GRID_INCLUDE_EDGE));
                 break;
-            case SUPER_SLIM_LAYOUT:
+            case GRID_LAYOUT + "|" + SUPER_SLIM:
                 mRecyclerView.setLayoutManager(new LayoutManager(parentActivity));
                 break;
-            case LIST_LAYOUT:
+            case LIST_LAYOUT + "|" + CARD:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
+                break;
+            case LIST_LAYOUT + "|" + SUPER_SLIM:
+                mRecyclerView.setLayoutManager(new LayoutManager(parentActivity));
                 break;
             default:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
@@ -377,16 +381,15 @@ public class RecyclerFragment extends BaseFragment implements
         mDataLoader.filter(s);
     }
 
-    public void load(String url, int location) {
-        mDataLoader.load(url, location);
+    public void load(int location, String url) {
+        mDataLoader.load(location, url);
     }
 
     public ArrayList<LineItem> getLineItems() {
-        switch (mLayoutMode) {
-            case GRID_LAYOUT:
-            case LIST_LAYOUT:
+        switch (mItemType) {
+            case CARD:
                 return mDataLoader.getLineItems();
-            case SUPER_SLIM_LAYOUT:
+            case SUPER_SLIM:
                 return mDataLoader.getSuperSlimLineItems();
             default:
                 return mDataLoader.getLineItems();
@@ -395,12 +398,11 @@ public class RecyclerFragment extends BaseFragment implements
 
     private void updateLineItems() {
         ArrayList<LineItem> lineItems;
-        switch (mLayoutMode) {
-            case GRID_LAYOUT:
-            case LIST_LAYOUT:
+        switch (mItemType) {
+            case CARD:
                 lineItems = mDataLoader.getLineItems();
                 break;
-            case SUPER_SLIM_LAYOUT:
+            case SUPER_SLIM:
                 lineItems = mDataLoader.getSuperSlimLineItems();
                 break;
             default:
