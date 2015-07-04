@@ -52,10 +52,16 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         switch (fragmentTag) {
             case MemeFragment.TAG:
+            case MemeFragment.TAG_CHILD_ONE:
+            case MemeFragment.TAG_CHILD_TWO:
+            case MemeFragment.TAG_CHILD_THREE:
                 titleResource = R.string.memes;
                 menuResource = R.menu.menu_memes;
                 break;
             case GifFragment.TAG:
+            case GifFragment.TAG_CHILD_ONE:
+            case GifFragment.TAG_CHILD_TWO:
+            case GifFragment.TAG_CHILD_THREE:
                 titleResource = R.string.gifs;
                 menuResource = R.menu.menu_gifs;
                 break;
@@ -63,6 +69,9 @@ public abstract class BaseActivity extends AppCompatActivity {
                 titleResource = R.string.explore;
                 break;
             case GalleryFragment.TAG:
+            case GalleryFragment.TAG_CHILD_ONE:
+            case GalleryFragment.TAG_CHILD_TWO:
+            case GalleryFragment.TAG_CHILD_THREE:
                 titleResource = R.string.gallery;
                 menuResource = R.menu.menu_gallery;
                 break;

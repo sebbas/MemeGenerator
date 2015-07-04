@@ -2,17 +2,16 @@ package org.sebbas.android.memegenerator.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.View;
+import android.widget.Toast;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.github.ksoichiro.android.observablescrollview.Scrollable;
-import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
@@ -33,13 +32,15 @@ public class MainActivity extends BaseActivity implements
         ObservableScrollViewCallbacks, FragmentCallback {
 
     private static final String TAG = "MainActivity";
+
     private static final int OFF_SCREEN_LIMIT = 5;
     private static final boolean IS_SWIPEABLE = false;
     private static final boolean IS_SMOOTH_SCROLL = false;
     private static final int ANIMATION_SPEED = 200;
 
-    // Position 0 is for main pager, position 1 is for embedded sliding tabs view pager
-    private static final int[] LAST_FRAGMENT_POSITIONS = new int[2];
+    private static int mLastFragmentPositionMain;
+    private static int mLastFragmentPositionSlidingTabs;
+
     private static final int[] TAB_TITLES = {
             R.string.memes,
             R.string.gifs,
@@ -48,7 +49,7 @@ public class MainActivity extends BaseActivity implements
             R.string.chart};
 
     // Setup default first fragment tag
-    private String mLastFragmentTag = MemeFragment.TAG;
+    private String mCurrentFragmentTag = MemeFragment.TAG;
 
     private ToggleSwipeViewPager mViewPager;
     private MainActivityAdapter mMainActivityAdapter;
@@ -94,10 +95,11 @@ public class MainActivity extends BaseActivity implements
             public void onPageSelected(int position) {
 
                 if (mMainActivityAdapter.getRegisteredFragment(position) != null) {
-                    LAST_FRAGMENT_POSITIONS[0] = position;
+                    mLastFragmentPositionMain = position;
 
-                    String currentFragmentTag = getCurrentFragment().getFragmentTag();
-                    MainActivity.super.setupToolbar(currentFragmentTag);
+                    mCurrentFragmentTag = getFragmentAt(position).getFragmentTag();
+
+                    MainActivity.super.setupToolbar(mCurrentFragmentTag);
 
                     setupSlidingTabs(getFragmentAt(position));
                     registerFragmentToolbarCallbacks(getFragmentAt(position));
@@ -124,7 +126,7 @@ public class MainActivity extends BaseActivity implements
 
             @Override
             public void onPageSelected(int position) {
-                LAST_FRAGMENT_POSITIONS[1] = position;
+                mLastFragmentPositionSlidingTabs = position;
 
                 // Close a previously opened search view
                 MainActivity.super.closeSearchView();
@@ -137,9 +139,6 @@ public class MainActivity extends BaseActivity implements
             public void onPageScrollStateChanged(int state) {
             }
         });
-
-        // Setup toolbar for initial fragment in viewpager
-        setupToolbar(mLastFragmentTag);
     }
 
     private void setupSlidingTabs(BaseFragment baseFragment) {
@@ -398,7 +397,7 @@ public class MainActivity extends BaseActivity implements
 
         if (baseFragment instanceof SlidingTabsFragment) {
             SlidingTabsFragment slidingTabsFragment = (SlidingTabsFragment) baseFragment;
-            int lastPosition = LAST_FRAGMENT_POSITIONS[0];
+            int lastPosition = mLastFragmentPositionMain;
             int currentPosition = slidingTabsFragment.getPositionInParent();
 
             if (lastPosition == currentPosition) {
@@ -408,14 +407,27 @@ public class MainActivity extends BaseActivity implements
 
         if (baseFragment instanceof RecyclerFragment) {
             RecyclerFragment recyclerFragment = (RecyclerFragment) baseFragment;
-            int lastParentPosition = LAST_FRAGMENT_POSITIONS[0];
-            int currentParentPosition = recyclerFragment.getParentPosition();
 
-            int lastPosition = LAST_FRAGMENT_POSITIONS[1];
-            int currentPosition = recyclerFragment.getPositionInParent();
+            int lastParentPosition = 0;
+            int currentParentPosition = 0;
+            int lastPosition = 0;
+            int currentPosition = 0;
+
+            // If fragment has a parent (i.e. embedded in sliding tabs fragments)
+            if (recyclerFragment.getParentFragment() != null) {
+                lastParentPosition = mLastFragmentPositionMain;
+                currentParentPosition = recyclerFragment.getParentPosition();
+
+                lastPosition = mLastFragmentPositionSlidingTabs;
+                currentPosition = recyclerFragment.getPositionInParent();
+            } else {
+                lastPosition = mLastFragmentPositionMain;
+                currentPosition = recyclerFragment.getPositionInParent();
+            }
 
             if (lastParentPosition == currentParentPosition && lastPosition == currentPosition) {
                 registerToolbarCallback(recyclerFragment);
+                setupToolbar(recyclerFragment.getFragmentTag());
             }
         }
     }
