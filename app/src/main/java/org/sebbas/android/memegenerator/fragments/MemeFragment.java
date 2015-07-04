@@ -11,6 +11,10 @@ import org.sebbas.android.memegenerator.adapter.MemeFragmentAdapter;
 public class MemeFragment extends SlidingTabsFragment {
 
     public static final String TAG = "MemeFragment";
+    public static final String TAG_CHILD_ONE = "MemeFragmentOne";
+    public static final String TAG_CHILD_TWO = "MemeFragmentTwo";
+    public static final String TAG_CHILD_THREE = "MemeFragmentThree";
+
     private static final boolean PAGER_SWIPEABLE = true;
     private static final int PAGER_OFF_SCREEN_LIMIT = 3;
     private static final int PAGER_START_POSITION = 0;

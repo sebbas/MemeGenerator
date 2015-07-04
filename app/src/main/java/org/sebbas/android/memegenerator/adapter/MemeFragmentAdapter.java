@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import org.sebbas.android.memegenerator.fragments.MemeFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 
 public class MemeFragmentAdapter extends SlidingTabsAdapter {
@@ -21,28 +22,28 @@ public class MemeFragmentAdapter extends SlidingTabsAdapter {
         switch (position) {
             case 0:
                 fragment = RecyclerFragment.newInstance(
-                        RecyclerFragment.MEME_FRAGMENT_ONE,
+                        MemeFragment.TAG_CHILD_ONE,
                         RecyclerFragment.GRID_LAYOUT,
                         RecyclerFragment.SUPER_SLIM,
                         false, position);
                 break;
             case 1:
                 fragment = RecyclerFragment.newInstance(
-                        RecyclerFragment.MEME_FRAGMENT_TWO,
+                        MemeFragment.TAG_CHILD_TWO,
                         RecyclerFragment.GRID_LAYOUT,
                         RecyclerFragment.SUPER_SLIM,
                         false, position);
                 break;
             case 2:
                 fragment = RecyclerFragment.newInstance(
-                        RecyclerFragment.MEME_FRAGMENT_THREE,
+                        MemeFragment.TAG_CHILD_THREE,
                         RecyclerFragment.GRID_LAYOUT,
                         RecyclerFragment.SUPER_SLIM,
                         false, position);
                 break;
             default:
                 fragment = RecyclerFragment.newInstance(
-                        RecyclerFragment.MEME_FRAGMENT_ONE,
+                        MemeFragment.TAG_CHILD_ONE,
                         RecyclerFragment.GRID_LAYOUT,
                         RecyclerFragment.SUPER_SLIM,
                         false, position);

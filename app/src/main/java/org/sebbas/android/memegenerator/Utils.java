@@ -7,6 +7,11 @@ import android.net.NetworkInfo;
 import android.text.TextUtils;
 
 import org.sebbas.android.memegenerator.dataloader.DataLoader;
+import org.sebbas.android.memegenerator.fragments.ChartFragment;
+import org.sebbas.android.memegenerator.fragments.ExploreFragment;
+import org.sebbas.android.memegenerator.fragments.GalleryFragment;
+import org.sebbas.android.memegenerator.fragments.GifFragment;
+import org.sebbas.android.memegenerator.fragments.MemeFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 
 import java.util.ArrayList;
@@ -47,22 +52,24 @@ public class Utils {
         String url = "";
 
         switch (fragmentTag) {
-            case RecyclerFragment.MEME_FRAGMENT_ONE:
-            case RecyclerFragment.MEME_FRAGMENT_TWO:
-            case RecyclerFragment.MEME_FRAGMENT_THREE:
+            case MemeFragment.TAG_CHILD_ONE:
+            case MemeFragment.TAG_CHILD_TWO:
+            case MemeFragment.TAG_CHILD_THREE:
                 url = MEMES;
                 break;
-            case RecyclerFragment.GIF_FRAGMENT_ONE:
-            case RecyclerFragment.GIF_FRAGMENT_TWO:
-            case RecyclerFragment.GIF_FRAGMENT_THREE:
+            case GifFragment.TAG_CHILD_ONE:
+            case GifFragment.TAG_CHILD_TWO:
+            case GifFragment.TAG_CHILD_THREE:
                 url = GIFS;
                 break;
-            case RecyclerFragment.GALLERY_FRAGMENT_ONE:
-            case RecyclerFragment.GALLERY_FRAGMENT_TWO:
-            case RecyclerFragment.GALLERY_FRAGMENT_THREE:
+            case ExploreFragment.TAG:
+                break;
+            case GalleryFragment.TAG_CHILD_ONE:
+            case GalleryFragment.TAG_CHILD_TWO:
+            case GalleryFragment.TAG_CHILD_THREE:
                 url = GIFS;
                 break;
-            case RecyclerFragment.EXPLORE_FRAGMENT:
+            case ChartFragment.TAG:
                 break;
         }
         return url;
@@ -72,18 +79,19 @@ public class Utils {
         int location;
 
         switch (fragmentTag) {
-            case RecyclerFragment.MEME_FRAGMENT_ONE:
-            case RecyclerFragment.MEME_FRAGMENT_TWO:
-            case RecyclerFragment.MEME_FRAGMENT_THREE:
-            case RecyclerFragment.GIF_FRAGMENT_ONE:
-            case RecyclerFragment.GIF_FRAGMENT_TWO:
-            case RecyclerFragment.GIF_FRAGMENT_THREE:
-            case RecyclerFragment.GALLERY_FRAGMENT_ONE:
-            case RecyclerFragment.GALLERY_FRAGMENT_TWO:
-            case RecyclerFragment.GALLERY_FRAGMENT_THREE:
+            case MemeFragment.TAG_CHILD_ONE:
+            case MemeFragment.TAG_CHILD_TWO:
+            case MemeFragment.TAG_CHILD_THREE:
+            case GifFragment.TAG_CHILD_ONE:
+            case GifFragment.TAG_CHILD_TWO:
+            case GifFragment.TAG_CHILD_THREE:
+            case GalleryFragment.TAG_CHILD_ONE:
+            case GalleryFragment.TAG_CHILD_TWO:
+            case GalleryFragment.TAG_CHILD_THREE:
+            case ExploreFragment.TAG:
                 location = DataLoader.INTERNET;
                 break;
-            case RecyclerFragment.EXPLORE_FRAGMENT:
+            case ChartFragment.TAG:
                 location = DataLoader.RESOURCE;
                 break;
             default:

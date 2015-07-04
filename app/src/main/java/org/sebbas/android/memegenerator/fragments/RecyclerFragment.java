@@ -51,18 +51,6 @@ public class RecyclerFragment extends BaseFragment implements
     private static final String ARG_IS_REFRESHABLE = "ARG_IS_REFRESHABLE";
     private static final String ARG_POSITION_IN_PARENT = "ARG_POSITION_IN_PARENT";
 
-    // Fragment type options
-    public static final String MEME_FRAGMENT_ONE = "MemeFragmentOne";
-    public static final String MEME_FRAGMENT_TWO = "MemeFragmentTwo";
-    public static final String MEME_FRAGMENT_THREE = "MemeFragmentThree";
-    public static final String GIF_FRAGMENT_ONE = "GifFragmentOne";
-    public static final String GIF_FRAGMENT_TWO = "GifFragmentTwo";
-    public static final String GIF_FRAGMENT_THREE = "GifFragmentThree";
-    public static final String GALLERY_FRAGMENT_ONE = "GalleryFragmentOne";
-    public static final String GALLERY_FRAGMENT_TWO = "GalleryFragmentTwo";
-    public static final String GALLERY_FRAGMENT_THREE = "GalleryFragmentThree";
-    public static final String EXPLORE_FRAGMENT = "ExploreFragment";
-
     // Layout mode
     public static final int GRID_LAYOUT = 0;
     public static final int LIST_LAYOUT = 1;
@@ -223,15 +211,19 @@ public class RecyclerFragment extends BaseFragment implements
 
         // Checks when no nested fragments are present
         if (getParentFragment() == null) {
-            if (getUserVisibleHint()) {
+            if (isVisibleToUser()) {
                 showConnectionUnavailableNotification();
             }
         // Checks when nested fragments are present
         } else {
-            if (getUserVisibleHint() /*&& getCurrentFragmentFromViewPager() == this*/) {
+            if (isVisibleToUser()) {
                 showConnectionUnavailableNotification();
             }
         }
+    }
+
+    private boolean isVisibleToUser() {
+        return ((MainActivity) getActivity()).getMainPagerPosition() == mPositionInParent;
     }
 
     @Override
@@ -240,15 +232,20 @@ public class RecyclerFragment extends BaseFragment implements
 
         // Checks when no nested fragments are present
         if (getParentFragment() == null) {
-            if (isVisible()) {
+            if (isVisibleToUser()) {
                 showConnectionTimeoutNotification();
             }
         // Checks when nested fragments are present
         } else {
-            if (isVisible() /*&& getCurrentFragmentFromViewPager() == this*/) {
+            if (isVisibleToUser()) {
                 showConnectionTimeoutNotification();
             }
         }
+    }
+
+    @Override
+    public boolean getUserVisibleHint() {
+        return super.getUserVisibleHint();
     }
 
     @Override

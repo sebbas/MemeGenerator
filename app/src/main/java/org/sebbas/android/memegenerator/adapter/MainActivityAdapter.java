@@ -9,6 +9,7 @@ import android.text.SpannableString;
 import android.text.style.ImageSpan;
 
 import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.fragments.ExploreFragment;
 import org.sebbas.android.memegenerator.fragments.GalleryFragment;
 import org.sebbas.android.memegenerator.fragments.GifFragment;
 import org.sebbas.android.memegenerator.fragments.MemeFragment;
@@ -21,9 +22,9 @@ public class MainActivityAdapter extends SlidingTabsAdapter {
     private static final int TAB_ICONS[] = {
             R.drawable.selector_meme_icon,
             R.drawable.selector_gif_icon,
-            R.drawable.selector_editor_icon,
+            R.drawable.selector_explore_icon,
             R.drawable.selector_gallery_icon,
-            R.drawable.selector_preferences_icon};
+            R.drawable.selector_chart_icon};
 
     private Context mContext;
 
@@ -44,7 +45,7 @@ public class MainActivityAdapter extends SlidingTabsAdapter {
                 fragment = GifFragment.newInstance(position);
                 break;
             case 2:
-                fragment = GalleryFragment.newInstance(position);
+                fragment = ExploreFragment.newInstance(position);
                 break;
             case 3:
                 fragment = GalleryFragment.newInstance(position);
@@ -67,4 +68,30 @@ public class MainActivityAdapter extends SlidingTabsAdapter {
         sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return sb;
     }
+
+    /*@Override
+    public String getFragmentTag(int position) {
+        String fragmentTag;
+
+        switch (position) {
+            case 0:
+                fragmentTag = MemeFragment.TAG;
+                break;
+            case 1:
+                fragmentTag = GifFragment.TAG;
+                break;
+            case 2:
+                fragmentTag = ExploreFragment.TAG;
+                break;
+            case 3:
+                fragmentTag = GalleryFragment.TAG;
+                break;
+            case 4:
+                fragmentTag = ChartFragment.TAG;
+                break;
+            default:
+                fragmentTag = MemeFragment.TAG;
+        }
+        return fragmentTag;
+    }*/
 }

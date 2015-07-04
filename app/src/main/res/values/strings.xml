@@ -6,9 +6,10 @@
     <!-- Main tabs titles -->
     <string name="memes">Memes</string>
     <string name="gifs">Gifs</string>
-    <string name="editor">Editor</string>
+    <string name="explore">Explore</string>
     <string name="gallery">Gallery</string>
-    <string name="more">More</string>
+    <string name="chart">Charts</string>
+    <string name="editor">Editor</string>
 
     <!-- Other fragments -->
 

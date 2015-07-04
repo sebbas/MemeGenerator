@@ -2,6 +2,7 @@ package org.sebbas.android.memegenerator.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -11,6 +12,7 @@ import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCal
 import com.github.ksoichiro.android.observablescrollview.ScrollState;
 import com.github.ksoichiro.android.observablescrollview.ScrollUtils;
 import com.github.ksoichiro.android.observablescrollview.Scrollable;
+import com.github.mrengineer13.snackbar.SnackBar;
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
 import com.nineoldandroids.view.ViewHelper;
 import com.nineoldandroids.view.ViewPropertyAnimator;
@@ -20,6 +22,7 @@ import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.adapter.MainActivityAdapter;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
+import org.sebbas.android.memegenerator.fragments.MemeFragment;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.fragments.SlidingTabsFragment;
 import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
@@ -40,12 +43,12 @@ public class MainActivity extends BaseActivity implements
     private static final int[] TAB_TITLES = {
             R.string.memes,
             R.string.gifs,
-            R.string.editor,
+            R.string.explore,
             R.string.gallery,
-            R.string.more};
+            R.string.chart};
 
     // Setup default first fragment tag
-    private String mLastFragmentTag = RecyclerFragment.MEME_FRAGMENT_ONE;
+    private String mLastFragmentTag = MemeFragment.TAG;
 
     private ToggleSwipeViewPager mViewPager;
     private MainActivityAdapter mMainActivityAdapter;
@@ -89,16 +92,19 @@ public class MainActivity extends BaseActivity implements
 
             @Override
             public void onPageSelected(int position) {
-                LAST_FRAGMENT_POSITIONS[0] = position;
 
-                String currentFragmentTag = getFragmentAt(position).getFragmentTag();
-                MainActivity.super.setupToolbar(currentFragmentTag);
+                if (mMainActivityAdapter.getRegisteredFragment(position) != null) {
+                    LAST_FRAGMENT_POSITIONS[0] = position;
 
-                setupSlidingTabs(getFragmentAt(position));
-                registerFragmentToolbarCallbacks(getFragmentAt(position));
+                    String currentFragmentTag = getCurrentFragment().getFragmentTag();
+                    MainActivity.super.setupToolbar(currentFragmentTag);
 
-                // Make sure that toolbar is shown when other page is selected
-                showToolbar();
+                    setupSlidingTabs(getFragmentAt(position));
+                    registerFragmentToolbarCallbacks(getFragmentAt(position));
+
+                    // Make sure that toolbar is shown when other page is selected
+                    showToolbar();
+                }
             }
 
             @Override
@@ -425,5 +431,9 @@ public class MainActivity extends BaseActivity implements
     public void bringMainNavigationToFront() {
         findViewById(R.id.header).bringToFront();
         findViewById(R.id.footer).bringToFront();
+    }
+
+    public int getMainPagerPosition() {
+        return mViewPager.getCurrentItem();
     }
 }

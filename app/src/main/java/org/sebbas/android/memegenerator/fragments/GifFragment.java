@@ -13,6 +13,10 @@ import org.sebbas.android.memegenerator.R;
 public class GifFragment extends SlidingTabsFragment {
 
     public static final String TAG = "GifFragment";
+    public static final String TAG_CHILD_ONE = "GifFragmentOne";
+    public static final String TAG_CHILD_TWO = "GifFragmentTwo";
+    public static final String TAG_CHILD_THREE = "GifFragmentThree";
+
     private static final boolean PAGER_SWIPEABLE = true;
     private static final int PAGER_OFF_SCREEN_LIMIT = 3;
     private static final int PAGER_START_POSITION = 0;

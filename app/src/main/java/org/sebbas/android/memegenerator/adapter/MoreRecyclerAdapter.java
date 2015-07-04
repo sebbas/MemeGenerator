@@ -11,9 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 
 import java.util.ArrayList;

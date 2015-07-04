@@ -6,9 +6,14 @@ public class ExploreFragment extends RecyclerFragment {
 
     public static RecyclerFragment newInstance(int position) {
         return RecyclerFragment.newInstance(
-                RecyclerFragment.EXPLORE_FRAGMENT,
+                ExploreFragment.TAG,
                 RecyclerFragment.LIST_LAYOUT,
-                RecyclerFragment.CARD,
+                RecyclerFragment.PARALLAX,
                 false, position);
+    }
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
     }
 }

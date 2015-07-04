@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.fragments.ExploreFragment;
 import org.sebbas.android.memegenerator.fragments.GalleryFragment;
 import org.sebbas.android.memegenerator.fragments.GifFragment;
 import org.sebbas.android.memegenerator.fragments.MemeFragment;
@@ -58,12 +59,15 @@ public abstract class BaseActivity extends AppCompatActivity {
                 titleResource = R.string.gifs;
                 menuResource = R.menu.menu_gifs;
                 break;
+            case ExploreFragment.TAG:
+                titleResource = R.string.explore;
+                break;
             case GalleryFragment.TAG:
                 titleResource = R.string.gallery;
                 menuResource = R.menu.menu_gallery;
                 break;
             case ChartFragment.TAG:
-                titleResource = R.string.more;
+                titleResource = R.string.chart;
                 break;
             case EditorActivity.TAG:
                 titleResource = R.string.editor;

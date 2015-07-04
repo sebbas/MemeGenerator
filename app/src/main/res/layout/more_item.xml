@@ -17,7 +17,7 @@
     <TextView
         android:id="@+id/item_title"
         android:layout_width="0dp"
-        android:text="@string/more"
+        android:text="@string/chart"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_margin="8dp"/>

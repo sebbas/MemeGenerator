@@ -40,12 +40,12 @@ public class CardFragment extends BaseFragment implements ToolbarCallback {
         View view = inflater.inflate(R.layout.card_item, container, false);
         ImageView imageView = (ImageView) view.findViewById(R.id.item_image);
 
-        // Maybe use this for smaller images ?
+        // Maybe use this for smaller images ? -> But problem: gif then wont load ...
         String formattedImageUrl = Utils.imageUrlToThumbnailUrl(mLineItem.getImageUrl(),
                 mLineItem.getImageId(), Utils.IMAGE_MEDIUM);
 
         Glide.with(getActivity())
-                .load(Utils.imageUrlToThumbnailUrl(mLineItem.getImageUrl(), mLineItem.getImageId(), Utils.IMAGE_MEDIUM)) //mLineItem.getImageUrl())
+                .load(mLineItem.getImageUrl())
                 .override(mLineItem.getImageWidth(), mLineItem.getImageHeight())
                 .centerCrop()
                 .into(imageView);

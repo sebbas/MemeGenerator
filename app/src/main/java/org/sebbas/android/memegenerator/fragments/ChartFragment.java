@@ -6,9 +6,14 @@ public class ChartFragment extends RecyclerFragment {
 
     public static RecyclerFragment newInstance(int position) {
         return RecyclerFragment.newInstance(
-                RecyclerFragment.EXPLORE_FRAGMENT,
+                ChartFragment.TAG,
                 RecyclerFragment.LIST_LAYOUT,
                 RecyclerFragment.CARD,
                 false, position);
+    }
+
+    @Override
+    public String getFragmentTag() {
+        return TAG;
     }
 }

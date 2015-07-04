@@ -61,6 +61,8 @@ public abstract class SlidingTabsAdapter extends FragmentStatePagerAdapter {
         return mRegisteredFragments.get(position);
     }
 
+    //public abstract String getFragmentTag(int position);
+
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         mRegisteredFragments.remove(position);
