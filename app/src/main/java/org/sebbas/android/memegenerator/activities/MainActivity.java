@@ -35,7 +35,7 @@ public class MainActivity extends BaseActivity implements
 
     private static final int OFF_SCREEN_LIMIT = 5;
     private static final boolean IS_SWIPEABLE = false;
-    private static final boolean IS_SMOOTH_SCROLL = false;
+    private static final boolean IS_SMOOTH_SCROLL = true;
     private static final int ANIMATION_SPEED = 200;
 
     private static int mLastFragmentPositionMain;

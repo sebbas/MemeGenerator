@@ -17,6 +17,7 @@
 package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
+import android.graphics.Matrix;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.tonicartos.superslim.GridSLM;
 
+import org.sebbas.android.memegenerator.BubbleTextGetter;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
@@ -40,7 +42,7 @@ import java.util.List;
 
 
 public class RecyclerFragmentAdapter extends
-        RecyclerView.Adapter<RecyclerFragmentAdapter.MainViewHolder> implements SectionIndexer {
+        RecyclerView.Adapter<RecyclerFragmentAdapter.MainViewHolder> implements SectionIndexer, BubbleTextGetter {
 
     private static final String TAG = "RecyclerFragmentAdapter";
     private static final int VIEW_TYPE_FILLER = 0;
@@ -124,12 +126,12 @@ public class RecyclerFragmentAdapter extends
                 mainViewHolder = new CardViewHolder(view, viewHolderCallback);
                 break;
             case VIEW_TYPE_SUPER_SLIM:
-                view = inflater.inflate(R.layout.list_item, parent, false);
+                view = inflater.inflate(R.layout.rounded_item, parent, false);
                 mainViewHolder = new SuperSlimViewHolder(view, viewHolderCallback);
                 break;
             case VIEW_TYPE_PARALLAX:
-                view = inflater.inflate(R.layout.list_item, parent, false);
-                mainViewHolder = new CardViewHolder(view, viewHolderCallback);
+                view = inflater.inflate(R.layout.parallax_item, parent, false);
+                mainViewHolder = new ParallaxViewHolder(view, viewHolderCallback);
                 break;
             default:
                 view = inflater.inflate(R.layout.toolbar_padding, parent, false);
@@ -173,10 +175,37 @@ public class RecyclerFragmentAdapter extends
                         .asBitmap()
                         .centerCrop()
                         .into(superSlimViewHolder.imageView);
-
                 break;
             case VIEW_TYPE_PARALLAX:
+                ParallaxViewHolder parallaxViewHolder = (ParallaxViewHolder) viewHolder;
+                parallaxViewHolder.textViewTitle.setText(item.getTitle());
+                Glide.with(mContext)
+                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
+                        .asBitmap()
+                        .centerCrop()
+                        .into(parallaxViewHolder.imageView);
                 break;
+        }
+    }
+
+    @Override
+    public String getTextToShowInBubble(int position) {
+        return Character.toString(mLineItems.get(position).getTitle().charAt(0));
+    }
+
+    public static class ParallaxViewHolder extends RecyclerFragmentAdapter.MainViewHolder implements View.OnClickListener {
+        ImageView imageView;
+
+        public ParallaxViewHolder(View view, ViewHolderCallback viewHolderCallback) {
+            super(view, viewHolderCallback);
+            view.setOnClickListener(this);
+
+            imageView = (ImageView) view.findViewById(R.id.item_image);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mViewHolderCallback.onItemClick(getLayoutPosition());
         }
     }
 
@@ -238,10 +267,6 @@ public class RecyclerFragmentAdapter extends
     public void setLineItems(ArrayList <LineItem> lineItems) {
         mLineItems.clear();
         mLineItems = lineItems;
-    }
-
-    public int getLineItemCount() {
-        return  mLineItems.size();
     }
 
     public ArrayList<Character> getSectionItems() {

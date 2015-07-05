@@ -21,9 +21,9 @@ import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.tonicartos.superslim.LayoutManager;
 
+import org.sebbas.android.memegenerator.FastScroller;
 import org.sebbas.android.memegenerator.GridSpacingItemDecoration;
 import org.sebbas.android.memegenerator.LineItem;
-import org.sebbas.android.memegenerator.ScrollBarSectionIndicator;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.adapter.RecyclerFragmentAdapter;
 import org.sebbas.android.memegenerator.dataloader.DataLoader;
@@ -34,8 +34,6 @@ import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 import org.sebbas.android.memegenerator.Utils;
 
 import java.util.ArrayList;
-
-import xyz.danoz.recyclerviewfastscroller.vertical.VerticalRecyclerViewFastScroller;
 
 
 public class RecyclerFragment extends BaseFragment implements
@@ -76,7 +74,7 @@ public class RecyclerFragment extends BaseFragment implements
     private RecyclerView.AdapterDataObserver mAdapterObserver;
     private DataLoader mDataLoader;
     private int mPositionInParent;
-    private VerticalRecyclerViewFastScroller mFastScroller;
+    private FastScroller mFastScroller;
     private View mRootView;
 
     protected ArrayList<LineItem> mLineItems;
@@ -141,16 +139,6 @@ public class RecyclerFragment extends BaseFragment implements
 
     private void setupAdapter() {
         if (mRecyclerFragmentAdapter == null){
-            /*switch (mItemType) {
-                case CARD:
-                    mRecyclerFragmentAdapter = new SimpleRecyclerAdapter(getActivity(), mLineItems);
-                    break;
-                case SUPER_SLIM:
-                    mRecyclerFragmentAdapter = new SuperSlimRecyclerAdapter(getActivity(), mLineItems);
-                    break;
-                default:
-                    mRecyclerFragmentAdapter = new SimpleRecyclerAdapter(getActivity(), mLineItems);
-            }*/
             mRecyclerFragmentAdapter = new RecyclerFragmentAdapter(getActivity(), mLineItems, mItemType);
         }
     }
@@ -332,6 +320,8 @@ public class RecyclerFragment extends BaseFragment implements
             case LIST_LAYOUT + "|" + SUPER_SLIM:
                 mRecyclerView.setLayoutManager(new LayoutManager(parentActivity));
                 break;
+            case LIST_LAYOUT + "|" + PARALLAX:
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
             default:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
         }
@@ -346,19 +336,16 @@ public class RecyclerFragment extends BaseFragment implements
 
     private void setupFastScroller(View view) {
         // Grab your RecyclerView and the RecyclerViewFastScroller from the layout
-        mFastScroller = (VerticalRecyclerViewFastScroller) view.findViewById(R.id.fast_scroller);
+        mFastScroller = (FastScroller) view.findViewById(R.id.fastscroller);
 
         // Connect the recycler to the scroller (to let the scroller scroll the list)
         mFastScroller.setRecyclerView(mRecyclerView);
 
-        // Connect the scroller to the recycler (to let the recycler scroll the scroller's handle)
-        mRecyclerView.addOnScrollListener(mFastScroller.getOnScrollListener());
-        mRecyclerView.addOnScrollListener(new MyScrollListener());
+        // Set listener to hide and show fast scroller on scroll
+        mRecyclerView.addOnScrollListener(new FastScrollHelperListener());
 
-        // Connect the section indicator to the scroller
-        ScrollBarSectionIndicator sectionTitleIndicator = (ScrollBarSectionIndicator) view.findViewById(R.id.fast_scroller_section_title_indicator);
-        mFastScroller.setSectionIndicator(sectionTitleIndicator);
-        mFastScroller.setScrollArea(1, mRecyclerFragmentAdapter.getLineItemCount());
+        // Set custom scroll area because of top padding items
+        mFastScroller.setStartScrollPosition(1);
 
         // Make sure that fast scroller is not visible when view is first created
         mFastScroller.setVisibility(View.GONE);
@@ -388,6 +375,8 @@ public class RecyclerFragment extends BaseFragment implements
                 return mDataLoader.getLineItems();
             case SUPER_SLIM:
                 return mDataLoader.getSuperSlimLineItems();
+            case PARALLAX:
+                return mDataLoader.getLineItems();
             default:
                 return mDataLoader.getLineItems();
         }
@@ -401,6 +390,9 @@ public class RecyclerFragment extends BaseFragment implements
                 break;
             case SUPER_SLIM:
                 lineItems = mDataLoader.getSuperSlimLineItems();
+                break;
+            case PARALLAX:
+                lineItems = mDataLoader.getLineItems();
                 break;
             default:
                 lineItems = mDataLoader.getLineItems();
@@ -463,7 +455,7 @@ public class RecyclerFragment extends BaseFragment implements
         return mFragmentTag;
     }
 
-    private class MyScrollListener extends RecyclerView.OnScrollListener {
+    private class FastScrollHelperListener extends RecyclerView.OnScrollListener {
 
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
         }

@@ -63,6 +63,7 @@ public class Utils {
                 url = GIFS;
                 break;
             case ExploreFragment.TAG:
+                url = MEMES;
                 break;
             case GalleryFragment.TAG_CHILD_ONE:
             case GalleryFragment.TAG_CHILD_TWO:
@@ -70,6 +71,7 @@ public class Utils {
                 url = GIFS;
                 break;
             case ChartFragment.TAG:
+                url = MEMES;
                 break;
         }
         return url;

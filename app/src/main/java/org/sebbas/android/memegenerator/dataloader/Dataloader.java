@@ -85,7 +85,7 @@ public class DataLoader implements Filterable {
                 sectionFirstPosition = tmp + headerCount;
                 headerCount += 1;
                 resultItems.add(LineItem.newInstance(
-                        " ", null, null, null, null, 0, 0, true, sectionManager,
+                        "#", null, null, null, null, 0, 0, true, sectionManager,
                         sectionFirstPosition, headerCount));
             } else {
                 boolean isAllowedPosition = isAllowedPosition(i - 1);
@@ -127,7 +127,7 @@ public class DataLoader implements Filterable {
         for (int i = 0; i < getItemCount() + 1; i++) {
             if (i == 0) {
                 resultItems.add(LineItem.newInstance(
-                        " ", null, null, null, null, 0, 0, true, 0, 0, headerCount));
+                        "#", null, null, null, null, 0, 0, true, 0, 0, headerCount));
             } else {
                 boolean isAllowedPosition = isAllowedPosition(i - 1);
                 if (isAllowedPosition) {
