@@ -6,14 +6,14 @@ import android.view.View;
 
 public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
 
-    private int spanCount;
-    private int spacing;
-    private boolean includeEdge;
+    private int mSpanCount;
+    private int mSpacing;
+    private boolean mIncludeEdge;
 
     public GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
-        this.spanCount = spanCount;
-        this.spacing = spacing;
-        this.includeEdge = includeEdge;
+        mSpanCount = spanCount;
+        mSpacing = spacing;
+        mIncludeEdge = includeEdge;
     }
 
     @Override
@@ -24,21 +24,21 @@ public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
         if (position != 0) {
             // The real first grid position because off padding item at position 0
             int positionReal = position - 1;
-            int column = (positionReal) % spanCount; // item column
+            int column = (positionReal) % mSpanCount; // item column
 
-            if (includeEdge) {
-                outRect.left = spacing - column * spacing / spanCount; // spacing - column * ((1f / spanCount) * spacing)
-                outRect.right = (column + 1) * spacing / spanCount; // (column + 1) * ((1f / spanCount) * spacing)
+            if (mIncludeEdge) {
+                outRect.left = mSpacing - column * mSpacing / mSpanCount;
+                outRect.right = (column + 1) * mSpacing / mSpanCount;
 
-                if (positionReal < spanCount) { // top edge
-                    outRect.top = spacing;
+                if (positionReal < mSpanCount) { // top edge
+                    outRect.top = mSpacing;
                 }
-                outRect.bottom = spacing; // item bottom
+                outRect.bottom = mSpacing; // item bottom
             } else {
-                outRect.left = column * spacing / spanCount; // column * ((1f / spanCount) * spacing)
-                outRect.right = spacing - (column + 1) * spacing / spanCount; // spacing - (column + 1) * ((1f /    spanCount) * spacing)
-                if (positionReal >= spanCount) {
-                    outRect.top = spacing; // item top
+                outRect.left = column * mSpacing / mSpanCount;
+                outRect.right = mSpacing - (column + 1) * mSpanCount / mSpanCount;
+                if (positionReal >= mSpanCount) {
+                    outRect.top = mSpacing; // item top
                 }
             }
         }

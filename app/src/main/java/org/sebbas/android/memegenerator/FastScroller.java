@@ -49,7 +49,7 @@ public class FastScroller extends LinearLayout {
         setOrientation(HORIZONTAL);
         setClipChildren(false);
         LayoutInflater inflater = LayoutInflater.from(context);
-        inflater.inflate(R.layout.recycler_view_fast_scroller__fast_scroller,this,true);
+        inflater.inflate(R.layout.recycler_view_fast_scroller,this,true);
         mBubble = (TextView)findViewById(R.id.fastscroller_bubble);
         mHandle = findViewById(R.id.fastscroller_handle);
         mBubble.setVisibility(INVISIBLE);

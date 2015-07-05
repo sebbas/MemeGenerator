@@ -21,6 +21,7 @@ import com.github.rahatarmanahmed.cpv.CircularProgressView;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 import com.tonicartos.superslim.LayoutManager;
 
+import org.sebbas.android.memegenerator.DividerItemDecoration;
 import org.sebbas.android.memegenerator.FastScroller;
 import org.sebbas.android.memegenerator.GridSpacingItemDecoration;
 import org.sebbas.android.memegenerator.LineItem;
@@ -56,12 +57,12 @@ public class RecyclerFragment extends BaseFragment implements
     // Item type
     public static final int CARD = 2;
     public static final int SUPER_SLIM = 3;
-    public static final int PARALLAX = 4;
+    public static final int EXPLORE = 4;
 
     // Specific setup for grid layout
     private static final int GRID_COLUMN_COUNT = 3;
     private static final int GRID_SPACING = 5;
-    private static final boolean GRID_INCLUDE_EDGE = true;
+    private static final boolean GRID_INCLUDE_EDGE = false;
 
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerFragmentAdapter mRecyclerFragmentAdapter;
@@ -320,8 +321,9 @@ public class RecyclerFragment extends BaseFragment implements
             case LIST_LAYOUT + "|" + SUPER_SLIM:
                 mRecyclerView.setLayoutManager(new LayoutManager(parentActivity));
                 break;
-            case LIST_LAYOUT + "|" + PARALLAX:
+            case LIST_LAYOUT + "|" + EXPLORE:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
+                mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
             default:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
         }
@@ -375,7 +377,7 @@ public class RecyclerFragment extends BaseFragment implements
                 return mDataLoader.getLineItems();
             case SUPER_SLIM:
                 return mDataLoader.getSuperSlimLineItems();
-            case PARALLAX:
+            case EXPLORE:
                 return mDataLoader.getLineItems();
             default:
                 return mDataLoader.getLineItems();
@@ -391,7 +393,7 @@ public class RecyclerFragment extends BaseFragment implements
             case SUPER_SLIM:
                 lineItems = mDataLoader.getSuperSlimLineItems();
                 break;
-            case PARALLAX:
+            case EXPLORE:
                 lineItems = mDataLoader.getLineItems();
                 break;
             default:

@@ -17,11 +17,12 @@
 package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
-import android.graphics.Matrix;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
@@ -33,11 +34,13 @@ import com.tonicartos.superslim.GridSLM;
 import org.sebbas.android.memegenerator.BubbleTextGetter;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.TopicsDetailGridAdapter;
 import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -49,7 +52,7 @@ public class RecyclerFragmentAdapter extends
     private static final int VIEW_TYPE_HEADER = 1;
     private static final int VIEW_TYPE_CARD = 2;
     private static final int VIEW_TYPE_SUPER_SLIM = 3;
-    private static final int VIEW_TYPE_PARALLAX = 4;
+    private static final int VIEW_TYPE_TOPICS = 4;
 
     private ArrayList<LineItem> mLineItems;
     private List<Character> mSectionItems;
@@ -78,8 +81,8 @@ public class RecyclerFragmentAdapter extends
                 return VIEW_TYPE_CARD;
             case RecyclerFragment.SUPER_SLIM:
                 return VIEW_TYPE_SUPER_SLIM;
-            case RecyclerFragment.PARALLAX:
-                return VIEW_TYPE_PARALLAX;
+            case RecyclerFragment.EXPLORE:
+                return VIEW_TYPE_TOPICS;
             default:
                 return VIEW_TYPE_CARD;
         }
@@ -99,7 +102,7 @@ public class RecyclerFragmentAdapter extends
                 // Only trigger click event for content items
                 if (getItemViewType(position) == VIEW_TYPE_CARD ||
                         getItemViewType(position) == VIEW_TYPE_SUPER_SLIM ||
-                        getItemViewType(position) == VIEW_TYPE_PARALLAX) {
+                        getItemViewType(position) == VIEW_TYPE_TOPICS) {
 
                     ((FragmentCallback) mContext).onItemClick(
                             getContentPosition(position),
@@ -129,9 +132,9 @@ public class RecyclerFragmentAdapter extends
                 view = inflater.inflate(R.layout.rounded_item, parent, false);
                 mainViewHolder = new SuperSlimViewHolder(view, viewHolderCallback);
                 break;
-            case VIEW_TYPE_PARALLAX:
-                view = inflater.inflate(R.layout.parallax_item, parent, false);
-                mainViewHolder = new ParallaxViewHolder(view, viewHolderCallback);
+            case VIEW_TYPE_TOPICS:
+                view = inflater.inflate(R.layout.topics_item, parent, false);
+                mainViewHolder = new TopicsHeaderViewHolder(view, viewHolderCallback);
                 break;
             default:
                 view = inflater.inflate(R.layout.toolbar_padding, parent, false);
@@ -152,7 +155,8 @@ public class RecyclerFragmentAdapter extends
         lp.setFirstPosition(item.getSectionFirstPosition());
         itemView.setLayoutParams(lp);
 
-        switch (getItemViewType(position)) {
+        int viewType = getItemViewType(position);
+        switch (viewType) {
             case VIEW_TYPE_HEADER:
                 // Set title letter for header items
                 viewHolder.textViewTitle.setText(item.getTitle());
@@ -176,16 +180,24 @@ public class RecyclerFragmentAdapter extends
                         .centerCrop()
                         .into(superSlimViewHolder.imageView);
                 break;
-            case VIEW_TYPE_PARALLAX:
-                ParallaxViewHolder parallaxViewHolder = (ParallaxViewHolder) viewHolder;
-                parallaxViewHolder.textViewTitle.setText(item.getTitle());
+            case VIEW_TYPE_TOPICS:
+                TopicsHeaderViewHolder topicsHeaderViewHolder = (TopicsHeaderViewHolder) viewHolder;
+                topicsHeaderViewHolder.textViewTitle.setText(item.getTitle());
                 Glide.with(mContext)
-                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
+                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_SMALL))
                         .asBitmap()
                         .centerCrop()
-                        .into(parallaxViewHolder.imageView);
+                        .into(topicsHeaderViewHolder.imageView);
+                topicsHeaderViewHolder.gridView.setAdapter(new TopicsDetailGridAdapter(mContext, new ArrayList<>(randomSubList(getContentItems(mLineItems), 6)) /*new ArrayList<>(mLineItems.subList(1, 6))*/));
+
                 break;
         }
+    }
+
+    public static <T> List<T> randomSubList(List<T> list, int newSize) {
+        list = new ArrayList<>(list);
+        Collections.shuffle(list);
+        return list.subList(0, newSize);
     }
 
     @Override
@@ -193,19 +205,27 @@ public class RecyclerFragmentAdapter extends
         return Character.toString(mLineItems.get(position).getTitle().charAt(0));
     }
 
-    public static class ParallaxViewHolder extends RecyclerFragmentAdapter.MainViewHolder implements View.OnClickListener {
+    public static class TopicsHeaderViewHolder extends RecyclerFragmentAdapter.MainViewHolder implements View.OnClickListener, AdapterView.OnItemClickListener {
         ImageView imageView;
+        GridView gridView;
 
-        public ParallaxViewHolder(View view, ViewHolderCallback viewHolderCallback) {
+        public TopicsHeaderViewHolder(View view, ViewHolderCallback viewHolderCallback) {
             super(view, viewHolderCallback);
             view.setOnClickListener(this);
 
             imageView = (ImageView) view.findViewById(R.id.item_image);
+            gridView = (GridView) view.findViewById(R.id.topics_grid);
+            gridView.setOnItemClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             mViewHolderCallback.onItemClick(getLayoutPosition());
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            mViewHolderCallback.onItemClick(getLayoutPosition() + position);
         }
     }
 

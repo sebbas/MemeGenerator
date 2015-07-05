@@ -8,7 +8,7 @@ public class ExploreFragment extends RecyclerFragment {
         return RecyclerFragment.newInstance(
                 ExploreFragment.TAG,
                 RecyclerFragment.LIST_LAYOUT,
-                RecyclerFragment.PARALLAX,
+                RecyclerFragment.EXPLORE,
                 false, position);
     }
 

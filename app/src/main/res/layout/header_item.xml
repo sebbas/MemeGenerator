@@ -10,6 +10,7 @@
     android:padding="16dp"
     android:textDirection="locale"
     android:textSize="24sp"
+    android:textColor="@color/secondaryText"
     app:slm_headerDisplay="inline|sticky"
     app:slm_isHeader="true"
     app:slm_section_headerMarginStart="56dp"

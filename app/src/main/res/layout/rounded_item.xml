@@ -17,6 +17,8 @@
         android:src="@color/primary"
         app:riv_corner_radius="250dp"
         app:riv_mutate_background="true"
+        app:riv_border_width="0.5dp"
+        app:riv_border_color="@color/divider"
         app:riv_oval="false" />
 
     <TextView
@@ -32,5 +34,5 @@
         android:textStyle="bold"
         android:paddingLeft="@dimen/margin_short"
         android:layout_gravity="center_vertical"
-        android:textColor="?android:attr/textColorPrimary"/>
+        android:textColor="@color/primaryText"/>
 </LinearLayout>

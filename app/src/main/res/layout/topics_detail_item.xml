@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.sebbas.android.memegenerator.TopicsDetailGridView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/topics_grid"
+    android:numColumns="3"
+    android:gravity="center"
+    android:columnWidth="100dp"
+    android:stretchMode="columnWidth"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:horizontalSpacing="2dp"
+    android:verticalSpacing="2dp"
+    android:paddingLeft="@dimen/margin_standard"
+    android:paddingTop="@dimen/margin_short"
+    android:paddingRight="@dimen/margin_standard"
+    android:paddingBottom="@dimen/margin_standard" />

@@ -38,7 +38,10 @@
     <string name="layout_cards">Cards</string>
     <string name="layout_list">List</string>
 
-    <!-- More fragment strings -->
+    <!-- Explore fragment string -->
+    <string name="follow">Follow</string>
+
+    <!-- Settings fragment strings -->
     <string-array name="more_line_item_titles">
         <item>General</item>
         <item>View</item>
