@@ -1,5 +1,6 @@
 package org.sebbas.android.memegenerator.fragments;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -35,7 +36,6 @@ import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 import org.sebbas.android.memegenerator.Utils;
 
 import java.util.ArrayList;
-
 
 public class RecyclerFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener, ToolbarCallback {
@@ -76,7 +76,6 @@ public class RecyclerFragment extends BaseFragment implements
     private DataLoader mDataLoader;
     private int mPositionInParent;
     private FastScroller mFastScroller;
-    private View mRootView;
 
     protected ArrayList<LineItem> mLineItems;
 
@@ -107,68 +106,85 @@ public class RecyclerFragment extends BaseFragment implements
 
         int location = Utils.getLoadingLocation(mFragmentTag);
         String url = Utils.getDataUrl(mFragmentTag);
-        load(location, url);
+        boolean isNetworkLoad = Utils.isNetworkLoad(getActivity(), mFragmentTag);
+        mDataLoader.loadData(location, url, isNetworkLoad);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        mRootView = inflater.inflate(R.layout.fragment_recyclerview, container, false);
 
-        return mRootView;
+        View rootView = inflater.inflate(R.layout.fragment_recyclerview, container, false);
+
+        init(rootView);
+        return rootView;
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(LINE_ITEMS, mLineItems);
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            mLineItems = savedInstanceState.getParcelableArrayList(LINE_ITEMS);
-        } else {
-            mLineItems = getLineItems();
-        }
-
-        setupAdapter();
-        init(mRootView);
-    }
-
-    private void setupAdapter() {
-        if (mRecyclerFragmentAdapter == null){
-            mRecyclerFragmentAdapter = new RecyclerFragmentAdapter(getActivity(), mLineItems, mItemType);
-        }
+    public void onDestroy() {
+        super.onDestroy();
+        Utils.saveDate(getActivity(), mFragmentTag);
     }
 
     private void init(View view) {
 
-        if (mSwipeRefreshLayout == null || mCircularProgressView == null || mRecyclerView == null) {
-            mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.recycler_swipe_refresh);
-            mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
-            mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
+        mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.recycler_swipe_refresh);
+        mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
+        mRecyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
+        mFastScroller = (FastScroller) view.findViewById(R.id.fastscroller);
 
-            // Depending on arguments, enable or disable swipe refresh
-            mSwipeRefreshLayout.setEnabled(mIsRefreshable);
+        // Depending on arguments, enable or disable swipe refresh
+        mSwipeRefreshLayout.setEnabled(mIsRefreshable);
 
-            // Set custom progress icon position because of toolbar and sliding tabs layout
-            //int tabHeight = getResources().getDimensionPixelOffset(R.dimen.tab_height);
-            //int offset = getActionBarSize() + tabHeight;
-            //mSwipeRefreshLayout.setProgressViewOffset(true, offset,offset + tabHeight);
+        // Set custom progress icon position because of toolbar and sliding tabs layout
+        //int tabHeight = getResources().getDimensionPixelOffset(R.dimen.tab_height);
+        //int offset = getActionBarSize() + tabHeight;
+        //mSwipeRefreshLayout.setProgressViewOffset(true, offset,offset + tabHeight);
 
-            // Bring activity ui elements to front
-            ((MainActivity) getActivity()).bringMainNavigationToFront();
+        // Bring activity ui elements to front
+        ((MainActivity) getActivity()).bringMainNavigationToFront();
 
-            setupRecyclerView();
-            updatePlaceholder();
-            setupSwipeRefreshLayout();
-            setupFastScroller(view);
-        }
+        setupRecyclerView();
+        setupSwipeRefreshLayout();
+        setupFastScroller();
 
         super.onFragmentComplete(this);
+    }
+
+    private void setupRecyclerView() {
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) getActivity().findViewById(R.id.main_container));
+
+        switch (mLayoutMode + "|" + mItemType) {
+            case GRID_LAYOUT + "|" + CARD:
+                final GridLayoutManager manager = new GridLayoutManager(getActivity(),
+                        GRID_COLUMN_COUNT, GridLayoutManager.VERTICAL, false);
+                manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                    @Override
+                    public int getSpanSize(int position) {
+                        return (position == 0) ? manager.getSpanCount() : 1;
+                    }
+                });
+                mRecyclerView.setLayoutManager(manager);
+                mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+                mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(GRID_COLUMN_COUNT, GRID_SPACING, GRID_INCLUDE_EDGE));
+                break;
+            case GRID_LAYOUT + "|" + SUPER_SLIM:
+                mRecyclerView.setLayoutManager(new LayoutManager(getActivity()));
+                break;
+            case LIST_LAYOUT + "|" + CARD:
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                break;
+            case LIST_LAYOUT + "|" + SUPER_SLIM:
+                mRecyclerView.setLayoutManager(new LayoutManager(getActivity()));
+                break;
+            case LIST_LAYOUT + "|" + EXPLORE:
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+            default:
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        }
+        mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) getActivity());
     }
 
     @Override
@@ -190,13 +206,12 @@ public class RecyclerFragment extends BaseFragment implements
     }
 
     @Override
-    public void onDataLoadSuccessful() {
-        mRecyclerFragmentAdapter.refreshUI();
+    public void onDataLoadSuccess() {
+        mDataLoader.loadLineItems(mItemType);
     }
 
     @Override
     public void onConnectionUnavailable() {
-        //mRecyclerFragmentAdapter.refreshUI();
 
         // Checks when no nested fragments are present
         if (getParentFragment() == null) {
@@ -209,15 +224,11 @@ public class RecyclerFragment extends BaseFragment implements
                 showConnectionUnavailableNotification();
             }
         }
-    }
-
-    private boolean isVisibleToUser() {
-        return ((MainActivity) getActivity()).getMainPagerPosition() == mPositionInParent;
+        mDataLoader.loadLineItems(mItemType);
     }
 
     @Override
-    public void onConnectionTimeout() {
-        //mRecyclerFragmentAdapter.refreshUI();
+    public void onDataLoadError() {
 
         // Checks when no nested fragments are present
         if (getParentFragment() == null) {
@@ -230,12 +241,35 @@ public class RecyclerFragment extends BaseFragment implements
                 showConnectionTimeoutNotification();
             }
         }
+        mDataLoader.loadLineItems(mItemType);
     }
 
     @Override
+    public void onLineItemsComplete() {
+        mLineItems = mDataLoader.getLineItems();
+
+        setLoading(false);
+        setupAdapter();
+    }
+
+
+    @Override
+    public boolean isVisibleToUser() {
+        boolean isVisibleToUser = true;
+        if (getActivity() != null) {
+            if (getParentFragment() != null) {
+                isVisibleToUser &= ((BaseFragment) getParentFragment()).isVisibleToUser();
+            }
+            isVisibleToUser &= ((BaseActivity) getActivity()).getMainPagerPosition() == mPositionInParent;
+        }
+        return isVisibleToUser;
+    }
+
+
+    /*@Override
     public boolean getUserVisibleHint() {
         return super.getUserVisibleHint();
-    }
+    }*/
 
     @Override
     public void onFilterComplete() {
@@ -268,66 +302,35 @@ public class RecyclerFragment extends BaseFragment implements
         refreshAdapter();
     }
 
-    private void updatePlaceholder() {
-        if (adapterIsEmpty()) {
+    private void setLoading(boolean isLoading) {
+        if (isLoading) {
             mCircularProgressView.setVisibility(View.VISIBLE);
         } else {
             mCircularProgressView.setVisibility(View.GONE);
+            mRecyclerView.setVisibility(View.VISIBLE);
         }
     }
 
-    private boolean adapterIsEmpty() {
-        return (mRecyclerFragmentAdapter.getItemCount() == 0);
-    }
+    private void setupAdapter() {
+        if (mRecyclerFragmentAdapter == null) {
+            mRecyclerFragmentAdapter = new RecyclerFragmentAdapter(getActivity(), mLineItems, mItemType);
 
-    private void setupRecyclerView() {
-
-        // Register observer
-        mAdapterObserver = new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onChanged() {
-                super.onChanged();
-                updatePlaceholder();
-            }
-        };
-        mRecyclerFragmentAdapter.registerAdapterDataObserver(mAdapterObserver);
-
-        MainActivity parentActivity = (MainActivity) getActivity();
-
-        mRecyclerView.setAdapter(mRecyclerFragmentAdapter);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setTouchInterceptionViewGroup((ViewGroup) parentActivity.findViewById(R.id.main_container));
-
-        switch (mLayoutMode + "|" + mItemType) {
-            case GRID_LAYOUT + "|" + CARD:
-                final GridLayoutManager manager = new GridLayoutManager(parentActivity,
-                        GRID_COLUMN_COUNT, GridLayoutManager.VERTICAL, false);
-                manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                    @Override
-                    public int getSpanSize(int position) {
-                        return (position == 0) ? manager.getSpanCount() : 1;
-                    }
-                });
-                mRecyclerView.setLayoutManager(manager);
-                mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-                mRecyclerView.addItemDecoration(new GridSpacingItemDecoration(GRID_COLUMN_COUNT, GRID_SPACING, GRID_INCLUDE_EDGE));
-                break;
-            case GRID_LAYOUT + "|" + SUPER_SLIM:
-                mRecyclerView.setLayoutManager(new LayoutManager(parentActivity));
-                break;
-            case LIST_LAYOUT + "|" + CARD:
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
-                break;
-            case LIST_LAYOUT + "|" + SUPER_SLIM:
-                mRecyclerView.setLayoutManager(new LayoutManager(parentActivity));
-                break;
-            case LIST_LAYOUT + "|" + EXPLORE:
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
-                mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-            default:
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(parentActivity));
+            // Register observer
+            mAdapterObserver = new RecyclerView.AdapterDataObserver() {
+                @Override
+                public void onChanged() {
+                    super.onChanged();
+                    setLoading(false);
+                }
+            };
+            mRecyclerFragmentAdapter.registerAdapterDataObserver(mAdapterObserver);
+            mRecyclerView.setAdapter(mRecyclerFragmentAdapter);
+        } else {
+            ArrayList<LineItem> lineItems = mDataLoader.getLineItems();
+            mRecyclerFragmentAdapter.setLineItems(lineItems);
+            mRecyclerFragmentAdapter.notifyDataSetChanged();
         }
-        mRecyclerView.setScrollViewCallbacks((ObservableScrollViewCallbacks) getActivity());
+
     }
 
     private void setupSwipeRefreshLayout() {
@@ -336,10 +339,7 @@ public class RecyclerFragment extends BaseFragment implements
         mSwipeRefreshLayout.setSwipeableChildren(R.id.scroll);
     }
 
-    private void setupFastScroller(View view) {
-        // Grab your RecyclerView and the RecyclerViewFastScroller from the layout
-        mFastScroller = (FastScroller) view.findViewById(R.id.fastscroller);
-
+    private void setupFastScroller() {
         // Connect the recycler to the scroller (to let the scroller scroll the list)
         mFastScroller.setRecyclerView(mRecyclerView);
 
@@ -359,19 +359,11 @@ public class RecyclerFragment extends BaseFragment implements
         }
     }
 
-    public String getFragmentType() {
-        return mFragmentTag;
-    }
-
-    public void filterDataWith(String s) {
+    private void filterDataWith(String s) {
         mDataLoader.filter(s);
     }
 
-    public void load(int location, String url) {
-        mDataLoader.load(location, url);
-    }
-
-    public ArrayList<LineItem> getLineItems() {
+    /*public ArrayList<LineItem> getLineItems() {
         switch (mItemType) {
             case CARD:
                 return mDataLoader.getLineItems();
@@ -382,35 +374,23 @@ public class RecyclerFragment extends BaseFragment implements
             default:
                 return mDataLoader.getLineItems();
         }
-    }
+    }*/
 
     private void updateLineItems() {
-        ArrayList<LineItem> lineItems;
-        switch (mItemType) {
-            case CARD:
-                lineItems = mDataLoader.getLineItems();
-                break;
-            case SUPER_SLIM:
-                lineItems = mDataLoader.getSuperSlimLineItems();
-                break;
-            case EXPLORE:
-                lineItems = mDataLoader.getLineItems();
-                break;
-            default:
-                lineItems = mDataLoader.getLineItems();
-        }
-        mRecyclerFragmentAdapter.setLineItems(lineItems);
+        mDataLoader.loadLineItems(mItemType);
     }
 
     private void refreshAdapter() {
-        mRecyclerFragmentAdapter.notifyDataSetChanged();
+        if (mLineItems != null) {
+            mRecyclerFragmentAdapter.notifyDataSetChanged();
+        }
     }
 
     public int getFirstVisibleItemPosition() {
         int position = 0;
         RecyclerView.LayoutManager layoutManager = mRecyclerView.getLayoutManager();
 
-        if (layoutManager != null) {
+        if (layoutManager != null && mRecyclerView.getAdapter() != null) {
             if (layoutManager instanceof LayoutManager) {
                 position = ((LayoutManager) layoutManager).findFirstVisibleItemPosition();
             } else if (layoutManager instanceof LinearLayoutManager) {

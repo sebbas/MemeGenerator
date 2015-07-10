@@ -1,7 +1,6 @@
 package org.sebbas.android.memegenerator.dataloader;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
@@ -34,7 +33,7 @@ public class DataLoader implements Filterable {
 
     private Context mContext;
     private DataLoaderCallback mDataLoaderCallback;
-    private String mFragmentType;
+    private String mFragmentTag;
     private List<Integer> mExcludedLineItemPositions;
 
     private List<String> mViewCounts;
@@ -45,20 +44,31 @@ public class DataLoader implements Filterable {
     private List<Integer> mImageWidths;
     private List<Integer> mImageHeights;
 
+    private ArrayList<LineItem> mLineItems;
+
     public DataLoader(RecyclerFragment fragment) {
         mContext = fragment.getActivity();
         mDataLoaderCallback = fragment;
-        mFragmentType = fragment.getFragmentType();
+        mFragmentTag = fragment.getFragmentTag();
         mExcludedLineItemPositions = new ArrayList<>();
 
-        // Restore array lists from previous session or if restore not possible (on startup)
-        // then get new lists
-        loadData();
+        mViewCounts = new ArrayList<>();
+        mImageUrls = new ArrayList<>();
+        mImageIds = new ArrayList<>();
+        mTitles = new ArrayList<>();
+        mTimeStamps = new ArrayList<>();
+        mImageWidths = new ArrayList<>();
+        mImageHeights = new ArrayList<>();
     }
 
-    public void load(int location, String url) {
+    public void loadData(int location, String url, boolean isNetworkLoad) {
         AsyncLoader asyncLoader = new AsyncLoader();
-        asyncLoader.execute(location, url);
+        asyncLoader.execute(location, url, isNetworkLoad);
+    }
+
+    public void loadLineItems(int itemType) {
+        LineItemFactory lineItemFactory = new LineItemFactory();
+        lineItemFactory.execute(itemType);
     }
 
     public void update(String localPath) {
@@ -70,7 +80,7 @@ public class DataLoader implements Filterable {
         this.getFilter().filter(constraint);
     }
 
-    public ArrayList<LineItem> getSuperSlimLineItems() {
+    private ArrayList<LineItem> generateSuperSlimLineItems() {
         String lastHeader = "";
         int sectionManager = -1;
         int headerCount = 0;
@@ -120,7 +130,7 @@ public class DataLoader implements Filterable {
         return resultItems;
     }
 
-    public ArrayList<LineItem> getLineItems() {
+    private ArrayList<LineItem> generateLineItems() {
         ArrayList<LineItem> resultItems = new ArrayList<>();
 
         int headerCount = 1;
@@ -168,24 +178,59 @@ public class DataLoader implements Filterable {
         }
     }
 
+    private class LineItemFactory extends AsyncTask<Integer, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Integer... params) {
+            int itemType = params[0];
+
+            // Create line items depending on item type
+            switch (itemType) {
+                case RecyclerFragment.SUPER_SLIM:
+                    mLineItems = generateSuperSlimLineItems();
+                    break;
+                case RecyclerFragment.CARD:
+                    mLineItems = generateLineItems();
+                    break;
+                case RecyclerFragment.EXPLORE:
+                    mLineItems = generateLineItems();
+                    break;
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            mDataLoaderCallback.onLineItemsComplete();
+        }
+    }
+
     private class AsyncLoader extends AsyncTask<Object, Void, Integer> {
 
         private static final int CONNECTION_UNAVAILABLE = 0;
-        private static final int CONNECTION_TIMEOUT = 1;
-        private static final int CONNECTION_SUCCESS = 2;
+        private static final int LOAD_ERROR = 1;
+        private static final int LOAD_SUCCESS = 2;
 
         @Override
         protected Integer doInBackground(Object... params) {
             int loadingLocation = (Integer) params[0];
             String url = (String) params[1];
+            boolean isNetworkLoad = (boolean) params[2];
 
             if (!Utils.isNetworkAvailable(mContext)) {
+                restoreData();
                 return CONNECTION_UNAVAILABLE;
             }
 
-            boolean loadSuccess = false;
+            if (!isNetworkLoad) {
+                restoreData();
+                return LOAD_SUCCESS;
+            }
 
             // Load data depending on location
+            boolean loadSuccess = false;
             switch(loadingLocation) {
                 case INTERNET:
                     loadSuccess = loadFromInternet(url);
@@ -197,9 +242,10 @@ public class DataLoader implements Filterable {
 
             if (loadSuccess) {
                 saveData();
-                return CONNECTION_SUCCESS;
+                return LOAD_SUCCESS;
             } else {
-                return CONNECTION_TIMEOUT;
+                restoreData();
+                return LOAD_ERROR;
             }
         }
 
@@ -211,36 +257,36 @@ public class DataLoader implements Filterable {
                 case CONNECTION_UNAVAILABLE:
                     mDataLoaderCallback.onConnectionUnavailable();
                     break;
-                case CONNECTION_TIMEOUT:
-                    mDataLoaderCallback.onConnectionTimeout();
+                case LOAD_ERROR:
+                    mDataLoaderCallback.onDataLoadError();
                     break;
-                case CONNECTION_SUCCESS:
-                    mDataLoaderCallback.onDataLoadSuccessful();
+                case LOAD_SUCCESS:
+                    mDataLoaderCallback.onDataLoadSuccess();
                     break;
                 default:
-                    mDataLoaderCallback.onConnectionTimeout();
+                    mDataLoaderCallback.onDataLoadError();
             }
         }
     }
 
     private void saveData() {
-        Utils.putListString(mContext, mFragmentType, mViewCounts, "viewCounts");
-        Utils.putListString(mContext, mFragmentType, mImageUrls, "imageUrls");
-        Utils.putListString(mContext, mFragmentType, mImageIds, "imageIds");
-        Utils.putListString(mContext, mFragmentType, mTitles, "imageTitles");
-        Utils.putListString(mContext, mFragmentType, mTimeStamps, "timeStamps");
-        Utils.putListInteger(mContext, mFragmentType, mImageWidths, "imageWidths");
-        Utils.putListInteger(mContext, mFragmentType, mImageHeights, "imageHeights");
+        Utils.putListString(mContext, mFragmentTag, mViewCounts, "viewCounts");
+        Utils.putListString(mContext, mFragmentTag, mImageUrls, "imageUrls");
+        Utils.putListString(mContext, mFragmentTag, mImageIds, "imageIds");
+        Utils.putListString(mContext, mFragmentTag, mTitles, "imageTitles");
+        Utils.putListString(mContext, mFragmentTag, mTimeStamps, "timeStamps");
+        Utils.putListInteger(mContext, mFragmentTag, mImageWidths, "imageWidths");
+        Utils.putListInteger(mContext, mFragmentTag, mImageHeights, "imageHeights");
     }
 
-    private void loadData() {
-        mViewCounts = Utils.getListString(mContext, mFragmentType, "viewCounts");
-        mImageUrls = Utils.getListString(mContext, mFragmentType, "imageUrls");
-        mImageIds = Utils.getListString(mContext, mFragmentType, "imageIds");
-        mTitles = Utils.getListString(mContext, mFragmentType, "imageTitles");
-        mTimeStamps = Utils.getListString(mContext, mFragmentType, "timeStamps");
-        mImageWidths = Utils.getListInteger(mContext, mFragmentType, "imageWidths");
-        mImageHeights = Utils.getListInteger(mContext, mFragmentType, "imageHeights");
+    private void restoreData() {
+        mViewCounts = Utils.getListString(mContext, mFragmentTag, "viewCounts");
+        mImageUrls = Utils.getListString(mContext, mFragmentTag, "imageUrls");
+        mImageIds = Utils.getListString(mContext, mFragmentTag, "imageIds");
+        mTitles = Utils.getListString(mContext, mFragmentTag, "imageTitles");
+        mTimeStamps = Utils.getListString(mContext, mFragmentTag, "timeStamps");
+        mImageWidths = Utils.getListInteger(mContext, mFragmentTag, "imageWidths");
+        mImageHeights = Utils.getListInteger(mContext, mFragmentTag, "imageHeights");
     }
 
     private boolean loadFromInternet(String url) {
@@ -464,5 +510,9 @@ public class DataLoader implements Filterable {
             count = mTitles.size();
         }
         return count;
+    }
+
+    public ArrayList<LineItem> getLineItems() {
+        return mLineItems;
     }
 }

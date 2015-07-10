@@ -6,7 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.activities.MainActivity;
 import org.sebbas.android.memegenerator.adapter.MemeFragmentAdapter;
+import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 
 public class MemeFragment extends SlidingTabsFragment {
 
@@ -41,6 +43,7 @@ public class MemeFragment extends SlidingTabsFragment {
             mMemeFragmentAdapter = new MemeFragmentAdapter(getActivity(), getChildFragmentManager(), TAB_TITLES);
         }
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {

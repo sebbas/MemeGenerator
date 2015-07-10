@@ -2,9 +2,9 @@ package org.sebbas.android.memegenerator.interfaces;
 
 public interface DataLoaderCallback {
 
-    void onDataLoadSuccessful();
+    void onDataLoadSuccess();
     void onConnectionUnavailable();
-    void onConnectionTimeout();
+    void onDataLoadError();
     void onFilterComplete();
-
+    void onLineItemsComplete();
 }

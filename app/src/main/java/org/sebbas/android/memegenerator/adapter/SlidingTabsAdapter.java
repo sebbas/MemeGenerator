@@ -3,6 +3,7 @@ package org.sebbas.android.memegenerator.adapter;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 import android.util.SparseArray;
@@ -20,7 +21,8 @@ public abstract class SlidingTabsAdapter extends FragmentStatePagerAdapter {
     private static final String TAG = "SlidingTabsFragmentAdapter";
 
     private String[] mTitles;
-    private SparseArray<Fragment> mRegisteredFragments;
+    private SparseArray<BaseFragment> mRegisteredFragments;
+    protected FragmentManager mFragmentManager;
 
     private SlidingTabsAdapter(FragmentManager fragmentManager, int titleSize) {
         super(fragmentManager);
@@ -29,17 +31,17 @@ public abstract class SlidingTabsAdapter extends FragmentStatePagerAdapter {
         if (mRegisteredFragments == null) {
             mRegisteredFragments = new SparseArray<>();
         }
+        mFragmentManager = fragmentManager;
     }
 
     public SlidingTabsAdapter(Context context, FragmentManager fragmentManager,
                               int[] titleResources) {
         this(fragmentManager, titleResources.length);
-        mTitles = Utils.resourceArrayToStringArray(context, titleResources);;
+        mTitles = Utils.resourceArrayToStringArray(context, titleResources);
     }
 
     public SlidingTabsAdapter(FragmentManager fragmentManager, String[] titles) {
         this(fragmentManager, titles.length);
-
         mTitles = titles;
     }
 
@@ -61,8 +63,6 @@ public abstract class SlidingTabsAdapter extends FragmentStatePagerAdapter {
         return mRegisteredFragments.get(position);
     }
 
-    //public abstract String getFragmentTag(int position);
-
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         mRegisteredFragments.remove(position);
@@ -71,8 +71,8 @@ public abstract class SlidingTabsAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
-        Fragment fragment = (Fragment) super.instantiateItem(container, position);
-        mRegisteredFragments.put(position, fragment);
-        return fragment;
+        BaseFragment baseFragment = (BaseFragment) super.instantiateItem(container, position);
+        mRegisteredFragments.put(position, baseFragment);
+        return baseFragment;
     }
 }

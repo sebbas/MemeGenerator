@@ -10,6 +10,7 @@ import android.view.View;
 import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
 import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.activities.MainActivity;
 import org.sebbas.android.memegenerator.adapter.SlidingTabsAdapter;
 
 
@@ -95,5 +96,14 @@ public abstract class SlidingTabsFragment extends BaseFragment {
 
     public int getPositionInParent() {
         return mPositionInParent;
+    }
+
+    @Override
+    public boolean isVisibleToUser() {
+        boolean isVisibleToUser = true;
+        if (getActivity() != null) {
+            isVisibleToUser &= ((BaseActivity) getActivity()).getMainPagerPosition() == mPositionInParent;
+        }
+        return isVisibleToUser;
     }
 }

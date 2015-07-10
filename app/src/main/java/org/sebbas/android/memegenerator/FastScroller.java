@@ -7,12 +7,13 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import org.sebbas.android.memegenerator.interfaces.BubbleTextGetter;
 
 import static android.support.v7.widget.RecyclerView.OnScrollListener;
 
@@ -107,7 +108,6 @@ public class FastScroller extends LinearLayout {
                 proportion = y / (float) mHeight;
             }
             int targetPos = getValueInRange(mStartScrollPosition, itemCount - 1, (int) (proportion * (float) itemCount));
-            Log.d(TAG, "targetPos: " + targetPos);
             mRecyclerView.getLayoutManager().scrollToPosition(targetPos);
             String bubbleText = ((BubbleTextGetter) mRecyclerView.getAdapter()).getTextToShowInBubble(targetPos);
             mBubble.setText(bubbleText);

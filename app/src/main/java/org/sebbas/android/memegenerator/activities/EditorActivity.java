@@ -118,12 +118,10 @@ public class EditorActivity extends BaseActivity implements FragmentCallback, To
 
     @Override
     public void onFragmentComplete(BaseFragment baseFragment) {
-
     }
 
     @Override
     public void onItemClick(int itemPosition, ArrayList<LineItem> lineItems) {
-
     }
 
     @Override
@@ -139,6 +137,16 @@ public class EditorActivity extends BaseActivity implements FragmentCallback, To
     @Override
     public void onToolbarBackPressed() {
         this.onBackPressed();
+    }
+
+    @Override
+    public int getMainPagerPosition() {
+        return mViewPager.getCurrentItem();
+    }
+
+    @Override
+    public int getLastFragmentPositionMain() {
+        return 0;
     }
 
     private class DepthPageTransformer implements ViewPager.PageTransformer {

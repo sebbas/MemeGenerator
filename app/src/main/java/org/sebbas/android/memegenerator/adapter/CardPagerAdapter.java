@@ -21,6 +21,6 @@ public class CardPagerAdapter extends SlidingTabsAdapter {
     @Override
     public Fragment getItem(int position) {
         LineItem lineItem = ((EditorActivity) mContext).getLineItemAt(position);
-        return CardFragment.newInstance(lineItem);
+        return CardFragment.newInstance(lineItem, position);
     }
 }

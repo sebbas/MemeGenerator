@@ -2,6 +2,7 @@ package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Spannable;
@@ -35,8 +36,8 @@ public class MainActivityAdapter extends SlidingTabsAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment;
 
+        Fragment fragment;
         switch (position) {
             case 0:
                 fragment = MemeFragment.newInstance(position);
@@ -68,30 +69,4 @@ public class MainActivityAdapter extends SlidingTabsAdapter {
         sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return sb;
     }
-
-    /*@Override
-    public String getFragmentTag(int position) {
-        String fragmentTag;
-
-        switch (position) {
-            case 0:
-                fragmentTag = MemeFragment.TAG;
-                break;
-            case 1:
-                fragmentTag = GifFragment.TAG;
-                break;
-            case 2:
-                fragmentTag = ExploreFragment.TAG;
-                break;
-            case 3:
-                fragmentTag = GalleryFragment.TAG;
-                break;
-            case 4:
-                fragmentTag = ChartFragment.TAG;
-                break;
-            default:
-                fragmentTag = MemeFragment.TAG;
-        }
-        return fragmentTag;
-    }*/
 }

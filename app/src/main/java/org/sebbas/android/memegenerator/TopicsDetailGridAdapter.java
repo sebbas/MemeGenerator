@@ -35,7 +35,7 @@ public class TopicsDetailGridAdapter extends BaseAdapter {
 
             LineItem item = mLineItems.get(position);
             Glide.with(mContext)
-                    .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
+                    .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_SMALL))
                     .asBitmap()
                     .centerCrop()
                     .into(imageView);

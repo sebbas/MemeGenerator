@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.Toast;
 
 import com.github.ksoichiro.android.observablescrollview.ObservableRecyclerView;
 import com.github.ksoichiro.android.observablescrollview.ObservableScrollViewCallbacks;
@@ -19,6 +18,7 @@ import com.nineoldandroids.view.ViewPropertyAnimator;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
+import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.adapter.MainActivityAdapter;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.fragments.MemeFragment;
@@ -38,8 +38,8 @@ public class MainActivity extends BaseActivity implements
     private static final boolean IS_SMOOTH_SCROLL = true;
     private static final int ANIMATION_SPEED = 200;
 
-    private static int mLastFragmentPositionMain;
-    private static int mLastFragmentPositionSlidingTabs;
+    private int mLastFragmentPositionMain;
+    private int mLastFragmentPositionSlidingTabs;
 
     private static final int[] TAB_TITLES = {
             R.string.memes,
@@ -70,9 +70,7 @@ public class MainActivity extends BaseActivity implements
         mFooterView = findViewById(R.id.footer);
         mToolbarView = findViewById(R.id.toolbar);
 
-        if (mMainActivityAdapter == null) {
-            mMainActivityAdapter = new MainActivityAdapter(this, getSupportFragmentManager(), TAB_TITLES);
-        }
+        mMainActivityAdapter = new MainActivityAdapter(this, getSupportFragmentManager(), TAB_TITLES);
 
         mViewPager = (ToggleSwipeViewPager) findViewById(R.id.main_viewpager);
         mViewPager.setPagingEnabled(IS_SWIPEABLE);
@@ -115,11 +113,11 @@ public class MainActivity extends BaseActivity implements
         });
 
         // Setup top sliding tabs
-        SlidingTabLayout slidingTabLayout = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
-        slidingTabLayout.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
-        slidingTabLayout.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
-        slidingTabLayout.setDistributeEvenly(true);
-        slidingTabLayout.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        SlidingTabLayout slidingTabLayoutTabs = (SlidingTabLayout) findViewById(R.id.sliding_tabs);
+        slidingTabLayoutTabs.setCustomTabView(R.layout.tab_indicator, android.R.id.text1);
+        slidingTabLayoutTabs.setSelectedIndicatorColors(getResources().getColor(R.color.accent));
+        slidingTabLayoutTabs.setDistributeEvenly(true);
+        slidingTabLayoutTabs.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
@@ -309,7 +307,7 @@ public class MainActivity extends BaseActivity implements
                 }
 
                 // Skip destroyed or not created item
-                RecyclerFragment childFragment = (RecyclerFragment) slidingTabsFragment.getFragmentAt(i);
+                BaseFragment childFragment = (BaseFragment) slidingTabsFragment.getFragmentAt(i);
                 if (childFragment == null) {
                     continue;
                 }
@@ -323,7 +321,7 @@ public class MainActivity extends BaseActivity implements
         }
     }
 
-    private void propagateToolbarState(boolean isShown, View view, RecyclerFragment fragment) {
+    private void propagateToolbarState(boolean isShown, View view, BaseFragment fragment) {
         ObservableRecyclerView recyclerView = (ObservableRecyclerView) view.findViewById(R.id.scroll);
         if (recyclerView == null) {
             return;
@@ -331,13 +329,13 @@ public class MainActivity extends BaseActivity implements
 
         if (isShown) {
             // Scroll up
-            if (fragment.getFirstVisibleItemPosition() == 1) {
+            if (fragment instanceof RecyclerFragment && ((RecyclerFragment) fragment).getFirstVisibleItemPosition() == 1) {
                 // Note: layoutmanager.scrollToPosition() does not work for some reason
                 recyclerView.scrollVerticallyToPosition(0);
             }
         } else {
             // Scroll down (to hide padding)
-            if (fragment.getFirstVisibleItemPosition() == 0) {
+            if (fragment instanceof RecyclerFragment && ((RecyclerFragment) fragment).getFirstVisibleItemPosition() == 0) {
                 recyclerView.scrollVerticallyToPosition(1);
             }
         }
@@ -445,7 +443,14 @@ public class MainActivity extends BaseActivity implements
         findViewById(R.id.footer).bringToFront();
     }
 
+    @Override
     public int getMainPagerPosition() {
         return mViewPager.getCurrentItem();
     }
+
+    @Override
+    public int getLastFragmentPositionMain() {
+        return mLastFragmentPositionMain;
+    }
+
 }

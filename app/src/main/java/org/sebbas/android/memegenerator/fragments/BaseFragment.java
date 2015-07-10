@@ -49,4 +49,6 @@ public abstract class BaseFragment extends Fragment {
     }
 
     abstract public String getFragmentTag();
+
+    abstract public boolean isVisibleToUser();
 }

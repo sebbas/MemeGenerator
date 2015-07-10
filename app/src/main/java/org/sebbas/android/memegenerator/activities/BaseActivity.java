@@ -156,4 +156,8 @@ public abstract class BaseActivity extends AppCompatActivity {
             MenuItemCompat.collapseActionView(mSearchMenuItem);
         }
     }
+
+    abstract public int getMainPagerPosition();
+
+    abstract public int getLastFragmentPositionMain();
 }

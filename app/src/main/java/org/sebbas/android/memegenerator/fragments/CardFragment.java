@@ -11,19 +11,24 @@ import com.bumptech.glide.Glide;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
+import org.sebbas.android.memegenerator.activities.BaseActivity;
+import org.sebbas.android.memegenerator.activities.EditorActivity;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
 public class CardFragment extends BaseFragment implements ToolbarCallback {
 
     public static final String TAG = "CardFragment";
     private static final String ARG_LINE_ITEM = "lineItem";
+    private static final String ARG_POSITION_IN_PARENT = "ARG_POSITION_IN_PARENT";
 
     private LineItem mLineItem;
+    private int mPositionInParent;
 
-    public static CardFragment newInstance(LineItem lineItem) {
+    public static CardFragment newInstance(LineItem lineItem, int position) {
         CardFragment cardFragment = new CardFragment();
         Bundle args = new Bundle();
         args.putParcelable(ARG_LINE_ITEM, lineItem);
+        args.putInt(ARG_POSITION_IN_PARENT, position);
         cardFragment.setArguments(args);
         return cardFragment;
     }
@@ -31,7 +36,11 @@ public class CardFragment extends BaseFragment implements ToolbarCallback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mLineItem = getArguments().getParcelable(ARG_LINE_ITEM);
+        Bundle args = getArguments();
+        if (args != null) {
+            mLineItem = args.getParcelable(ARG_LINE_ITEM);
+            mPositionInParent = args.getInt(ARG_POSITION_IN_PARENT, 0);
+        }
     }
 
     @Override
@@ -56,6 +65,14 @@ public class CardFragment extends BaseFragment implements ToolbarCallback {
     @Override
     public String getFragmentTag() {
         return TAG;
+    }
+
+    @Override
+    public boolean isVisibleToUser() {
+        if (getActivity() != null) {
+            return ((BaseActivity) getActivity()).getMainPagerPosition() == mPositionInParent;
+        }
+        return false;
     }
 
     @Override

@@ -12,7 +12,6 @@ import org.sebbas.android.memegenerator.fragments.ExploreFragment;
 import org.sebbas.android.memegenerator.fragments.GalleryFragment;
 import org.sebbas.android.memegenerator.fragments.GifFragment;
 import org.sebbas.android.memegenerator.fragments.MemeFragment;
-import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +31,9 @@ public class Utils {
     public static final short NO_CONNECTION_HINT_TIME = 4000;
     public static final short TIMEOUT_HINT_TIME = 4000;
     private static final String NUMBERS_HEADER_LETTER = "#";
+    private static final String TIME = "time";
+    private static final String DEFAULT_USER_PREFERENCES = "users_preferences";
+    private static final int EPOCH_LOAD_OFFSET = 86400;
 
     private Utils() {
         // No instances
@@ -100,6 +102,31 @@ public class Utils {
                 location = DataLoader.INTERNET;
         }
         return location;
+    }
+
+    public static boolean isNetworkLoad(Context context, String fragmentTag) {
+        return (getLastEpochTime(context, fragmentTag) < getCurrentEpochTime() - EPOCH_LOAD_OFFSET);
+    }
+
+    public static void saveDate(Context context, String fragmentTag) {
+
+        // Only if one day has passed (current epoch time - one day in epoch < last time epoch saved)
+        // we update the time in the preferences
+        if (getLastEpochTime(context, fragmentTag) < getCurrentEpochTime() - EPOCH_LOAD_OFFSET) {
+            SharedPreferences sp = context.getSharedPreferences(DEFAULT_USER_PREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putLong(TIME, getCurrentEpochTime());
+            editor.commit();
+        }
+    }
+
+    private static long getLastEpochTime(Context context, String fragmentTag) {
+        SharedPreferences sp = context.getSharedPreferences(fragmentTag, Context.MODE_PRIVATE);
+        return sp.getLong(TIME, -1);
+    }
+
+    private static long getCurrentEpochTime() {
+        return System.currentTimeMillis() / 1000;
     }
 
     /*
@@ -196,26 +223,26 @@ public class Utils {
         }
     }
 
-    public static ArrayList<String> getListString(Context context, String fragmentType, String key) {
-        SharedPreferences preferences = context.getSharedPreferences(fragmentType, Context.MODE_PRIVATE);
+    public static ArrayList<String> getListString(Context context, String fragmentTag, String key) {
+        SharedPreferences preferences = context.getSharedPreferences(fragmentTag, Context.MODE_PRIVATE);
         return new ArrayList<>(Arrays.asList(TextUtils.split(preferences.getString(key, ""), "‚‗‚")));
     }
 
-    public static void putListString(Context context, String fragmentType, List<String> stringList, String key) {
-        SharedPreferences preferences = context.getSharedPreferences(fragmentType, Context.MODE_PRIVATE);
+    public static void putListString(Context context, String fragmentTag, List<String> stringList, String key) {
+        SharedPreferences preferences = context.getSharedPreferences(fragmentTag, Context.MODE_PRIVATE);
         String[] myStringList = stringList.toArray(new String[stringList.size()]);
         preferences.edit().putString(key, TextUtils.join("‚‗‚", myStringList)).apply();
     }
 
-    public static ArrayList<Integer> getListInteger(Context context, String fragmentType, String key) {
-        SharedPreferences preferences = context.getSharedPreferences(fragmentType, Context.MODE_PRIVATE);
+    public static ArrayList<Integer> getListInteger(Context context, String fragmentTag, String key) {
+        SharedPreferences preferences = context.getSharedPreferences(fragmentTag, Context.MODE_PRIVATE);
         String[] strings = TextUtils.split(preferences.getString(key, ""), "‚‗‚");
         Integer[] ints = stringArrayToIntArray(strings);
         return new ArrayList<>(Arrays.asList(ints));
     }
 
-    public static void putListInteger(Context context, String fragmentType, List<Integer> integerList, String key) {
-        SharedPreferences preferences = context.getSharedPreferences(fragmentType, Context.MODE_PRIVATE);
+    public static void putListInteger(Context context, String fragmentTag, List<Integer> integerList, String key) {
+        SharedPreferences preferences = context.getSharedPreferences(fragmentTag, Context.MODE_PRIVATE);
         Integer[] myIntegerList = integerList.toArray(new Integer[integerList.size()]);
         preferences.edit().putString(key, TextUtils.join("‚‗‚", myIntegerList)).apply();
     }

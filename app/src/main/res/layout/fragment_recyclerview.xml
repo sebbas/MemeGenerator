@@ -10,6 +10,7 @@
 
     <RelativeLayout
         android:id="@+id/recycler_container"
+        android:clickable="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -35,7 +36,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             app:cpv_indeterminate="true"
-            app:cpv_thickness="5dp"
+            app:cpv_thickness="4dp"
             app:cpv_color="@color/accent"/>
     </RelativeLayout>
 

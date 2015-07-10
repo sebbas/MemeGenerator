@@ -24,14 +24,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.makeramen.roundedimageview.RoundedImageView;
 import com.tonicartos.superslim.GridSLM;
 
-import org.sebbas.android.memegenerator.BubbleTextGetter;
+import org.sebbas.android.memegenerator.interfaces.BubbleTextGetter;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.TopicsDetailGridAdapter;
@@ -45,7 +44,7 @@ import java.util.List;
 
 
 public class RecyclerFragmentAdapter extends
-        RecyclerView.Adapter<RecyclerFragmentAdapter.MainViewHolder> implements SectionIndexer, BubbleTextGetter {
+        RecyclerView.Adapter<RecyclerFragmentAdapter.MainViewHolder> implements /*SectionIndexer,*/ BubbleTextGetter {
 
     private static final String TAG = "RecyclerFragmentAdapter";
     private static final int VIEW_TYPE_FILLER = 0;
@@ -62,7 +61,7 @@ public class RecyclerFragmentAdapter extends
     public RecyclerFragmentAdapter(Context context, ArrayList<LineItem> lineItems, int itemType) {
         mContext = context;
         mLineItems = lineItems;
-        mSectionItems = getSectionItems();
+        //mSectionItems = getSectionItems();
         mItemType = itemType;
     }
 
@@ -165,7 +164,7 @@ public class RecyclerFragmentAdapter extends
                 // Set text and image
                 CardViewHolder cardViewHolder = (CardViewHolder) viewHolder;
                 Glide.with(mContext)
-                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
+                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_SMALL))
                         .asBitmap()
                         .centerCrop()
                         .into(cardViewHolder.imageView);
@@ -175,7 +174,7 @@ public class RecyclerFragmentAdapter extends
                 SuperSlimViewHolder superSlimViewHolder = (SuperSlimViewHolder) viewHolder;
                 superSlimViewHolder.textViewTitle.setText(item.getTitle());
                 Glide.with(mContext)
-                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
+                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_SMALL))
                         .asBitmap()
                         .centerCrop()
                         .into(superSlimViewHolder.imageView);
@@ -280,16 +279,12 @@ public class RecyclerFragmentAdapter extends
         }
     }
 
-    public void refreshUI() {
-        this.notifyDataSetChanged();
-    }
-
     public void setLineItems(ArrayList <LineItem> lineItems) {
         mLineItems.clear();
         mLineItems = lineItems;
     }
 
-    public ArrayList<Character> getSectionItems() {
+    /*public ArrayList<Character> getSectionItems() {
         ArrayList<Character> sectionItems = new ArrayList<>();
         char headerCurrentHeaderLetter = '\0';
 
@@ -331,7 +326,7 @@ public class RecyclerFragmentAdapter extends
         int letterPosition = mSectionItems.indexOf(letter);
 
         return letterPosition;
-    }
+    }*/
 
     // Returns position of item not regarding any padding or header items in line item list
     private int getContentPosition(int position) {
