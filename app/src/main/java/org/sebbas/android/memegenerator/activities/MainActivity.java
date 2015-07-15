@@ -18,7 +18,6 @@ import com.nineoldandroids.view.ViewPropertyAnimator;
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
-import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.adapter.MainActivityAdapter;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.fragments.MemeFragment;

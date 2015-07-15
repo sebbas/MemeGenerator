@@ -18,35 +18,45 @@ public class GalleryFragmentAdapter extends SlidingTabsAdapter {
     @Override
     public Fragment getItem(int position) {
         Fragment fragment;
+        boolean isRefreshable, isNetworkEnabled;
+
 
         switch (position) {
             case 0:
+                isRefreshable = false;
+                isNetworkEnabled = true;
                 fragment = RecyclerFragment.newInstance(
                         GalleryFragment.TAG_CHILD_ONE,
                         RecyclerFragment.GRID_LAYOUT,
                         RecyclerFragment.CARD,
-                        false, position);
+                        isRefreshable, position, isNetworkEnabled);
                 break;
             case 1:
+                isRefreshable = false;
+                isNetworkEnabled = true;
                 fragment = RecyclerFragment.newInstance(
                         GalleryFragment.TAG_CHILD_TWO,
                         RecyclerFragment.GRID_LAYOUT,
                         RecyclerFragment.CARD,
-                        false, position);
+                        isRefreshable, position, isNetworkEnabled);
                 break;
             case 2:
+                isRefreshable = false;
+                isNetworkEnabled = true;
                 fragment = RecyclerFragment.newInstance(
                         GalleryFragment.TAG_CHILD_THREE,
                         RecyclerFragment.GRID_LAYOUT,
                         RecyclerFragment.CARD,
-                        false, position);
+                        isRefreshable, position, isNetworkEnabled);
                 break;
             default:
+                isRefreshable = false;
+                isNetworkEnabled = true;
                 fragment = RecyclerFragment.newInstance(
                         GalleryFragment.TAG_CHILD_ONE,
                         RecyclerFragment.GRID_LAYOUT,
                         RecyclerFragment.CARD,
-                        false, position);
+                        isRefreshable, position, isNetworkEnabled);
         }
         return fragment;
     }

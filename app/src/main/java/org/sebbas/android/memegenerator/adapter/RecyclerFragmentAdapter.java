@@ -52,6 +52,8 @@ public class RecyclerFragmentAdapter extends
     private static final int VIEW_TYPE_CARD = 2;
     private static final int VIEW_TYPE_SUPER_SLIM = 3;
     private static final int VIEW_TYPE_TOPICS = 4;
+    private static final int VIEW_TYPE_TOPICS_DETAIL = 5;
+    private static final int VIEW_TYPE_SIMPLE = 6;
 
     private ArrayList<LineItem> mLineItems;
     private List<Character> mSectionItems;
@@ -82,6 +84,10 @@ public class RecyclerFragmentAdapter extends
                 return VIEW_TYPE_SUPER_SLIM;
             case RecyclerFragment.EXPLORE:
                 return VIEW_TYPE_TOPICS;
+            case RecyclerFragment.EXPLORE_DETAIL:
+                return VIEW_TYPE_TOPICS_DETAIL;
+            case RecyclerFragment.SIMPLE:
+                return VIEW_TYPE_SIMPLE;
             default:
                 return VIEW_TYPE_CARD;
         }
@@ -133,7 +139,15 @@ public class RecyclerFragmentAdapter extends
                 break;
             case VIEW_TYPE_TOPICS:
                 view = inflater.inflate(R.layout.topics_item, parent, false);
-                mainViewHolder = new TopicsHeaderViewHolder(view, viewHolderCallback);
+                mainViewHolder = new TopicsViewHolder(view, viewHolderCallback);
+                break;
+            case VIEW_TYPE_TOPICS_DETAIL:
+                view = inflater.inflate(R.layout.topics_detail_item, parent, false);
+                mainViewHolder = new TopicsDetailViewHolder(view, viewHolderCallback);
+                break;
+            case VIEW_TYPE_SIMPLE:
+                view = inflater.inflate(R.layout.simple_item, parent, false);
+                mainViewHolder = new SimpleItemViewHolder(view, viewHolderCallback);
                 break;
             default:
                 view = inflater.inflate(R.layout.toolbar_padding, parent, false);
@@ -164,7 +178,7 @@ public class RecyclerFragmentAdapter extends
                 // Set text and image
                 CardViewHolder cardViewHolder = (CardViewHolder) viewHolder;
                 Glide.with(mContext)
-                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_SMALL))
+                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
                         .asBitmap()
                         .centerCrop()
                         .into(cardViewHolder.imageView);
@@ -174,22 +188,39 @@ public class RecyclerFragmentAdapter extends
                 SuperSlimViewHolder superSlimViewHolder = (SuperSlimViewHolder) viewHolder;
                 superSlimViewHolder.textViewTitle.setText(item.getTitle());
                 Glide.with(mContext)
-                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_SMALL))
+                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
                         .asBitmap()
                         .centerCrop()
                         .into(superSlimViewHolder.imageView);
                 break;
             case VIEW_TYPE_TOPICS:
-                TopicsHeaderViewHolder topicsHeaderViewHolder = (TopicsHeaderViewHolder) viewHolder;
-                topicsHeaderViewHolder.textViewTitle.setText(item.getTitle());
+                TopicsViewHolder topicsViewHolder = (TopicsViewHolder) viewHolder;
+                topicsViewHolder.textViewTitle.setText(item.getTitle());
                 Glide.with(mContext)
                         .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_SMALL))
                         .asBitmap()
                         .centerCrop()
-                        .into(topicsHeaderViewHolder.imageView);
-                topicsHeaderViewHolder.gridView.setAdapter(new TopicsDetailGridAdapter(mContext, new ArrayList<>(randomSubList(getContentItems(mLineItems), 6)) /*new ArrayList<>(mLineItems.subList(1, 6))*/));
-
+                        .into(topicsViewHolder.imageView);
+                topicsViewHolder.gridView.setAdapter(new TopicsDetailGridAdapter(mContext, new ArrayList<>(randomSubList(getContentItems(mLineItems), 6)) /*new ArrayList<>(mLineItems.subList(1, 6))*/));
                 break;
+            case VIEW_TYPE_TOPICS_DETAIL:
+                TopicsDetailViewHolder topicsDetailViewHolder = (TopicsDetailViewHolder) viewHolder;
+                topicsDetailViewHolder.textViewTitle.setText(item.getTitle());
+                Glide.with(mContext)
+                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_MEDIUM))
+                        .asBitmap()
+                        .centerCrop()
+                        .into(topicsDetailViewHolder.imageView);
+                Glide.with(mContext)
+                        .load(Utils.imageUrlToThumbnailUrl(item.getImageUrl(), item.getImageId(), Utils.IMAGE_SMALL))
+                        .asBitmap()
+                        .centerCrop()
+                        .into(topicsDetailViewHolder.imageViewIcon);
+                break;
+            case VIEW_TYPE_SIMPLE:
+                SimpleItemViewHolder simpleItemViewHolder = (SimpleItemViewHolder) viewHolder;
+                simpleItemViewHolder.textViewTitle.setText(item.getTitle());
+                simpleItemViewHolder.itemIcon.setImageResource(Integer.valueOf(item.getImageUrl()));
         }
     }
 
@@ -204,11 +235,52 @@ public class RecyclerFragmentAdapter extends
         return Character.toString(mLineItems.get(position).getTitle().charAt(0));
     }
 
-    public static class TopicsHeaderViewHolder extends RecyclerFragmentAdapter.MainViewHolder implements View.OnClickListener, AdapterView.OnItemClickListener {
+    static class SimpleItemViewHolder extends RecyclerFragmentAdapter.MainViewHolder implements View.OnClickListener {
+        ImageView itemIcon;
+        ViewHolderCallback mViewHolderCallback;
+
+        public SimpleItemViewHolder(View view, ViewHolderCallback viewHolderCallback) {
+            super(view, viewHolderCallback);
+            view.setOnClickListener(this);
+
+            itemIcon = (ImageView) view.findViewById(R.id.item_image);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mViewHolderCallback.onItemClick(getLayoutPosition());
+        }
+
+    }
+
+    static class TopicsDetailViewHolder extends RecyclerFragmentAdapter.MainViewHolder implements View.OnClickListener, AdapterView.OnItemClickListener {
+        ImageView imageViewIcon;
+        ImageView imageView;
+
+        public TopicsDetailViewHolder(View view, ViewHolderCallback viewHolderCallback) {
+            super(view, viewHolderCallback);
+
+            imageViewIcon = (ImageView) view.findViewById(R.id.item_image_icon);
+            imageView = (ImageView) view.findViewById(R.id.item_image);
+            imageViewIcon.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mViewHolderCallback.onItemClick(getLayoutPosition());
+        }
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            mViewHolderCallback.onItemClick(getLayoutPosition() + position);
+        }
+    }
+
+    static class TopicsViewHolder extends RecyclerFragmentAdapter.MainViewHolder implements View.OnClickListener, AdapterView.OnItemClickListener {
         ImageView imageView;
         GridView gridView;
 
-        public TopicsHeaderViewHolder(View view, ViewHolderCallback viewHolderCallback) {
+        public TopicsViewHolder(View view, ViewHolderCallback viewHolderCallback) {
             super(view, viewHolderCallback);
             view.setOnClickListener(this);
 

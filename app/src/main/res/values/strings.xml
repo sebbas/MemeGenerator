@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Meme Generator</string>
+    <string name="app_name">Memerific</string>
 
     <!-- Main tabs titles -->
     <string name="memes">Memes</string>
@@ -22,7 +22,6 @@
     <string name="favorites">Favorites</string>
     <string name="recent">Recent</string>
 
-
     <!-- Toolbar icons -->
     <string name="action_settings">Settings</string>
     <string name="action_search">Search Meme</string>
@@ -40,19 +39,23 @@
 
     <!-- Explore fragment string -->
     <string name="follow">Follow</string>
+    <string name="following">Following</string>
+    <string name="topics">Topics</string>
 
     <!-- Settings fragment strings -->
     <string-array name="more_line_item_titles">
-        <item>General</item>
+        <item>Help</item>
         <item>View</item>
         <item>Cache</item>
-        <item>About</item>
+        <item>Suggestions</item>
+        <item>Report a problem</item>
     </string-array>
     <string-array name="more_line_item_icons">
-        <item>@drawable/ic_launcher</item>
-        <item>@drawable/ic_launcher</item>
-        <item>@drawable/ic_launcher</item>
-        <item>@drawable/ic_launcher</item>
+        <item>@drawable/ic_help_grey600_24dp</item>
+        <item>@drawable/ic_help_grey600_24dp</item>
+        <item>@drawable/ic_storage_grey600_24dp</item>
+        <item>@drawable/ic_help_grey600_24dp</item>
+        <item>@drawable/ic_bug_report_grey600_24dp</item>
     </string-array>
 
     <!-- Preferences strings -->
@@ -60,8 +63,8 @@
     <string name="preference_download_favorites">Download favorite memes</string>
 
     <!-- Editor strings -->
-    <string name="editor_top_text">Top text</string>
-    <string name="editor_bottom_text">Bottom text</string>
+    <string name="top_text">Top text</string>
+    <string name="bottom_text">Bottom text</string>
 
 
     <!-- Google card strings -->

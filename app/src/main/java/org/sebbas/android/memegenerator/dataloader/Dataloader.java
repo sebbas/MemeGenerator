@@ -1,6 +1,7 @@
 package org.sebbas.android.memegenerator.dataloader;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.Log;
@@ -15,6 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.sebbas.android.memegenerator.LineItem;
+import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.fragments.RecyclerFragment;
 import org.sebbas.android.memegenerator.interfaces.DataLoaderCallback;
@@ -158,6 +160,22 @@ public class DataLoader implements Filterable {
         return resultItems;
     }
 
+    private ArrayList<LineItem> generateStaticLineItems() {
+        ArrayList<LineItem> resultItems = new ArrayList<>();
+
+        String[] lineItemTitles = mContext.getResources().getStringArray(R.array.more_line_item_titles);
+        TypedArray lineItemIcons = mContext.getResources().obtainTypedArray(R.array.more_line_item_icons);
+        clearLists();
+
+        for (int i = 0; i < lineItemTitles.length; i++) {
+            mImageUrls.add(Integer.toString(lineItemIcons.getResourceId(i, -1)));
+            mTitles.add(lineItemTitles[i]);
+
+            resultItems.add(LineItem.newInstance(getTitleAt(i), getImageUrlAt(i), null, null, null, 0, 0, false, 0, 0, 0));
+        }
+        return resultItems;
+    }
+
     private boolean isAllowedPosition(int i) {
         // List of excluded items is empty -> all items are allowed
         if (mExcludedLineItemPositions == null || mExcludedLineItemPositions.isEmpty()) {
@@ -193,6 +211,14 @@ public class DataLoader implements Filterable {
                     mLineItems = generateLineItems();
                     break;
                 case RecyclerFragment.EXPLORE:
+                    mLineItems = generateLineItems();
+                    break;
+                case RecyclerFragment.EXPLORE_DETAIL:
+                    mLineItems = generateLineItems();
+                    break;
+                case RecyclerFragment.SIMPLE:
+                    mLineItems = generateStaticLineItems();
+                default:
                     mLineItems = generateLineItems();
                     break;
             }

@@ -2,7 +2,6 @@ package org.sebbas.android.memegenerator.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.text.Spannable;
@@ -14,7 +13,7 @@ import org.sebbas.android.memegenerator.fragments.ExploreFragment;
 import org.sebbas.android.memegenerator.fragments.GalleryFragment;
 import org.sebbas.android.memegenerator.fragments.GifFragment;
 import org.sebbas.android.memegenerator.fragments.MemeFragment;
-import org.sebbas.android.memegenerator.fragments.ChartFragment;
+import org.sebbas.android.memegenerator.fragments.MoreFragment;
 
 public class MainActivityAdapter extends SlidingTabsAdapter {
 
@@ -25,7 +24,7 @@ public class MainActivityAdapter extends SlidingTabsAdapter {
             R.drawable.selector_gif_icon,
             R.drawable.selector_explore_icon,
             R.drawable.selector_gallery_icon,
-            R.drawable.selector_chart_icon};
+            R.drawable.selector_more_icon};
 
     private Context mContext;
 
@@ -52,7 +51,7 @@ public class MainActivityAdapter extends SlidingTabsAdapter {
                 fragment = GalleryFragment.newInstance(position);
                 break;
             case 4:
-                fragment = ChartFragment.newInstance(position);
+                fragment = MoreFragment.newInstance(position);
                 break;
             default:
                 fragment = MemeFragment.newInstance(position);

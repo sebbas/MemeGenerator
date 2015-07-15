@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/margin_standard"
     android:paddingLeft="@dimen/margin_standard"
     android:paddingTop="@dimen/margin_standard"
     android:paddingRight="@dimen/margin_standard"
@@ -17,7 +17,6 @@
         android:orientation="horizontal">
 
         <com.makeramen.roundedimageview.RoundedImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/item_image"
             android:layout_width="70dp"
             android:layout_height="70dp"

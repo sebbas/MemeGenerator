@@ -7,7 +7,7 @@ import android.net.NetworkInfo;
 import android.text.TextUtils;
 
 import org.sebbas.android.memegenerator.dataloader.DataLoader;
-import org.sebbas.android.memegenerator.fragments.ChartFragment;
+import org.sebbas.android.memegenerator.fragments.MoreFragment;
 import org.sebbas.android.memegenerator.fragments.ExploreFragment;
 import org.sebbas.android.memegenerator.fragments.GalleryFragment;
 import org.sebbas.android.memegenerator.fragments.GifFragment;
@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Utils {
+
+    private static final String TAG = "Utils";
 
     public static final String IMAGE_TINY = "s";
     public static final String IMAGE_SMALL = "t";
@@ -32,7 +34,6 @@ public class Utils {
     public static final short TIMEOUT_HINT_TIME = 4000;
     private static final String NUMBERS_HEADER_LETTER = "#";
     private static final String TIME = "time";
-    private static final String DEFAULT_USER_PREFERENCES = "users_preferences";
     private static final int EPOCH_LOAD_OFFSET = 86400;
 
     private Utils() {
@@ -64,7 +65,8 @@ public class Utils {
             case GifFragment.TAG_CHILD_THREE:
                 url = GIFS;
                 break;
-            case ExploreFragment.TAG:
+            case ExploreFragment.TAG_CHILD_ONE:
+            case ExploreFragment.TAG_CHILD_TWO:
                 url = MEMES;
                 break;
             case GalleryFragment.TAG_CHILD_ONE:
@@ -72,7 +74,7 @@ public class Utils {
             case GalleryFragment.TAG_CHILD_THREE:
                 url = GIFS;
                 break;
-            case ChartFragment.TAG:
+            case MoreFragment.TAG:
                 url = MEMES;
                 break;
         }
@@ -92,10 +94,11 @@ public class Utils {
             case GalleryFragment.TAG_CHILD_ONE:
             case GalleryFragment.TAG_CHILD_TWO:
             case GalleryFragment.TAG_CHILD_THREE:
-            case ExploreFragment.TAG:
+            case ExploreFragment.TAG_CHILD_ONE:
+            case ExploreFragment.TAG_CHILD_TWO:
                 location = DataLoader.INTERNET;
                 break;
-            case ChartFragment.TAG:
+            case MoreFragment.TAG:
                 location = DataLoader.RESOURCE;
                 break;
             default:
@@ -113,7 +116,8 @@ public class Utils {
         // Only if one day has passed (current epoch time - one day in epoch < last time epoch saved)
         // we update the time in the preferences
         if (getLastEpochTime(context, fragmentTag) < getCurrentEpochTime() - EPOCH_LOAD_OFFSET) {
-            SharedPreferences sp = context.getSharedPreferences(DEFAULT_USER_PREFERENCES, Context.MODE_PRIVATE);
+
+            SharedPreferences sp = context.getSharedPreferences(fragmentTag, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
             editor.putLong(TIME, getCurrentEpochTime());
             editor.commit();

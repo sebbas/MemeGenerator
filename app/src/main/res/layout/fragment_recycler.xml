@@ -10,7 +10,6 @@
 
     <RelativeLayout
         android:id="@+id/recycler_container"
-        android:clickable="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

@@ -1,16 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.sebbas.android.memegenerator.TopicsDetailGridView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/topics_grid"
-    android:numColumns="3"
-    android:gravity="center"
-    android:columnWidth="100dp"
-    android:stretchMode="columnWidth"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:horizontalSpacing="2dp"
-    android:verticalSpacing="2dp"
-    android:paddingLeft="@dimen/margin_standard"
-    android:paddingTop="@dimen/margin_short"
-    android:paddingRight="@dimen/margin_standard"
-    android:paddingBottom="@dimen/margin_standard" />
+    android:paddingTop="@dimen/margin_standard"
+    android:paddingBottom="@dimen/margin_short"
+    android:orientation="horizontal">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/topics_header"
+        android:paddingRight="@dimen/margin_standard"
+        android:paddingLeft="@dimen/margin_standard"
+        android:layout_marginBottom="@dimen/margin_standard"
+        android:orientation="horizontal">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/item_image_icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@color/primary"
+            android:layout_centerVertical="true"
+            app:riv_corner_radius="250dp"
+            app:riv_mutate_background="true"
+            app:riv_border_width="0.5dp"
+            app:riv_border_color="@color/divider"
+            app:riv_oval="false" />
+
+        <TextView
+            style="@android:style/TextAppearance.DeviceDefault.Medium.Inverse"
+            android:id="@+id/item_title"
+            android:text="No title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:ellipsize="marquee"
+            android:singleLine="false"
+            android:minLines="1"
+            android:textStyle="bold"
+            android:layout_toRightOf="@+id/item_image_icon"
+            android:paddingLeft="@dimen/margin_short"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/primaryText"/>
+
+        <TextView
+            style="@android:style/TextAppearance.DeviceDefault.Small.Inverse"
+            android:id="@+id/item_time"
+            android:text="3h ago"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:ellipsize="marquee"
+            android:singleLine="false"
+            android:minLines="1"
+            android:layout_alignParentRight="true"
+            android:paddingLeft="@dimen/margin_short"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
+            android:textColor="@color/primaryText"/>
+
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/item_image"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:src="@color/primary"
+        android:layout_below="@+id/topics_header"/>
+
+
+</RelativeLayout>

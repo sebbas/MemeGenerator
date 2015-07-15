@@ -1,6 +1,5 @@
 package org.sebbas.android.memegenerator.fragments;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -41,14 +40,15 @@ public class RecyclerFragment extends BaseFragment implements
         SwipeRefreshLayout.OnRefreshListener, DataLoaderCallback, SnackBar.OnMessageClickListener, ToolbarCallback {
 
     private static final String TAG = "RecyclerFragment";
-    private static final String LINE_ITEMS = "lineItems";
 
     // Keys for values in bundle
-    private static final String ARG_FRAGMENT_TYPE = "ARG_FRAGMENT_TYPE";
+    private static final String ARG_FRAGMENT_TAG = "ARG_FRAGMENT_TAG";
     private static final String ARG_LAYOUT_MODE = "ARG_LAYOUT_MODE";
     private static final String ARG_ITEM_TYPE = "ARG_ITEM_TYPE";
     private static final String ARG_IS_REFRESHABLE = "ARG_IS_REFRESHABLE";
     private static final String ARG_POSITION_IN_PARENT = "ARG_POSITION_IN_PARENT";
+    private static final String ARG_WITH_NETWORK_LOAD = "ARG_WITH_NETWORK_LOAD";
+
 
     // Layout mode
     public static final int GRID_LAYOUT = 0;
@@ -58,11 +58,13 @@ public class RecyclerFragment extends BaseFragment implements
     public static final int CARD = 2;
     public static final int SUPER_SLIM = 3;
     public static final int EXPLORE = 4;
+    public static final int EXPLORE_DETAIL = 5;
+    public static final int SIMPLE = 6;
 
     // Specific setup for grid layout
     private static final int GRID_COLUMN_COUNT = 3;
     private static final int GRID_SPACING = 5;
-    private static final boolean GRID_INCLUDE_EDGE = false;
+    private static final boolean GRID_INCLUDE_EDGE = true;
 
     private MultiSwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerFragmentAdapter mRecyclerFragmentAdapter;
@@ -75,18 +77,21 @@ public class RecyclerFragment extends BaseFragment implements
     private RecyclerView.AdapterDataObserver mAdapterObserver;
     private DataLoader mDataLoader;
     private int mPositionInParent;
+    private boolean mIsNetworkEnabled;
     private FastScroller mFastScroller;
 
     protected ArrayList<LineItem> mLineItems;
 
-    public static RecyclerFragment newInstance(String tag, int layoutMode, int itemType, boolean isRefreshable, int position) {
+    public static RecyclerFragment newInstance(String tag, int layoutMode, int itemType,
+                                               boolean isRefreshable, int position, boolean withNetworkLoad) {
         RecyclerFragment fragment = new RecyclerFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_FRAGMENT_TYPE, tag);
+        args.putString(ARG_FRAGMENT_TAG, tag);
         args.putInt(ARG_LAYOUT_MODE, layoutMode);
         args.putInt(ARG_ITEM_TYPE, itemType);
         args.putBoolean(ARG_IS_REFRESHABLE, isRefreshable);
         args.putInt(ARG_POSITION_IN_PARENT, position);
+        args.putBoolean(ARG_WITH_NETWORK_LOAD, withNetworkLoad);
         fragment.setArguments(args);
         return fragment;
     }
@@ -96,37 +101,30 @@ public class RecyclerFragment extends BaseFragment implements
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            mFragmentTag = args.getString(ARG_FRAGMENT_TYPE);
+            mFragmentTag = args.getString(ARG_FRAGMENT_TAG);
             mLayoutMode = args.getInt(ARG_LAYOUT_MODE);
             mItemType = args.getInt(ARG_ITEM_TYPE);
             mIsRefreshable = args.getBoolean(ARG_IS_REFRESHABLE, false);
             mPositionInParent = args.getInt(ARG_POSITION_IN_PARENT, 0);
+            mIsNetworkEnabled = args.getBoolean(ARG_WITH_NETWORK_LOAD, false);
         }
         mDataLoader = new DataLoader(this);
 
-        int location = Utils.getLoadingLocation(mFragmentTag);
-        String url = Utils.getDataUrl(mFragmentTag);
-        boolean isNetworkLoad = Utils.isNetworkLoad(getActivity(), mFragmentTag);
-        mDataLoader.loadData(location, url, isNetworkLoad);
+        if (mIsNetworkEnabled) {
+            int location = Utils.getLoadingLocation(mFragmentTag);
+            String url = Utils.getDataUrl(mFragmentTag);
+            boolean loadNow = Utils.isNetworkLoad(getActivity(), mFragmentTag);
+            mDataLoader.loadData(location, url, loadNow);
+        } else {
+            mDataLoader.loadLineItems(mItemType);
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View rootView = inflater.inflate(R.layout.fragment_recyclerview, container, false);
-
-        init(rootView);
-        return rootView;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Utils.saveDate(getActivity(), mFragmentTag);
-    }
-
-    private void init(View view) {
+        View view = inflater.inflate(R.layout.fragment_recycler, container, false);
 
         mSwipeRefreshLayout = (MultiSwipeRefreshLayout) view.findViewById(R.id.recycler_swipe_refresh);
         mCircularProgressView = (CircularProgressView) view.findViewById(R.id.progress_view);
@@ -137,9 +135,9 @@ public class RecyclerFragment extends BaseFragment implements
         mSwipeRefreshLayout.setEnabled(mIsRefreshable);
 
         // Set custom progress icon position because of toolbar and sliding tabs layout
-        //int tabHeight = getResources().getDimensionPixelOffset(R.dimen.tab_height);
-        //int offset = getActionBarSize() + tabHeight;
-        //mSwipeRefreshLayout.setProgressViewOffset(true, offset,offset + tabHeight);
+        int tabHeight = getResources().getDimensionPixelOffset(R.dimen.tab_height);
+        int offset = tabHeight;
+        mSwipeRefreshLayout.setProgressViewOffset(true, offset,offset + tabHeight);
 
         // Bring activity ui elements to front
         ((MainActivity) getActivity()).bringMainNavigationToFront();
@@ -149,6 +147,15 @@ public class RecyclerFragment extends BaseFragment implements
         setupFastScroller();
 
         super.onFragmentComplete(this);
+        return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mLineItems != null && mLineItems.size() > 0) {
+            Utils.saveDate(getActivity(), mFragmentTag);
+        }
     }
 
     private void setupRecyclerView() {
@@ -179,6 +186,11 @@ public class RecyclerFragment extends BaseFragment implements
                 mRecyclerView.setLayoutManager(new LayoutManager(getActivity()));
                 break;
             case LIST_LAYOUT + "|" + EXPLORE:
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+            case LIST_LAYOUT + "|" + EXPLORE_DETAIL:
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            case LIST_LAYOUT + "|" + SIMPLE:
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                 mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
             default:

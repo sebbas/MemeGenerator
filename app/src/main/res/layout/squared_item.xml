@@ -2,6 +2,6 @@
 <org.sebbas.android.memegenerator.SquaredImageView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/item_image"
-    android:src="@color/accent"
+    android:src="@color/primary"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"/>

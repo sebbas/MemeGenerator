@@ -14,9 +14,7 @@ import com.bumptech.glide.Glide;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 
-import java.util.ArrayList;
-
-public class MoreRecyclerAdapter extends RecyclerView.Adapter<MoreRecyclerAdapter.MoreItemViewHolder> {
+public class StaticRecyclerAdapter extends RecyclerView.Adapter<StaticRecyclerAdapter.MoreItemViewHolder> {
 
     private static final int VIEW_TYPE_FILLER = 0;
     private static final int VIEW_TYPE_CONTENT = 1;
@@ -25,7 +23,7 @@ public class MoreRecyclerAdapter extends RecyclerView.Adapter<MoreRecyclerAdapte
     private String[] mLineItemTitles;
     private TypedArray mLineItemIcons;
 
-    public MoreRecyclerAdapter(Context context, int titleResourceArray, int iconResourceArray) {
+    public StaticRecyclerAdapter(Context context, int titleResourceArray, int iconResourceArray) {
         mContext = context;
         mLineItemTitles = context.getResources().getStringArray(titleResourceArray);
         mLineItemIcons = context.getResources().obtainTypedArray(iconResourceArray);
@@ -42,7 +40,7 @@ public class MoreRecyclerAdapter extends RecyclerView.Adapter<MoreRecyclerAdapte
     }
 
     @Override
-    public MoreRecyclerAdapter.MoreItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public StaticRecyclerAdapter.MoreItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         MoreItemViewHolder.ViewHolderCallback viewHolderCallback = new MoreItemViewHolder.ViewHolderCallback() {
             @Override
@@ -61,7 +59,7 @@ public class MoreRecyclerAdapter extends RecyclerView.Adapter<MoreRecyclerAdapte
         if (viewType == VIEW_TYPE_FILLER) {
             view = inflater.inflate(R.layout.toolbar_padding, parent, false);
         } else {
-            view = inflater.inflate(R.layout.more_item, parent, false);
+            view = inflater.inflate(R.layout.simple_item, parent, false);
         }
 
         return new MoreItemViewHolder(view, viewHolderCallback);
@@ -88,7 +86,7 @@ public class MoreRecyclerAdapter extends RecyclerView.Adapter<MoreRecyclerAdapte
             super(view);
             view.setOnClickListener(this);
 
-            itemIcon = (ImageView) view.findViewById(R.id.more_icon);
+            itemIcon = (ImageView) view.findViewById(R.id.item_image);
             mViewHolderCallback = viewHolderCallback;
 
         }

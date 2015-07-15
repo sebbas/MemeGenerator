@@ -15,7 +15,6 @@ import org.sebbas.android.memegenerator.Utils;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.fragments.SlidingTabsFragment;
 
-
 public abstract class SlidingTabsAdapter extends FragmentStatePagerAdapter {
 
     private static final String TAG = "SlidingTabsFragmentAdapter";

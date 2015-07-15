@@ -1,31 +1,27 @@
 package org.sebbas.android.memegenerator.activities;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.PersistableBundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.google.samples.apps.iosched.ui.widget.SlidingTabLayout;
-import com.nineoldandroids.view.ViewPropertyAnimator;
 
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
 import org.sebbas.android.memegenerator.ToggleSwipeViewPager;
+import org.sebbas.android.memegenerator.activities.BaseActivity;
 import org.sebbas.android.memegenerator.adapter.CardPagerAdapter;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-public class EditorActivity extends BaseActivity implements FragmentCallback, ToolbarCallback {
+
+public class BrowseActivity extends BaseActivity implements FragmentCallback, ToolbarCallback {
 
     public static final String TAG = "EditorActivity";
     public static final String START_POSITION = "startPosition";

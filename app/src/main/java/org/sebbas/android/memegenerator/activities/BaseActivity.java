@@ -16,7 +16,7 @@ import org.sebbas.android.memegenerator.fragments.ExploreFragment;
 import org.sebbas.android.memegenerator.fragments.GalleryFragment;
 import org.sebbas.android.memegenerator.fragments.GifFragment;
 import org.sebbas.android.memegenerator.fragments.MemeFragment;
-import org.sebbas.android.memegenerator.fragments.ChartFragment;
+import org.sebbas.android.memegenerator.fragments.MoreFragment;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
 public abstract class BaseActivity extends AppCompatActivity {
@@ -66,7 +66,10 @@ public abstract class BaseActivity extends AppCompatActivity {
                 menuResource = R.menu.menu_gifs;
                 break;
             case ExploreFragment.TAG:
+            case ExploreFragment.TAG_CHILD_ONE:
+            case ExploreFragment.TAG_CHILD_TWO:
                 titleResource = R.string.explore;
+                menuResource = R.menu.menu_explore;
                 break;
             case GalleryFragment.TAG:
             case GalleryFragment.TAG_CHILD_ONE:
@@ -75,7 +78,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 titleResource = R.string.gallery;
                 menuResource = R.menu.menu_gallery;
                 break;
-            case ChartFragment.TAG:
+            case MoreFragment.TAG:
                 titleResource = R.string.chart;
                 break;
             case EditorActivity.TAG:

@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.util.TypedValue;
 
 import org.sebbas.android.memegenerator.R;
+import org.sebbas.android.memegenerator.interfaces.DataLoaderCallback;
 import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 
 public abstract class BaseFragment extends Fragment {

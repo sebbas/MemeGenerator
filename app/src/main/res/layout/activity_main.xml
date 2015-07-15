@@ -41,6 +41,7 @@
         <!-- This view is used to create the elevation effect at the
         top of the bottom sliding tabs bar -->
         <View
+            android:visibility="gone"
             android:id="@+id/toolbar_shadow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/shadow_height"
@@ -68,6 +69,7 @@
         <!-- This view is used to create the elevation effect at the
         top of the bottom sliding tabs bar -->
         <View
+            android:visibility="gone"
             android:id="@+id/footer_shadow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/shadow_height"
