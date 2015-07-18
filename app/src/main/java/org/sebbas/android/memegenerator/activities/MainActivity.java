@@ -431,9 +431,12 @@ public class MainActivity extends BaseActivity implements
 
     @Override
     public void onItemClick(int contentPosition, ArrayList<LineItem> contentItems) {
-        Intent editorIntent = new Intent(this, EditorActivity.class);
+        /*Intent editorIntent = new Intent(this, EditorActivity.class);
         editorIntent.putExtra(EditorActivity.START_POSITION, contentPosition);
         editorIntent.putExtra(EditorActivity.LINE_ITEMS, contentItems);
+        startActivity(editorIntent);*/
+        Intent editorIntent = new Intent(this, EditActivity.class);
+        editorIntent.putExtra(EditActivity.LINE_ITEM, contentItems.get(contentPosition));
         startActivity(editorIntent);
     }
 

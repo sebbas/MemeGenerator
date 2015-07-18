@@ -43,7 +43,7 @@
             android:id="@+id/toolbar_shadow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/shadow_height"
-            android:background="@drawable/toolbar_shadow"/>
+            android:background="@drawable/shadow_toolbar"/>
     </LinearLayout>
 
     <LinearLayout

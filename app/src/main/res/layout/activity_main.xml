@@ -41,11 +41,10 @@
         <!-- This view is used to create the elevation effect at the
         top of the bottom sliding tabs bar -->
         <View
-            android:visibility="gone"
             android:id="@+id/toolbar_shadow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/shadow_height"
-            android:background="@drawable/toolbar_shadow"/>
+            android:background="@drawable/shadow_toolbar"/>
     </LinearLayout>
 
     <FrameLayout
@@ -69,11 +68,10 @@
         <!-- This view is used to create the elevation effect at the
         top of the bottom sliding tabs bar -->
         <View
-            android:visibility="gone"
             android:id="@+id/footer_shadow"
             android:layout_width="match_parent"
             android:layout_height="@dimen/shadow_height"
-            android:background="@drawable/footer_shadow"
+            android:background="@drawable/shadow_footer"
             android:layout_above="@+id/sliding_tabs_main_navigation" />
 
         <com.google.samples.apps.iosched.ui.widget.SlidingTabLayout

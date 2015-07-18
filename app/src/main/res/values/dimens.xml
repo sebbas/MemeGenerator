@@ -51,6 +51,6 @@
 
     <dimen name="fast_scroller_width">24dp</dimen>
 
-    <dimen name="shadow_height">6dp</dimen>
+    <dimen name="shadow_height">3dp</dimen>
 
 </resources>

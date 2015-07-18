@@ -258,4 +258,8 @@ public class Utils {
         }
         return intArray;
     }
+    public static float spToPixels(Context context, Float sp) {
+        float scaledDensity = context.getResources().getDisplayMetrics().scaledDensity;
+        return sp*scaledDensity;
+    }
 }

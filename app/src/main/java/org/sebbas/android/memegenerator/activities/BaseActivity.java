@@ -81,7 +81,7 @@ public abstract class BaseActivity extends AppCompatActivity {
             case MoreFragment.TAG:
                 titleResource = R.string.chart;
                 break;
-            case EditorActivity.TAG:
+            case EditActivity.TAG:
                 titleResource = R.string.editor;
                 menuResource = R.menu.menu_editor;
                 toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
