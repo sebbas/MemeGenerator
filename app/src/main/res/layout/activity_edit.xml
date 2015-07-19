@@ -90,44 +90,101 @@
             android:background="@color/primary"
             android:padding="@dimen/margin_extra_short">
 
-            <LinearLayout
+            <EditText
+                android:id="@+id/edit_text_one"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textAndIcons"
+                android:textColorHint="@color/textAndIcons"
+                android:hint="@string/top_text"
+                android:layout_margin="@dimen/margin_extra_short" />
+
+            <EditText
+                android:id="@+id/edit_text_two"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textAndIcons"
+                android:textColorHint="@color/textAndIcons"
+                android:hint="@string/bottom_text"
+                android:layout_margin="@dimen/margin_extra_short" />
+
+            <!--<RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
                 <EditText
                     android:id="@+id/edit_text_one"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:textColor="@color/textAndIcons"
                     android:textColorHint="@color/textAndIcons"
                     android:hint="@string/top_text"
-                    android:layout_width="273dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_extra_short"
-                    android:layout_marginTop="@dimen/margin_extra_short"
-                    android:layout_marginBottom="@dimen/margin_extra_short" />
+                    android:layout_margin="@dimen/margin_extra_short"
+                    android:layout_toLeftOf="@+id/button_one_plus"
+                    android:layout_toStartOf="@+id/button_one_plus" />
 
                 <Button
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:text="+"
-                    android:id="@+id/button_one" />
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="@string/plus"
+                    android:textColor="@color/textAndIcons"
+                    android:background="@drawable/custom_button"
+                    android:id="@+id/button_one_plus"
+                    android:layout_margin="@dimen/margin_extra_short"
+                    android:layout_toLeftOf="@+id/button_one_minus"
+                    android:layout_toStartOf="@+id/button_one_minus" />
 
                 <Button
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:text="-"
-                    android:id="@+id/button_two" />
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="@string/minus"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="@dimen/margin_extra_short"
+                    android:textColor="@color/textAndIcons"
+                    android:background="@drawable/custom_button"
+                    android:id="@+id/button_one_minus" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
-            <EditText
-                android:id="@+id/edit_text_two"
-                android:textColor="@color/textAndIcons"
-                android:textColorHint="@color/textAndIcons"
-                android:hint="@string/bottom_text"
-                android:layout_margin="@dimen/margin_extra_short"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/edit_text_two"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/textAndIcons"
+                    android:textColorHint="@color/textAndIcons"
+                    android:hint="@string/bottom_text"
+                    android:layout_margin="@dimen/margin_extra_short"
+                    android:layout_toLeftOf="@+id/button_two_plus"
+                    android:layout_toStartOf="@+id/button_two_plus" />
+
+                <Button
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="@string/plus"
+                    android:textColor="@color/textAndIcons"
+                    android:background="@drawable/custom_button"
+                    android:id="@+id/button_two_plus"
+                    android:layout_margin="@dimen/margin_extra_short"
+                    android:layout_toLeftOf="@+id/button_two_minus"
+                    android:layout_toStartOf="@+id/button_two_minus" />
+
+                <Button
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="@string/minus"
+                    android:layout_alignParentRight="true"
+                    android:layout_margin="@dimen/margin_extra_short"
+                    android:textColor="@color/textAndIcons"
+                    android:background="@drawable/custom_button"
+                    android:id="@+id/button_two_minus" />
+
+            </RelativeLayout>-->
         </LinearLayout>
     </LinearLayout>
 

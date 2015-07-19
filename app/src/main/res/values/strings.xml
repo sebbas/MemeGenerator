@@ -28,6 +28,11 @@
     <string name="action_image">New photo</string>
     <string name="action_video">New video</string>
     <string name="search_hint">Enter meme name</string>
+    <string name="action_done">Done</string>
+    <string name="action_border">Border</string>
+    <string name="action_move">Move</string>
+
+
 
     <string name="connection_unavailable">No connection</string>
     <string name="connection_timeout">Connection timeout</string>
@@ -65,6 +70,8 @@
     <!-- Editor strings -->
     <string name="top_text">Top text</string>
     <string name="bottom_text">Bottom text</string>
+    <string name="plus">+</string>
+    <string name="minus">-</string>
 
 
     <!-- Google card strings -->

@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.TypedValue;
+import android.view.ActionMode;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -19,7 +21,7 @@ import org.sebbas.android.memegenerator.fragments.MemeFragment;
 import org.sebbas.android.memegenerator.fragments.MoreFragment;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity implements ActionMode.Callback {
 
     private MenuItem mSearchMenuItem;
 
@@ -83,7 +85,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 break;
             case EditActivity.TAG:
                 titleResource = R.string.editor;
-                menuResource = R.menu.menu_editor;
+                menuResource = R.menu.menu_edit;
                 toolbar.setNavigationIcon(R.drawable.abc_ic_ab_back_mtrl_am_alpha);
                 break;
             default:
@@ -105,7 +107,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public void registerToolbarCallback(final ToolbarCallback toolbarCallback) {
-        Toolbar toolbar = (Toolbar) this.findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) this.findViewById(R.id.toolbar);
 
         // Setup toolbar actions
         toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
@@ -118,6 +120,9 @@ public abstract class BaseActivity extends AppCompatActivity {
                     case R.id.menu_image:
                         break;
                     case R.id.menu_video:
+                        break;
+                    case R.id.menu_border:
+                        toolbar.startActionMode(BaseActivity.this);
                         break;
                 }
                 return true;
@@ -163,4 +168,31 @@ public abstract class BaseActivity extends AppCompatActivity {
     abstract public int getMainPagerPosition();
 
     abstract public int getLastFragmentPositionMain();
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        // TODO Auto-generated method stub
+        mode.getMenuInflater().inflate(R.menu.menu_memes, menu);
+        return true;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        // TODO Auto-generated method stub
+
+        mode.setTitle("CheckBox is Checked");
+        return false;
+    }
 }

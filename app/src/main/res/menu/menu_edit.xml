@@ -1,0 +1,25 @@
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:mContext=".MainActivity">
+
+    <item
+        android:id="@+id/menu_move"
+        android:title="@string/action_move"
+        android:icon="@drawable/ic_open_with_white_24dp"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_border"
+        android:title="@string/action_border"
+        android:icon="@drawable/ic_view_day_white_24dp"
+        app:showAsAction="always" />
+
+   <item
+        android:id="@+id/menu_done"
+        android:title="@string/action_done"
+        android:icon="@drawable/ic_done_white_24dp"
+        app:showAsAction="always" />
+
+</menu>
