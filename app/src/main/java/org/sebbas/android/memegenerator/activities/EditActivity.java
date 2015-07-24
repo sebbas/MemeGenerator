@@ -8,13 +8,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
 import org.sebbas.android.memegenerator.LineItem;
 import org.sebbas.android.memegenerator.R;
-import org.sebbas.android.memegenerator.TextViewOutline;
+import org.sebbas.android.memegenerator.OutlineEditText;
 import org.sebbas.android.memegenerator.fragments.BaseFragment;
 import org.sebbas.android.memegenerator.interfaces.FragmentCallback;
 import org.sebbas.android.memegenerator.interfaces.ToolbarCallback;
@@ -27,11 +26,9 @@ public class EditActivity extends BaseActivity implements FragmentCallback, Tool
     public static final String LINE_ITEM = "lineItem";
 
     private LineItem mLineItem;
-    private View mHeaderView;
-    private View mToolbarView;
     private ImageView mImageView;
-    private TextViewOutline mTextViewOne;
-    private TextViewOutline mTextViewTwo;
+    private OutlineEditText mEditTextOne;
+    private OutlineEditText mEditTextTwo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,20 +48,16 @@ public class EditActivity extends BaseActivity implements FragmentCallback, Tool
         // This makes the actionbar in multitask mode in Android Lollipop look a bit nicer
         setCustomLollipopActionBar();
 
-        mHeaderView = findViewById(R.id.header);
-        mToolbarView = findViewById(R.id.toolbar);
         mImageView = (ImageView) findViewById(R.id.item_image);
-        mTextViewOne = (TextViewOutline) findViewById(R.id.text_one);
-        mTextViewTwo = (TextViewOutline) findViewById(R.id.text_two);
+        mEditTextOne = (OutlineEditText) findViewById(R.id.text_one);
+        mEditTextTwo = (OutlineEditText) findViewById(R.id.text_two);
 
-        setTypeFace(mTextViewOne);
-        setTypeFace(mTextViewTwo);
+        Typeface typeface = Typeface.createFromAsset(this.getAssets(), "fonts/impact.ttf");
+        String topText = getResources().getString(R.string.top_text);
+        String bottomText = getResources().getString(R.string.bottom_text);
 
-        //setTextColor(mTextViewOne);
-        //setTextColor(mTextViewTwo);
-
-        mTextViewOne.setText("WOKE UP TODAY");
-        mTextViewTwo.setText("IT WAS AWFUL");
+        mEditTextOne.changeAll(0xFFFFFFFF, 0xFF000000, typeface, 36, topText);
+        mEditTextTwo.changeAll(0xFFFFFFFF, 0xFF000000, typeface, 36, bottomText);
 
 
         Glide.with(this)
@@ -164,14 +157,16 @@ public class EditActivity extends BaseActivity implements FragmentCallback, Tool
         }
     }
 
-    private void setTypeFace(TextView textView) {
-        Typeface typeFace = Typeface.createFromAsset(this.getAssets(), "fonts/impact.ttf");
-        textView.setTypeface(typeFace);
+    private void setTypeFace(Typeface typeFace) {
+        mEditTextOne.changeTypeface(typeFace);
+        mEditTextTwo.changeTypeface(typeFace);
     }
 
-    private void setTextColor(TextView textView) {
-        textView.setTextColor(getResources().getColor(android.R.color.white));
+    private void setTextColor(int innerColor, int outlineColor) {
+        mEditTextOne.changeTextColor(innerColor, outlineColor);
+        mEditTextTwo.changeTextColor(innerColor, outlineColor);
     }
+
 
 
 }
